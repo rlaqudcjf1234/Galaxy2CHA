@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.temp.service.impl.TempMapper">
+
+	<select id="selectCheck" resultType="int">
+		SELECT 1 AS CHK FROM DUAL
+	</select>
+	
+	<select id="selectCount" parameterType="searchVO" resultType="int">
+		SELECT COUNT(*) FROM ORIGIN_DATA
+	</select>
+	
+	<select id="selectList" parameterType="searchVO" resultType="egovMap">
+		SELECT A.*, ROWNUM AS RNUM
+		FROM (
+			SELECT SEQ, COURSE, FULL_NAME 
+			FROM ORIGIN_DATA
+			ORDER BY SEQ DESC
+		)A OFFSET (#{pageIndex} - 1) * #{pageSize} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+
+</mapper>

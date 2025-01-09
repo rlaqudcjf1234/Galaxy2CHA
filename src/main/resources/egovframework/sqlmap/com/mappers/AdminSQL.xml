@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.admin.service.impl.AdminMapper">
+
+	<select id="selectCheck" parameterType="String" resultType="int">
+		SELECT COUNT(*) 
+		FROM ADMIN
+		WHERE EMAIL = #{email}
+	</select>
+	
+	<sql id="sqlSearch">
+		<where>
+			<if test='email != null and email != ""'>
+				AND EMAIL = #{email}
+			</if>
+			<if test='name != null and name != ""'>
+				AND NAME = #{name}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectCount" parameterType="searchVO" resultType="int">
+		SELECT COUNT(*) FROM ADMIN
+	</select>
+	
+	<select id="selectList" parameterType="searchVO" resultType="egovMap">
+		SELECT A.*, ROWNUM AS RNUM
+		FROM (
+			SELECT SEQ, EMAIL, NAME, PHONE, DIVISION, POST, REG_DT, USE_YN
+			FROM ADMIN
+			<include refid="sqlSearch" />
+			ORDER BY SEQ DESC
+		)A OFFSET (#{pageIndex} - 1) * #{pageSize} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	
+	<insert id="insertAdmin" parameterType="adminVO">
+		INSERT ALL 
+		INTO SEQ_MANAGEMENT(
+			SEQ, TABLE_NM, REG_DT
+		) VALUES (
+			SEQ.NEXTVAL, #{table_nm}, SYSDATE
+		)
+		INTO ADMIN (
+			SEQ, EMAIL, PASSWORD, NAME, PHONE, DIVISION, POST, REG_DT, USE_YN
+		) VALUES (
+			SEQ.NEXTVAL, #{email}, #{password}, #{name}, #{phone}, #{division}, #{post}, SYSDATE, '0'
+		)
+	</insert>
+</mapper>

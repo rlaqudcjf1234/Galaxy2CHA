@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<!-- 메뉴 탭 타일즈 -->
+	<definition name=".defaultLayout" template="/WEB-INF/jsp/include/layout.jsp">
+		<put-attribute name="head" value="/WEB-INF/jsp/include/head.jsp" />
+		<put-attribute name="mode" value="/WEB-INF/jsp/include/mode.jsp" />
+		<put-attribute name="header" value="/WEB-INF/jsp/include/header.jsp" />
+		<put-attribute name="main" value="" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/include/footer.jsp" />
+	</definition>
+
+	<definition name="*.tiles" extends=".defaultLayout">
+		<put-attribute name="main" value="/WEB-INF/jsp/{1}.jsp" />
+	</definition>
+
+	<definition name="*/*.tiles" extends=".defaultLayout">
+		<put-attribute name="main" value="/WEB-INF/jsp/{1}/{2}.jsp" />
+	</definition>
+
+	<definition name="*/*/*.tiles" extends=".defaultLayout">
+		<put-attribute name="main" value="/WEB-INF/jsp/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<!-- 메뉴 탭 타일즈 -->
+	<definition name=".frontLayout" template="/WEB-INF/jsp/front/include/layout.jsp">
+		<put-attribute name="head" value="/WEB-INF/jsp/front/include/head.jsp" />
+		<put-attribute name="mode" value="/WEB-INF/jsp/front/include/mode.jsp" />
+		<put-attribute name="header" value="/WEB-INF/jsp/front/include/header.jsp" />
+		<put-attribute name="main" value="" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/front/include/footer.jsp" />
+	</definition>
+
+	<definition name="/front/*" extends=".frontLayout">
+		<put-attribute name="main" value="/WEB-INF/jsp/front/{1}.jsp" />
+	</definition>
+
+	<definition name="/front/*/*" extends=".frontLayout">
+		<put-attribute name="main" value="/WEB-INF/jsp/front/{1}/{2}.jsp" />
+	</definition>
+
+	<definition name="/front/*/*/*" extends=".frontLayout">
+		<put-attribute name="main" value="/WEB-INF/jsp/front/{1}/{2}/{3}.jsp" />
+	</definition>
+
+</tiles-definitions>
