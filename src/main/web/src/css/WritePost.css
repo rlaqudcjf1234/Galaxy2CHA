@@ -1,0 +1,81 @@
+.write-container {
+    width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.write-container h2 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #0066cc;
+}
+
+.write-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.title-input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.content-input {
+    padding: 12px;
+    height: 400px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-button,
+.submit-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-button {
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+.cancel-button:hover {
+    background-color: #f8f9fa;
+}
+
+.submit-button {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* 입력 필드 포커스 스타일 */
+.title-input:focus,
+.content-input:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0,102,204,0.1);
+}

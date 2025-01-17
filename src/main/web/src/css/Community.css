@@ -1,0 +1,77 @@
+/* Board.css */
+.board-container {
+    width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 검색 영역 */
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+}
+
+.search-box input {
+    padding: 8px;
+    width: 300px;
+    border: 1px solid #ddd;
+}
+
+.search-box button,
+.write-button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* 테이블 스타일 */
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 2px solid #0066cc;
+    margin-bottom: 20px;
+}
+
+.board-table th,
+.board-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.board-table th {
+    background-color: #f8f9fa;
+}
+
+.board-table .title {
+    text-align: left;
+    color: #0066cc;
+    cursor: pointer;
+}
+
+.board-table td.title:hover {
+    text-decoration: underline;
+}
+
+.write-button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: white;
+    cursor: pointer;
+    /* Link를 위한 추가 스타일 */
+    text-decoration: none;  /* 밑줄 제거 */
+    color: inherit;        /* 부모 요소의 텍스트 색상 상속 */
+    display: inline-block; /* 버튼처럼 패딩 적용되게 */
+}
+
+/* 호버 효과도 추가해주면 좋습니다 */
+.write-button:hover {
+    background-color: #f8f9fa;
+}

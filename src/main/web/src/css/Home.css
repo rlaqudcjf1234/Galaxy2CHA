@@ -1,0 +1,38 @@
+/* Home.css */
+.home-container {
+    padding: 2rem;
+    width: 100%;
+     /* 컨테이너의 최대 너비 설정 */
+         /* 왼쪽 정렬을 위해 margin-left를 0으로 설정 */
+    margin-right: auto; /* 오른쪽 여백을 자동으로 설정 */
+}
+
+.slide-container {
+    
+    width: 100%;
+    margin-bottom: 3rem;
+         /* 슬라이드 컨테이너도 왼쪽 정렬 */
+    max-width: 1300px; 
+}
+
+.card-container {
+    position: relative;
+    left: 80px;
+    bottom: 70px;
+    max-width: 1200px;
+    width: 100%;
+    padding: 2rem 0;
+         /* 카드 컨테이너도 왼쪽 정렬 */
+}
+
+.TabMenu-container {
+    position: relative;
+    left: 1250px;
+    bottom: 850px;
+}
+
+/* 제목도 왼쪽 정렬이 필요하다면 */
+.home-container h2 {
+    text-align: left;   /* bootstrap의 text-center 클래스를 덮어쓰기 */
+    margin-left: 0;
+}

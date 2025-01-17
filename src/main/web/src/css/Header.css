@@ -1,0 +1,124 @@
+/* 기본 변수 설정 - 네비게이션의 크기와 아이템 수를 정의합니다 */
+:root {
+    --menu-width: 100%;  /* 전체 너비로 변경 */
+    --items: 4;  /* 메뉴 아이템 수 */
+}
+
+/* 헤더 기본 스타일 - Bootstrap 클래스와 함께 작동하도록 설정 */
+header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+/* 네비게이션 메뉴 기본 스타일 */
+#menu {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+/* 메뉴 아이템 스타일링 */
+.menu-item {
+    position: relative;
+    padding: 1em;
+    cursor: pointer;
+}
+
+/* 메뉴 텍스트 스타일링 */
+.menu-text {
+    position: relative;
+    font-size: 20px;
+}
+
+.menu-text a {
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+    font-weight: bold;
+    opacity: 75%;
+    transition: color 0.2s ease;
+}
+
+.menu-text a:hover {
+    color: #0c86ef;
+}
+
+/* 트리플 너비 서브메뉴 */
+.sub-menu{
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FAEDED;
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    padding: 1.5em;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+    border: 1px solid rgba(0,0,0,0.1);
+
+}
+
+/* 서브메뉴 호버 효과 */
+.menu-item:hover .sub-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* 박스 스타일링 */
+.box {
+    text-align: center;
+    font-size: 17px;
+    
+}
+
+.box h3 {
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(44, 70, 86, 0.7);
+    margin-bottom: 1em;
+}
+
+.box a {
+    display: block;
+    color: #7a8a94;
+    text-decoration: none;
+    padding: 0.5em 0;
+    transition: color 0.2s ease;
+}
+
+.box a:hover {
+    color: black;
+    font-weight: bold;
+    opacity: 70%;
+}
+
+/* 상단 컨테이너 스타일 */
+.top-container {
+    margin-bottom: 2em;
+}
+
+.top-container {
+    font-size: 2em;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .sub-menu{
+        min-width: calc(100vw - 40px);
+        left: 20px;
+        transform: none;
+        grid-template-columns: 1fr;
+    }
+    
+    .menu-item:hover .sub-menu {
+        transform: none;
+    }
+    
+}
