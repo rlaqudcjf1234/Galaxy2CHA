@@ -1,38 +1,43 @@
-/* Home.css */
+/* Home 전체 레이아웃 */
 .home-container {
-    padding: 2rem;
-    width: 100%;
-     /* 컨테이너의 최대 너비 설정 */
-         /* 왼쪽 정렬을 위해 margin-left를 0으로 설정 */
-    margin-right: auto; /* 오른쪽 여백을 자동으로 설정 */
+    padding: 20px 0;
 }
 
-.slide-container {
-    
-    width: 100%;
-    margin-bottom: 3rem;
-         /* 슬라이드 컨테이너도 왼쪽 정렬 */
-    max-width: 1300px; 
+/* 슬라이더 섹션 */
+.main-slider, .course-slider {
+    margin: 50px 0; /* 위아래 간격 추가 */
 }
 
-.card-container {
-    position: relative;
-    left: 80px;
-    bottom: 70px;
-    max-width: 1200px;
-    width: 100%;
-    padding: 2rem 0;
-         /* 카드 컨테이너도 왼쪽 정렬 */
+/* 슬라이더 버튼 */
+.slider-button {
+    position: absolute;
+    top: 50%; /* 슬라이더 높이의 중앙 */
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    border-radius: 50%; /* 원형 버튼 */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10; /* 슬라이더 위로 표시 */
+    transition: background 0.3s;
 }
 
-.TabMenu-container {
-    position: relative;
-    left: 1250px;
-    bottom: 850px;
+/* 버튼 hover 효과 */
+.slider-button:hover {
+    background: rgba(0, 0, 0, 0.7);
 }
 
-/* 제목도 왼쪽 정렬이 필요하다면 */
-.home-container h2 {
-    text-align: left;   /* bootstrap의 text-center 클래스를 덮어쓰기 */
-    margin-left: 0;
+/* 버튼 위치 수정 */
+.slider-button.prev {
+    left: 10px; /* 슬라이드 왼쪽으로 약간 안쪽으로 이동 */
 }
+
+.slider-button.next {
+    right: 10px; /* 슬라이드 오른쪽으로 약간 안쪽으로 이동 */
+}
+
