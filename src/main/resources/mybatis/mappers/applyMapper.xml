@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.ApplyMapper">
+
+    <select id="selectCount"> SELECT COUNT(*) FROM APPLY </select>
+
+    <select id="selectList">
+        SELECT A.*, ROWNUM AS RNUM
+            FROM (
+                SELECT 
+                A.ID AS ID,
+                A.CLASS_SEQ AS seq,
+                A.JUMIN AS jumin,
+                A.NAME AS name,
+                A.REAL_ZIPCODE AS real_zipcode,
+                A.REAL_ADDRESS1 AS real_address1,
+                A.REAL_ADDRESS2 AS real_address2,
+                A.ZIPCODE AS zipcode,
+                A.ADDRESS1 AS address1,
+                A.ADDRESS2 AS address2,
+                A.EMAIL AS email,
+                A.PHONE AS phone,
+                A.PATH AS path,
+                TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS reg_dt,
+                A.USE_YN AS use_yn,
+                C.ROUND AS round,
+                C.ROOM AS room
+            FROM APPLY A
+            INNER JOIN CLASS C ON A.CLASS_SEQ = C.SEQ
+            ORDER BY A.REG_DT DESC
+            )
+            A OFFSET (#{pageIndex} - 1) * #{pageSize}
+            ROWS FETCH NEXT #{pageSize} ROWS ONLY </select>
+
+    <insert id="insertApply" parameterType="ApplyDto">
+    INSERT INTO APPLY (
+        class_seq,      /* 클래스 시퀀스 (Class 테이블의 SEQ 참조) */
+        jumin,          /* 주민등록번호 */
+        name,           /* 이름 */
+        real_zipcode,   /* 실거주지 우편번호 */
+        real_address1,  /* 실거주지 주소 */
+        real_address2,  /* 실거주지 상세주소 */
+        ZIPCODE,        /* 등본상 우편번호 */
+        ADDRESS1,       /* 등본상 주소 */
+        ADDRESS2,       /* 등본상 주소 상세 */
+        email,          /* 이메일 */
+        phone,          /* 전화번호 */
+        path,           /* 지원경로 */
+        reg_dt         /* 등록일시 */
+    ) VALUES (
+        #{class_seq},  /* Class 테이블에 존재하는 SEQ만 입력 가능 */
+        #{jumin},
+        #{name},
+        #{real_zipcode},
+        #{real_address1},
+        #{real_address2},
+        #{zipcode},
+        #{address1},
+        #{address2},
+        #{email},
+        #{phone},
+        #{path},
+        SYSDATE
+    )
+</insert>
+
+    <!-- 주민등록번호 중복 체크 -->
+    <select id="selectByJumin" parameterType="ApplyDto" resultType="Integer">
+        /* 주민등록번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
+        SELECT COUNT(*)
+        FROM APPLY
+        WHERE JUMIN = #{jumin}
+    </select>
+
+    <select id="selectActiveByJumin" parameterType="ApplyDto" resultType="Integer">
+        /* 주민등록번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
+        SELECT COUNT(*)
+        FROM APPLY
+        WHERE JUMIN = #{jumin}
+        AND USE_YN='N'
+    </select>
+
+    <!-- 전화번호 중복 체크 -->
+    <select id="selectByPhone" parameterType="ApplyDto" resultType="Integer">
+        /* 전화번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
+        SELECT COUNT(*)
+        FROM APPLY
+        WHERE PHONE = #{phone}
+    </select>
+
+    <select id="selectActiveByPhone" parameterType="ApplyDto" resultType="Integer">
+        /* 전화번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
+        SELECT COUNT(*)
+        FROM APPLY
+        WHERE PHONE = #{phone}
+        AND USE_YN='N'
+    </select>
+
+    <select id="selectApplyRead" parameterType="String" resultType="map">
+    SELECT 
+        ID,
+        CLASS_SEQ as seq,
+        NAME,
+        JUMIN,
+        PHONE,
+        EMAIL,
+        REAL_ZIPCODE,
+        REAL_ADDRESS1,
+        REAL_ADDRESS2,
+        ZIPCODE,
+        ADDRESS1,
+        ADDRESS2,
+        PATH,
+        TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT,
+        USE_YN
+    FROM 
+        APPLY
+    WHERE 
+        ID = #{id}
+    </select>
+    
+    <select id="selectApplyById" parameterType="Long" resultType="ApplyDto">
+    SELECT 
+        ID,
+        CLASS_SEQ as seq,
+        NAME as name,
+        JUMIN as jumin,
+        PHONE as phone,
+        EMAIL as email,
+        REAL_ZIPCODE as real_zipcode,
+        REAL_ADDRESS1 as real_address1,
+        REAL_ADDRESS2 as real_address2,
+        ZIPCODE as zipcode,
+        ADDRESS1 as address1,
+        ADDRESS2 as address2,
+        PATH as path,
+        REG_DT as reg_dt,
+        USE_YN as use_yn
+    FROM 
+        APPLY
+    WHERE 
+        ID = #{id}
+    </select>
+
+    <delete id="deleteApply" parameterType="Long">
+        DELETE FROM APPLY
+        WHERE ID = #{id}
+    </delete>
+
+    <select id="selectApplyByStudentInfo" resultType="ApplyDto">
+    SELECT 
+        ID,
+        CLASS_SEQ as seq,
+        NAME as name,
+        JUMIN as jumin,
+        PHONE as phone,
+        EMAIL as email,
+        REAL_ZIPCODE as real_zipcode,
+        REAL_ADDRESS1 as real_address1,
+        REAL_ADDRESS2 as real_address2,
+        ZIPCODE as zipcode,
+        ADDRESS1 as address1,
+        ADDRESS2 as address2,
+        PATH as path,
+        REG_DT as reg_dt,
+        USE_YN as use_yn
+    FROM 
+        APPLY
+    WHERE 
+        NAME = #{name}
+        AND EMAIL = #{email}
+        AND JUMIN = #{jumin}
+    </select>
+
+</mapper>

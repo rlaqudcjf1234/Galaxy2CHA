@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.ClassMapper">
+
+    <select id="selectCount" parameterType="searchDto" resultType="int">
+        SELECT COUNT(*) FROM CLASS
+    </select>
+
+    <select id="selectList" resultType="map">
+		SELECT C.SEQ, 
+			GET_LECTURE_NAME(LECTURE_SEQ) AS LECTURE_NAME, 
+			C.ROUND, 
+			GET_ADMIN_NAME(ADMIN_SEQ) AS ADMIN_NAME, 
+			C.ROOM,
+			TO_CHAR(C.START_DT,'YYYY-MM-DD') AS START_DT, 
+			TO_CHAR(C.END_DT, 'YYYY-MM-DD') AS END_DT, 
+			C.START_TM,
+			C.END_TM,
+			C.PEOPLE,
+			TO_CHAR(C.reg_dt, 'YYYY-MM-DD') AS reg_dt,
+			C.USE_YN,
+			TO_CHAR(C.Confirm_dt, 'YYYY-MM-DD') AS confirm_dt
+		FROM CLASS C
+		ORDER BY C.SEQ DESC
+
+    </select>
+
+    <select id="getAdminList" resultType="adminDto">
+        SELECT name FROM admin WHERE division = 'admin' or use_yn ='1';
+
+    </select>
+
+    <insert id="insertClass" parameterType="classDto">
+		INSERT ALL 
+			INTO SEQ_MANAGEMENT(
+				SEQ, TABLE_NM, REG_DT
+			) VALUES (
+				SEQ.NEXTVAL, #{table_nm}, SYSDATE
+			)
+			INTO CLASS ( 
+				SEQ, LECTURE_SEQ, ADMIN_SEQ, ROUND, ROOM, 
+				START_DT, END_DT,
+				START_TM, END_TM, PEOPLE, REG_DT, USE_YN
+			) VALUES ( 
+				SEQ.NEXTVAL, #{lecture}, #{admin}, #{round}, #{room}, 
+				#{start_dt}, #{end_dt}, #{start_tm},
+				#{end_tm}, #{people}, SYSDATE, '0'
+			)
+		SELECT * FROM DUAL
+    </insert>
+
+
+	<select id="getClassDetail" resultType="map">
+		SELECT C.SEQ, 
+			GET_LECTURE_NAME(LECTURE_SEQ) AS LECTURE_NAME, 
+			C.ROUND, 
+			GET_ADMIN_NAME(ADMIN_SEQ) AS ADMIN_NAME, 
+			C.ROOM,
+			TO_CHAR(C.START_DT,'YYYY-MM-DD') AS START_DT, 
+			TO_CHAR(C.END_DT, 'YYYY-MM-DD') AS END_DT, 
+			C.START_TM,
+			C.END_TM,
+			C.PEOPLE,
+			TO_CHAR(C.reg_dt, 'YYYY-MM-DD') AS reg_dt,
+			C.USE_YN
+		FROM CLASS C
+		ORDER BY C.SEQ DESC
+
+    </select>
+
+	<select id="selectClassOptionsForApply" resultType="map">
+    SELECT 
+        C.SEQ, 
+        C.ROOM,
+        C.ROUND, 
+        TO_CHAR(C.START_DT,'YYYY-MM-DD') AS START_DT, 
+        TO_CHAR(C.END_DT, 'YYYY-MM-DD') AS END_DT
+    FROM CLASS C
+    WHERE C.USE_YN = '1'
+    ORDER BY C.SEQ DESC
+	</select>
+
+</mapper>
