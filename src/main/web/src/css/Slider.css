@@ -1,96 +1,145 @@
+/* slide.css */
+
+/* 슬라이더 컨테이너 스타일 */
 .slider-container {
-    width: 90%; /* 전체 너비를 90%로 조정 */
     position: relative;
     margin: 0 auto;
-    padding: 0 40px;
-}
-
-.slider-wrapper {
-    width: 100%;
+    padding: 20px;
+    max-width: 1200px;
     overflow: hidden;
 }
 
-.slider-content {
-    display: flex;
-    width: 100%;
-    transform-style: preserve-3d;
-}
-
-.slide {
-    flex: 0 0 25%;
-    padding: 0 8px; /* 슬라이드 간격 줄임 */
-    box-sizing: border-box;
-}
-
-.slide-inner {
-    background: #ffffff;
+/* 개별 슬라이드 아이템 스타일 */
+.slide-item {
+    padding: 20px;
+    margin: 10px;
     border-radius: 8px;
-    border: 1px solid #e0e0e0; /* 테두리 추가 */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    height: 280px; /* 높이 줄임 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.3s;
-}
-
-.slide-inner:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.slide img {
-    width: 90%; /* 이미지 너비 조정 */
-    height: 140px; /* 이미지 높이 고정 */
-    object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    display: block; /* 이미지 중앙 정렬을 위해 */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.slide h3 {
-    font-size: 15px;
-    font-weight: 600;
-    margin: 8px 0;
-    color: #333;
-    text-align: center;
-    width: 100%;
-}
-
-.slide p {
-    font-size: 13px;
-    color: #666;
-    margin: 0;
-    text-align: center;
-    width: 100%;
-}
-
-.slider-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    background: #ffffff;
     cursor: pointer;
-    z-index: 10;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    height: 200px; /* 슬라이드 높이 고정 */
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.slider-button:hover {
-    background: rgba(0, 0, 0, 0.7);
+.slide-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.slider-button.prev {
-    left: 0;
+/* 슬라이드 내용 스타일 */
+.slide-content {
+    padding: 15px;
+    text-align: center;
 }
 
-.slider-button.next {
-    right: 0;
+.slide-content h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.slide-content p {
+    margin: 8px 0;
+    color: #666;
+    font-size: 1rem;
+}
+
+/* 슬라이더 타입별 스타일 */
+.main-slider .slide-item {
+    background: linear-gradient(to right, #e3f2fd, #bbdefb);
+}
+
+.course-slider .slide-item {
+    background: linear-gradient(to right, #f3e5f5, #e1bee7);
+}
+
+.class-slider .slide-item {
+    background: linear-gradient(to right, #e8f5e9, #c8e6c9);
+}
+
+/* Slick 슬라이더 네비게이션 화살표 */
+.slick-prev,
+.slick-next {
+    width: 40px;
+    height: 40px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+    background: rgba(0,0,0,0.8);
+}
+
+.slick-prev:before,
+.slick-next:before {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.slick-prev {
+    left: 10px;
+}
+
+.slick-next {
+    right: 10px;
+}
+
+/* Slick 슬라이더 도트 네비게이션 */
+.slick-dots {
+    bottom: -30px;
+}
+
+.slick-dots li {
+    margin: 0 4px;
+}
+
+.slick-dots li button:before {
+    font-size: 12px;
+    color: #999;
+    opacity: 0.5;
+}
+
+.slick-dots li.slick-active button:before {
+    color: #333;
+    opacity: 1;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .slide-item {
+        height: 180px;
+        margin: 5px;
+    }
+
+    .slide-content h3 {
+        font-size: 1.2rem;
+    }
+
+    .slide-content p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .slide-item {
+        height: 160px;
+    }
+
+    .slide-content h3 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .slick-prev,
+    .slick-next {
+        width: 30px;
+        height: 30px;
+    }
 }
