@@ -11,9 +11,9 @@ function Header() {
                 </Link>
             </div>
 
-            <nav id="menu" className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+           {/* <nav id="menu" className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <div className="menu-item">
-                    {/* <div className="menu-text">
+                     <div className="menu-text">
                         <Link to="/" className="nav-link px-2">
                             통합관리
                         </Link>
@@ -36,7 +36,7 @@ function Header() {
                             ))}
                         </div>
                         <div className="sub-menu-holder"></div>
-                    </div> */}
+                    </div> 
                 </div>
                 <div className="menu-item">
                     <div className="menu-text">
@@ -204,15 +204,13 @@ function Header() {
                         <div className="sub-menu-holder"></div>
                     </div>
                 </div>
-            </nav>
+            </nav>*/}
 
             <div className="col-md-3 text-end">
                 <button type="button" className="btn btn-outline-primary me-2">
                     Login
                 </button>
-                <button type="button" className="btn btn-primary">
-                    Sign-up
-                </button>
+               
             </div>
         </header>
     );

@@ -1,7 +1,7 @@
 import "./App.css";
 
 import React from "react";
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
@@ -11,6 +11,7 @@ import ApplyStudent from "./pages/student/ApplyStudent";
 import ApplyAdd from "./pages/student/ApplyAdd";
 import ApplyList from "./pages/student/ApplyList";
 import ApplyRead from "./pages/student/ApplyRead";
+import SlideDetail from "../src/components/slidedetail"; // 추가된 부분
 
 import ClassDetail from "./pages/class/Detail";
 
@@ -30,6 +31,7 @@ function App() {
                     <Route path="class" element={<Container />}>
                         <Route path=":seq" element={<ClassDetail />} />
                     </Route>
+                    <Route path="slide/:type/:id" element={<SlideDetail />} />
                 </Route>
             </Routes>
         </Router>
