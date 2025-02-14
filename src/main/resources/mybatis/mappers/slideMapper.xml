@@ -2,12 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.galaxy.mapper.SlideMapper">
     <select id="slideRead" parameterType="String" resultType="map">
-        SELECT
-         A.SEQ,
-         GET_CODE_NAME('14',A.DIVISION) AS DIVISION,
-         B.ROUND,
-         B.LECTURE_SEQ
-        FROM LECTURE A, CLASS B 
-        WHERE A.SEQ=B.LECTURE_SEQ
+    SELECT
+        A.SEQ,
+        A.CATEGORY,
+        GET_CODE_NAME('14',A.DIVISION) AS DIVISION,
+        GET_CODE_NAME('15',A.CATEGORY) AS SLIDER_TITLE,
+        B.ROUND,
+        B.LECTURE_SEQ
+    FROM LECTURE A, CLASS B 
+    WHERE A.SEQ=B.LECTURE_SEQ
     </select>
 </mapper>

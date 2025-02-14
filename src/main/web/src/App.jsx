@@ -11,7 +11,7 @@ import ApplyStudent from "./pages/student/ApplyStudent";
 import ApplyAdd from "./pages/student/ApplyAdd";
 import ApplyList from "./pages/student/ApplyList";
 import ApplyRead from "./pages/student/ApplyRead";
-import SlideDetail from "../src/components/slideditail"; // 추가된 부분
+import SlideDetail from "../src/components/slidedetail"; // 추가된 부분
 
 function App() {
     return (

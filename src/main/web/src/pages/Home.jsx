@@ -1,4 +1,3 @@
-// Home.jsx
 import React, { useState, useEffect } from 'react';
 import Slider from '../components/Slider';
 import CardSection from '../components/CardSection';
@@ -12,6 +11,7 @@ function Home() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        // API를 호출하여 슬라이더 데이터를 가져옵니다
         fetch('/api/slide/read')
             .then(response => {
                 if (!response.ok) {
@@ -35,27 +35,31 @@ function Home() {
     if (error) return <div>Error: {error}</div>;
     if (!slideData) return <div>No data available</div>;
 
+    // 우리는 이제 데이터베이스에서 제목을 가져오므로, type prop은 단순히 슬라이더 스타일과 레이아웃을 위해서만 사용됩니다
     return (
         <div className="home-container">
-            <section className="main-slider">
-                <h2 className="text-center mb-4">메인 슬라이더</h2>
-                <Slider items={slideData} type="main" />
-            </section>
-            <section className="course-slider">
-                <h2 className="text-center mb-4">강좌 슬라이더</h2>
-                <Slider items={slideData} type="course" />
-            </section>
-            <section className="course-slider">
-                <h2 className="text-center mb-4">강의 슬라이더</h2>
-                <Slider items={slideData} type="class" />
-            </section>
+            <div className="slider-wrapper">
+                <section className="main-slider">
+                    <Slider items={slideData} type="main" />
+                </section>
+            </div>
+            <div className="slider-wrapper">
+                <section className="course-slider">
+                    <Slider items={slideData} type="course" />
+                </section>
+            </div>
+            <div className="slider-wrapper">
+                <section className="course-slider">
+                    <Slider items={slideData} type="class" />
+                </section>
+            </div>
             <section className="card-section">
                 <CardSection />
             </section>
             <section className="tab-menu-section">
                 <TabMenu />
             </section>
-        </div>
+        </div >
     );
 }
 
