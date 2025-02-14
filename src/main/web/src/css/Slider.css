@@ -1,4 +1,4 @@
-/* 슬라이더 컨테이너 - 전체 슬라이더를 감싸는 최상위 컨테이너 */
+/* 슬라이더 컨테이너 */
 .slider-container {
     position: relative;
     width: 100%;
@@ -7,7 +7,7 @@
     padding: 0 40px;
 }
 
-/* 슬라이더 제목 스타일링 */
+/* 슬라이더 제목 */
 .slider-container h2 {
     text-align: center;
     font-size: 1.8rem;
@@ -15,75 +15,110 @@
     color: #333;
 }
 
-/* Slick 슬라이더의 기본 설정 */
+/* Slick 슬라이더 기본 설정 */
 .slick-slider {
     margin: 0 auto;
     width: 100%;
-    display: flex;
-    justify-content: center;
 }
 
-/* 슬라이드들을 감싸는 트랙 */
+/* 슬라이드 트랙 */
 .slick-track {
     display: flex !important;
-    align-items: center;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 /* 개별 슬라이드 래퍼 */
 .slick-slide {
-    padding: 0 10px;
-    height: inherit !important;
-    display: flex !important;
-    justify-content: center;
+    padding: 0 8px;
+    height: auto !important;
 }
 
-/* 슬라이드 내부 div 요소 */
+/* 슬라이드 내부 div */
 .slick-slide > div {
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
 }
 
-/* 실제 슬라이드 아이템 */
+/* 슬라이드 아이템 */
 .slide-item {
-    height: 270px !important;
-    width: 100%;
-    margin: 10px;
-    padding: 20px;
     background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     cursor: pointer;
     transition: all 0.3s ease;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
 }
 
-/* 슬라이드 내부 콘텐츠 영역 */
-.slide-content {
+/* 이미지 래퍼 */
+.slide-image-wrapper {
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 비율 */
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* 이미지 */
+.slide-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
+    object-fit: cover;
+}
+
+/* 콘텐츠 영역 */
+.slide-content {
+    padding: 15px;
+}
+
+/* 제목과 회차를 포함하는 상단 영역 */
+.content-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/* 제목 */
+.content-title h3 {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* 회차 정보 */
+.round {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* 상세 정보 영역 */
+.content-details {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
+    gap: 5px;
 }
 
-/* 슬라이드 내부 텍스트 스타일 */
-.slide-content h3 {
-    font-size: 1.2rem;
-    margin: 0;
-    color: #333;
-}
-
-.slide-content p {
-    margin: 0;
+/* 시작 날짜 */
+.start-date {
     color: #666;
+    font-size: 0.9rem;
+    margin: 0;
 }
 
-/* 네비게이션 화살표 버튼 공통 스타일 */
+/* 강의번호 숨기기 */
+.lecture-seq {
+    display: none;
+}
+
+/* 네비게이션 화살표 */
 .slick-prev,
 .slick-next {
     width: 40px;
@@ -91,41 +126,34 @@
     background: rgba(0, 0, 0, 0.5) !important;
     border-radius: 50%;
     z-index: 1;
-    transform: translateY(-50%);
 }
 
-/* 왼쪽 화살표 위치 */
 .slick-prev {
     left: -20px;
 }
 
-/* 오른쪽 화살표 위치 */
 .slick-next {
     right: -20px;
 }
 
-/* 화살표 아이콘 색상 */
 .slick-prev:before,
 .slick-next:before {
     color: white;
     opacity: 1;
 }
 
-/* 반응형 디자인 */
+/* 반응형 */
 @media (max-width: 768px) {
     .slider-container {
         padding: 0 20px;
     }
 
-    .slide-item {
-        height: 240px !important;
-    }
-
-    .slide-content h3 {
+    .content-title h3 {
         font-size: 1rem;
     }
 
-    .slide-content p {
-        font-size: 0.9rem;
+    .round,
+    .start-date {
+        font-size: 0.85rem;
     }
 }
