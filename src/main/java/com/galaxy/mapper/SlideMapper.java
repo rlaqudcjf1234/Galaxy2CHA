@@ -8,5 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SlideMapper {
 
-    List<Map<String, Object>> slideRead(String seq) throws Exception;
+    List<Map<String, Object>> slideList(String seq) throws Exception;
 }

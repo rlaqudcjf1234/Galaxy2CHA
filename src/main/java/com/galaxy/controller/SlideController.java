@@ -19,7 +19,7 @@ public class SlideController {
     private SlideService slideService;
 
     @GetMapping("/read")
-    public List<Map<String, Object>> slideRead(String seq) throws Exception {
-        return slideService.slideRead(seq);
+    public List<Map<String, Object>> slideList(String seq) throws Exception {
+        return slideService.slideList(seq);
     }
 }
