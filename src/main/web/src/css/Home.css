@@ -8,7 +8,8 @@
 
 /* 슬라이더 섹션 공통 스타일 */
 .main-slider,
-.course-slider {
+.course-slider,
+.class-slider {
     width: 100%;
     max-width: 1200px;
     margin: 40px auto;
