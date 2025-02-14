@@ -50,22 +50,21 @@
     </insert>
 
 
-	<select id="getClassDetail" resultType="map">
-		SELECT C.SEQ, 
-			GET_LECTURE_NAME(LECTURE_SEQ) AS LECTURE_NAME, 
-			C.ROUND, 
-			GET_ADMIN_NAME(ADMIN_SEQ) AS ADMIN_NAME, 
-			C.ROOM,
-			TO_CHAR(C.START_DT,'YYYY-MM-DD') AS START_DT, 
-			TO_CHAR(C.END_DT, 'YYYY-MM-DD') AS END_DT, 
-			C.START_TM,
-			C.END_TM,
-			C.PEOPLE,
-			TO_CHAR(C.reg_dt, 'YYYY-MM-DD') AS reg_dt,
-			C.USE_YN
-		FROM CLASS C
-		ORDER BY C.SEQ DESC
-
+	<select id="classDetail" parameterType="int" resultType="map">
+        SELECT 
+            C.SEQ,
+            GET_LECTURE_NAME(LECTURE_SEQ) AS LECTURE_NAME,
+            C.ROUND,
+            GET_ADMIN_NAME(ADMIN_SEQ) AS ADMIN_NAME,
+            TO_CHAR(C.START_DT,'YYYY-MM-DD') AS START_DT,
+            TO_CHAR(C.END_DT, 'YYYY-MM-DD') AS END_DT,
+            C.START_TM,
+            C.END_TM,
+            C.PEOPLE,
+            TO_CHAR(C.reg_dt, 'YYYY-MM-DD') AS reg_dt,
+            TO_CHAR(C.Confirm_dt, 'YYYY-MM-DD') AS confirm_dt
+        FROM CLASS C
+        WHERE C.SEQ = #{value}
     </select>
 
 	<select id="selectClassOptionsForApply" resultType="map">

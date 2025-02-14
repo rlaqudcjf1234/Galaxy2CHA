@@ -12,6 +12,8 @@ import ApplyAdd from "./pages/student/ApplyAdd";
 import ApplyList from "./pages/student/ApplyList";
 import ApplyRead from "./pages/student/ApplyRead";
 
+import ClassDetail from "./pages/class/Detail";
+
 function App() {
     return (
         <Router>
@@ -23,6 +25,10 @@ function App() {
                         <Route path="add" element={<ApplyAdd />} />
                         <Route path="read/:id" element={<ApplyRead />} />
                         <Route path="student" element={<ApplyStudent />} />
+                    </Route>
+
+                    <Route path="class" element={<Container />}>
+                        <Route path=":seq" element={<ClassDetail />} />
                     </Route>
                 </Route>
             </Routes>

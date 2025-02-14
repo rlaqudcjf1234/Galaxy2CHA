@@ -13,9 +13,7 @@ public interface ClassService {
 
     List<Map<String, Object>> selectList(SearchDto dto) throws Exception;
 
-    int insertClass(ClassDto dto) throws Exception;
-
-    Map<String, Object> getClassDetail(String seq) throws Exception;
+    Map<String, Object> getClassDetail(int seq) throws Exception;
 
     List<Map<String, Object>> selectClassOptionsForApply() throws Exception;
 }
