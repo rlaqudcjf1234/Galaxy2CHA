@@ -88,7 +88,7 @@ function Slider({ items, type }) {
     };
 
     const handleSlideClick = (item) => {
-        navigate(`/slide/${type}/${item.LECTURE_SEQ}`);
+        navigate(`/class/${item.LECTURE_SEQ}/${item.SEQ}`);
     };
 
     return (

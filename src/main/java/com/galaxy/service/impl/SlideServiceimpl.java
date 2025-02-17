@@ -15,9 +15,9 @@ public class SlideServiceimpl implements SlideService {
     @Autowired
     SlideMapper slideMapper;
 
-    public List<Map<String, Object>> slideList(String seq) throws Exception{
+    public List<Map<String, Object>> slideList() throws Exception{
 
-        return slideMapper.slideList(seq);
+        return slideMapper.slideList();
     }
 
 }

@@ -3,14 +3,14 @@
 <mapper namespace="com.galaxy.mapper.SlideMapper">
     <select id="slideList" parameterType="String" resultType="map">
     SELECT
-        A.SEQ,
+        B.LECTURE_SEQ,
+        B.SEQ,
         A.CATEGORY,
         GET_CODE_NAME('14',A.DIVISION) AS DIVISION,
         GET_CODE_NAME('15',A.CATEGORY) AS SLIDER_TITLE,
         B.ROUND,
-        B.LECTURE_SEQ,
         B.START_DT
     FROM LECTURE A, CLASS B 
-    WHERE A.SEQ=B.LECTURE_SEQ
+    WHERE A.SEQ = B.LECTURE_SEQ
     </select>
 </mapper>

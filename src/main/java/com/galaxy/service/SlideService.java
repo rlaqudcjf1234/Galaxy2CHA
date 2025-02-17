@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface SlideService {
 
-    List<Map<String, Object>> slideList(String seq) throws Exception;
+    List<Map<String, Object>> slideList() throws Exception;
 }
