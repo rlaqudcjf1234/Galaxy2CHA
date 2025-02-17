@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.CodeMapper">
+
+    <select id="selectUseCode" parameterType="int" resultType="map">
+        SELECT B.GROUP_ID, B.CODE_ID, B.CODE_NAME, B.CODE_SORT
+        FROM CODE_GROUP A, CODE B
+        WHERE A.GROUP_ID = B.GROUP_ID
+        AND A.USE_YN = 1 AND B.USE_YN = 1
+        AND A.GROUP_ID = #{group_id}
+        ORDER BY B.CODE_SORT ASC
+    </select>
+
+</mapper>

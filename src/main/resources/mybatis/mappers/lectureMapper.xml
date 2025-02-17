@@ -1,109 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.galaxy.mapper.LectureMapper">
-<select id=""></select>
-
-
-    <sql id="sqlSearch">
-        <if test='text != null and text != ""'>
-            <choose>
-                <when test='select == "1"'>
-                    AND UPPER(A.NAME) LIKE UPPER('%'||TRIM(#{text})||'%')
-                </when>
-                <when test='select == "2"'>
-                    AND B.NAME LIKE '%'||TRIM(#{text})||'%'
-                </when>					
-            </choose>				
-        </if>
-	</sql>
-
-    <select id="selectCount" parameterType="SearchDto" resultType="int">
-        SELECT COUNT(*) 
-        FROM LECTURE A, ADMIN B 
-        WHERE A.ADMIN_SEQ = B.SEQ   
-        <include refid="sqlSearch"/>     
-    </select>
-
-<select id="selectList" parameterType="searchDto" resultType="map">
-       SELECT 
-        SEQ,        
-        LECTURE_NAME,
-        ADMIN_NAME,
-        GET_CODE_NAME('14',DIVISION) AS DIVISION,
-        GET_CODE_NAME('15',CATEGORY) AS CATEGORY,
-        REG_DT,
-        ROWNUM AS RNUM
-    FROM (
-        SELECT 
-            A.SEQ,
-            A.NAME AS LECTURE_NAME,
-            B.NAME AS ADMIN_NAME,
-            A.DIVISION,
-            A.CATEGORY,
-            TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS REG_DT
-        FROM LECTURE A, ADMIN B 
-        WHERE A.ADMIN_SEQ = B.SEQ
-        <include refid="sqlSearch"/>
-        ORDER BY A.SEQ DESC
-    ) A 
-    OFFSET (#{pageIndex} - 1) * #{pageSize} ROWS 
-    FETCH NEXT #{pageSize} ROWS ONLY
-</select>
-
-    <insert id="insertLecture" parameterType="LectureDto">
-        INSERT ALL INTO 
-        SEQ_MANAGEMENT(
-             SEQ, 
-             TABLE_NM, 
-             REG_DT) 
-        VALUES ( 
-             SEQ.NEXTVAL, 
-             #{table_nm}, 
-             SYSDATE )
-        INTO LECTURE(
-             SEQ,
-             DIVISION,
-             CATEGORY,
-             NAME, 
-             ADMIN_SEQ, 
-             REG_DT ) 
-        VALUES(
-            SEQ.NEXTVAL,
-            #{division},
-            #{category},
-            #{name}, 
-            '${@com.galaxy.util.HttpSessionUtil@getLoginSeq()}', 
-            SYSDATE ) 
-        SELECT * FROM DUAL
-    </insert>
-
-    <select id="selectLectureRead" parameterType="String" resultType="map">
-        SELECT 
-            A.SEQ,A.ADMIN_SEQ,A.NAME,A.DIVISION,A.CATEGORY,
-            TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS REG_DT,
-            GET_ADMIN_NAME(A.ADMIN_SEQ) AS ADMIN_NAME 
-        FROM LECTURE A
-        WHERE SEQ = #{seq}
-    </select>
 
     <select id="selectOne" parameterType="String" resultType="map">
-		  SELECT 
-            A.SEQ,A.ADMIN_SEQ,A.NAME,A.DIVISION,A.CATEGORY,
-            TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS REG_DT,
-            GET_ADMIN_NAME(A.ADMIN_SEQ) AS ADMIN_NAME 
-        FROM LECTURE A
+        SELECT 
+            SEQ, DIVISION, 
+            GET_CODE_NAME('14', DIVISION) AS DIVISION_NAME,
+            CATEGORY, 
+            GET_CODE_NAME('15', CATEGORY) AS CATEGORY_NAME,
+            NAME, 
+            TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT,
+            ADMIN_SEQ, 
+            GET_ADMIN_NAME(ADMIN_SEQ) AS ADMIN_NAME 
+        FROM LECTURE
         WHERE SEQ = #{seq}
-	</select>
+    </select>
 
-    <update id="updateLecture" parameterType="LectureDto">
-        UPDATE LECTURE 
-        SET
-         name = #{name},
-         DIVISION = #{division},
-         CATEGORY = #{category},
-         REG_DT=SYSDATE
-        WHERE SEQ = #{seq}
-    </update>
-
-  
 </mapper>
