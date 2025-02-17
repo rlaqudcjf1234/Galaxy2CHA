@@ -1,0 +1,158 @@
+/* src/components/Mypage.css */
+.mypage-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  
+  .mypage-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .mypage-header {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .mypage-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #343a40;
+    font-weight: 600;
+  }
+  
+  .mypage-content {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .info-section {
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+  }
+  
+  .info-section h2 {
+    font-size: 18px;
+    color: #495057;
+    margin-bottom: 15px;
+    font-weight: 500;
+  }
+  
+  .info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .info-group p {
+    margin: 0;
+    color: #495057;
+    line-height: 1.5;
+  }
+  
+  .label {
+    font-weight: 500;
+    color: #212529;
+    margin-right: 8px;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #6c757d;
+  }
+  
+  .error {
+    text-align: center;
+    padding: 40px;
+    color: #dc3545;
+    font-size: 16px;
+  }
+  
+  .no-data {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    font-size: 16px;
+  }
+  
+  /* 반응형 디자인을 위한 미디어 쿼리 */
+  @media (max-width: 768px) {
+    .mypage-container {
+      padding: 10px;
+    }
+  
+    .mypage-content {
+      grid-template-columns: 1fr;
+    }
+  
+    .mypage-header h1 {
+      font-size: 20px;
+    }
+  
+    .info-section h2 {
+      font-size: 16px;
+    }
+  }
+
+  .search-container {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-form {
+    display: flex;
+    gap: 10px;
+    max-width: 400px;
+    margin: 20px auto;
+  }
+  
+  .search-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .search-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .search-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .search-again-button {
+    padding: 8px 16px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 20px;
+  }
+  
+  .search-again-button:hover {
+    background-color: #545b62;
+  }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.StudentMapper">
+    
+    <select id="selectStudentInfoById" resultType="com.galaxy.dto.StudentDto">
+    SELECT 
+        s.ID as id,
+        s.CLASS_SEQ as classSeq,
+        s.NAME as name,
+        s.JUMIN as jumin,
+        s.REAL_ZIPCODE as realZipcode,
+        s.REAL_ADDRESS1 as realAddress1,
+        s.REAL_ADDRESS2 as realAddress2,
+        s.ZIPCODE as zipcode,
+        s.ADDRESS1 as address1,
+        s.ADDRESS2 as address2,
+        s.EMAIL as email,
+        s.PHONE as phone,
+        CAST(s.REG_DATE AS TIMESTAMP) as regDate 
+    FROM 
+        GALAXY.STUDENT s
+    WHERE 
+        s.ID = #{id}
+    </select>
+
+
+
+    
+</mapper>
