@@ -28,9 +28,10 @@ function App() {
                         <Route path="student" element={<ApplyStudent />} />
                     </Route>
 
-                    <Route path="class" element={<Container />}>
-                        <Route path=":seq" element={<ClassDetail />} />
+                    <Route path="class/:lecture_seq/:seq" element={<Container />}>
+                        <Route index="index" element={<ClassDetail />} />
                     </Route>
+
                     <Route path="slide/:type/:id" element={<SlideDetail />} />
                 </Route>
             </Routes>
