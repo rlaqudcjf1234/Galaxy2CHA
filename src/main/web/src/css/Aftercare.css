@@ -1,160 +1,119 @@
-/* 전체 컨테이너 스타일 */
-.aftercare-container {
-    max-width: 1024px;
+/* Aftercare.css */
+
+.container {
+    width: 100%; /* 가로폭을 100%로 설정 */
     margin: 0 auto;
-    padding: 1.5rem;
-    background-color: #f9fafb;
-    min-height: 100vh;
+    padding: 20px;
 }
 
-.aftercare-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1f2937;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.sections-grid {
-    display: grid;
-    gap: 1.5rem;
-}
-
-/* 섹션 컴포넌트 스타일 */
-.info-section {
+.card {
     background-color: white;
-    border-radius: 0.5rem;
+    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 20px;
+    margin-bottom: 20px;
+    height: auto; /* 카드 높이가 내용에 맞게 자동으로 변하도록 설정 */
+    width: 100%; /* 카드가 가로폭 100%를 차지하도록 설정 */
 }
 
-.section-header {
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-}
-
-.section-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.section-description {
-    color: #6b7280;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-}
-
-/* 입력 폼 스타일 */
-.input-group {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-}
-
-.input-field {
-    flex: 1;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    transition: border-color 0.2s;
-}
-
-.input-field:focus {
-    outline: none;
-    border-color: #3b82f6;
-}
-
-.add-button {
-    background-color: #3b82f6;
-    color: white;
-    padding: 0.5rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 700;
-    transition: background-color 0.2s;
-    min-width: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.add-button:hover {
-    background-color: #2563eb;
-}
-
-/* 리스트 스타일 */
-.items-container {
-    background-color: #f9fafb;
-    border-radius: 0.5rem;
-    padding: 1rem;
-}
-
-.empty-message {
-    color: #6b7280;
-    text-align: center;
-    padding: 1rem 0;
-}
-
-.items-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.item {
+.header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #f3f4f6;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.2s;
+    margin-bottom: 20px;
 }
 
-.item:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.title h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
 }
 
-.item-text {
-    color: #374151;
+.info-section {
+    background-color: #f7fafc; /* 배경 색상 하나로 합침 */
+    padding: 20px;
+    border-radius: 8px;
 }
 
-.remove-button {
-    margin-left: 1rem;
-    background-color: #fee2e2;
-    color: #dc2626;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 9999px;
+.info-card {
+    margin-bottom: 16px; /* 카드 간의 간격 추가 */
+}
+
+.label {
+    font-size: 20px; /* 글자 크기 2px 키움 */
+    font-weight: 700; /* 볼드 처리 */
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.value {
+    font-size: 16px;
+    color: #2d3748;
+}
+
+.input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input, .textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.button {
+    background-color: #3182ce;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #2b6cb0;
+}
+
+.certifications-list {
+    margin-top: 40px;
+}
+
+.list-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.certifications {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
+    flex-direction: column;
+    gap: 20px;
 }
 
-.remove-button:hover {
-    background-color: #fecaca;
+.certification-item {
+    background-color: #f7fafc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .aftercare-container {
-        padding: 1rem;
-    }
+.certification-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
 
-    .info-section {
-        padding: 1rem;
-    }
+.description {
+    margin-top: 10px;
+    grid-column: span 2;
+}
 
-    .input-group {
-        flex-direction: column;
-    }
-
-    .add-button {
-        width: 100%;
-    }
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #2d3748;
 }

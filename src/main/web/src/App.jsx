@@ -7,6 +7,10 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Container from "./components/Container";
 
+import Aftercare from './pages/aftercare/Aftercare';
+
+import MyPage from "./pages/mypage/Mypage";
+
 import ApplyStudent from "./pages/student/ApplyStudent";
 import ApplyAdd from "./pages/student/ApplyAdd";
 import ApplyList from "./pages/student/ApplyList";
@@ -31,8 +35,17 @@ function App() {
                     <Route path="class/:lecture_seq/:seq" element={<Container />}>
                         <Route index="index" element={<ClassDetail />} />
                     </Route>
+                        
+                    <Route path="student">
+                        <Route path="aftercare/:seq" element={<Container />}>
+                            <Route index="index" element={<Aftercare />} />
+                        </Route>
+                    </Route>
 
-                    <Route path="slide/:type/:id" element={<SlideDetail />} />
+
+                        <Route path="mypage" element={<Container />}>
+                        <Route index="index" element={<MyPage />} />
+                    </Route>
                 </Route>
             </Routes>
         </Router>

@@ -7,38 +7,47 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping(value = "/student")
 @RequiredArgsConstructor
 @Slf4j
 public class StudentController {
 
     private final StudentService studentService;
 
-    @GetMapping("/{seq}")
-    public ResponseEntity<StudentDto> getStudentInfo(@PathVariable Long seq, HttpSession session) {
-        Long studentSeq = (Long) session.getAttribute("studentSeq");
 
-        if (studentSeq == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @GetMapping("/aftercare/{seq}")
+    public ResponseEntity<?> getStudentAftercare(@PathVariable("seq") Long seq) {
+        log.info("============================================");
+        log.info("Entering getStudentAftercare method");
+        log.info("Requested sequence number: {}", seq);
+        
+        try {
+            // studentService에서 조인된 데이터를 한 번에 가져옴
+            Map<String, Object> aftercareInfo = studentService.getStudentAftercare(seq);
+            log.info("Service response: {}", aftercareInfo);
+            
+            if (aftercareInfo == null) {
+                log.warn("No aftercare info found for seq: {}", seq);
+                return ResponseEntity.notFound().build();
+            }
+            
+            return ResponseEntity.ok(aftercareInfo);
+        } catch (Exception e) {
+            log.error("Error processing request for seq: {}", seq, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("정보 조회 중 오류가 발생했습니다.");
         }
-
-        if (!studentSeq.equals(seq)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        StudentDto studentInfo = studentService.getStudentInfo(seq);
-        if (studentInfo == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(studentInfo);
     }
+     
 
+    
     
     @GetMapping("/info/{id}")
     public ResponseEntity<StudentDto> getStudentInfoById(@PathVariable String id) {

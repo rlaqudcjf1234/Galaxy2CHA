@@ -6,6 +6,8 @@ import com.galaxy.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +18,7 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentMapper studentMapper;
 
-    @Override
-    @Transactional(readOnly = true)
-    public StudentDto getStudentInfo(Long seq) {
-        return studentMapper.selectStudentInfo(seq);
-    }
+    
 
     @Override
     @Transactional(readOnly = true)
@@ -40,5 +38,26 @@ public class StudentServiceImpl implements StudentService {
             return null;
         }
     }
+
+    @Override
+    public Map<String, Object> getStudentInfo(Long seq) throws Exception {
+        log.info("Fetching student info for seq: {}", seq);
+        try {
+            Map<String, Object> studentInfo = studentMapper.getStudentInfo(seq);
+            if (studentInfo == null) {
+                log.warn("No student found for seq: {}", seq);
+            }
+            return studentInfo;
+        } catch (Exception e) {
+            log.error("Error while fetching student info: {}", e.getMessage(), e);
+            throw new Exception("학생 정보 조회 중 오류가 발생했습니다.");
+        }
+    }
+
+    @Override
+    public Map<String, Object> getStudentAftercare(Long seq) {
+        return studentMapper.getStudentAftercare(seq);
+    }
+
 
 }

@@ -1,115 +1,145 @@
-import React, { useState } from 'react';
-import '../../css/aftercare.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import '../../css/Aftercare.css';
 
-const InfoSection = ({ title, items, onAdd, onRemove, description }) => {
-  const [newItem, setNewItem] = useState('');
+const Aftercare = () => {
+ const { seq } = useParams();
 
-  const handleAdd = () => {
-    if (newItem.trim()) {
-      onAdd(newItem);
-      setNewItem('');
-    }
-  };
+ const [loading, setLoading] = useState(true);
+ const [data, setData] = useState(null);
+ const [newCertification, setNewCertification] = useState({
+   name: "",
+   acquisitionDate: "",
+   description: ""
+ });
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleAdd();
-    }
-  };
+ const fetchData = async () => {
+   setLoading(true);
+   try {
+     const response = await axios.get(`/api/student/aftercare/${seq}`);
+     setData(response.data);
+   } catch (error) {
+     console.error("Error fetching data:", error);
+     alert("정보를 불러오는데 실패했습니다.");
+   } finally {
+     setLoading(false);
+   }
+ };
 
-  return (
-    <div className="info-section">
-      <div className="section-header">
-        <h2 className="section-title">{title}</h2>
-        {description && (
-          <p className="section-description">{description}</p>
-        )}
-      </div>
-      
-      <div className="input-group">
-        <input
-          type="text"
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="input-field"
-          placeholder={`${title} 입력`}
-        />
-        <button
-          onClick={handleAdd}
-          className="add-button"
-        >
-          +
-        </button>
-      </div>
+ useEffect(() => {
+   if (seq) {
+     fetchData();
+   }
+ }, [seq]);
 
-      <div className="items-container">
-        {items.length === 0 ? (
-          <p className="empty-message">등록된 정보가 없습니다</p>
-        ) : (
-          <ul className="items-list">
-            {items.map((item, index) => (
-              <li key={index} className="item">
-                <span className="item-text">{item}</span>
-                <button
-                  onClick={() => onRemove(index)}
-                  className="remove-button"
-                >
-                  -
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
+ if (loading) {
+   return <div className="loading">데이터를 불러오는 중...</div>;
+ }
+
+ if (!data) {
+   return <div className="loading">학생 정보를 찾을 수 없습니다.</div>;
+ }
+
+ return (
+   <div className="container">
+     {/* 상단 학생 정보 카드 */}
+     <div className="card">
+       <div className="header">
+         <div className="title">
+           <h1>개인정보</h1>
+         </div>
+       </div>
+
+       {/* 개인정보 섹션 */}
+       <div className="info-section">
+         <div className="info-card">
+           <div className="label">이름</div>
+           <div className="value">{data.NAME}</div>
+         </div>
+         <div className="info-card">
+           <div className="label">이메일</div>
+           <div className="value">{data.EMAIL}</div>
+         </div>
+         <div className="info-card">
+           <div className="label">연락처</div>
+           <div className="value">{data.PHONE}</div>
+         </div>
+
+         <div className="info-card">
+           <div className="label">과정</div>
+           <div className="value">
+             <div className="class">
+               <div>{data.LECTURE_NAME}</div>
+               <div>강사: {data.ADMIN_NAME}</div>
+               <div>강의실: {data.ROOM}</div>
+               <div>기간: {data.START_DT} ~ {data.END_DT}</div>
+               <div>시간: {data.START_TM} ~ {data.END_TM}</div>
+               <div>회차: {data.ROUND}</div>
+             </div>
+           </div>
+         </div>
+         <div className="info-card">
+           <div className="label">주소</div>
+           <div className="value">
+             <div className="zipcode">{data.REALZIPCODE}</div>
+             <div className="address">{data.REALADDRESS1} {data.REALADDRESS2}</div>
+           </div>
+         </div>
+       </div>
+     </div>
+
+     {/* 자격증 정보 입력 섹션 */}
+     <div className="card">
+       <h2 className="section-title">자격증 정보 입력</h2>
+       <div className="form">
+         <div className="input-group">
+           <div>
+             <label className="label">자격증명</label>
+             <input
+               type="text"
+               className="input"
+               value={newCertification.name}
+               onChange={(e) => setNewCertification({
+                 ...newCertification,
+                 name: e.target.value
+               })}
+               placeholder="자격증 이름을 입력하세요"
+             />
+           </div>
+           <div>
+             <label className="label">취득일자</label>
+             <input
+               type="date"
+               className="input"
+               value={newCertification.acquisitionDate}
+               onChange={(e) => setNewCertification({
+                 ...newCertification,
+                 acquisitionDate: e.target.value
+               })}
+             />
+           </div>
+         </div>
+         <div>
+           <label className="label">상세 설명</label>
+           <textarea
+             className="textarea"
+             rows="3"
+             value={newCertification.description}
+             onChange={(e) => setNewCertification({
+               ...newCertification,
+               description: e.target.value
+             })}
+             placeholder="자격증에 대한 상세 설명을 입력하세요"
+           />
+         </div>
+         <button className="button">
+           자격증 정보 저장
+         </button>
+       </div>
+     </div>
+   </div>
+ );
 };
 
-const aftercare = () => {
-  const [studentInfo, setStudentInfo] = useState([]);
-  const [lectureInfo, setLectureInfo] = useState([]);
-  const [certifications, setCertifications] = useState([]);
-
-  const addItem = (setter) => (newItem) => {
-    setter(prev => [...prev, newItem]);
-  };
-
-  const removeItem = (setter) => (index) => {
-    setter(prev => prev.filter((_, i) => i !== index));
-  };
-
-  return (
-    <div className="aftercare-container">
-      <h1 className="aftercare-title">학생 사후관리 시스템</h1>
-      
-      <div className="sections-grid">
-        <InfoSection
-          title="학생 정보"
-          description="학생의 기본 정보를 관리합니다. (추후 DB 연동 예정)"
-          items={studentInfo}
-          onAdd={addItem(setStudentInfo)}
-          onRemove={removeItem(setStudentInfo)}
-        />
-        
-        <InfoSection
-          title="강의 정보"
-          description="수강 중인 강의 정보를 관리합니다. (추후 API 연동 예정)"
-          items={lectureInfo}
-          onAdd={addItem(setLectureInfo)}
-          onRemove={removeItem(lectureInfo)}
-        />
-        
-        <InfoSection
-          title="자격증"
-          description="취득한 자격증 정보를 관리합니다."
-          items={certifications}
-          onAdd={addItem(setCertifications)}
-          onRemove={removeItem(certifications)}
-        />
-      </div>
-    </div>
-  );
-};
-
-export default aftercare;
+export default Aftercare;
