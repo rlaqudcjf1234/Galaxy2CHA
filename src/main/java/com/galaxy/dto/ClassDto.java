@@ -28,4 +28,5 @@ public class ClassDto extends SeqDto {
 
     private int people;
 
+    private String use_yn;
 }

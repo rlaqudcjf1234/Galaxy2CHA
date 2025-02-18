@@ -6,8 +6,8 @@
 
     <select id="selectList">
         SELECT A.*, ROWNUM AS RNUM
-            FROM (
-                SELECT 
+        FROM (
+            SELECT 
                 A.ID AS ID,
                 A.CLASS_SEQ AS seq,
                 A.JUMIN AS jumin,
@@ -28,9 +28,9 @@
             FROM APPLY A
             INNER JOIN CLASS C ON A.CLASS_SEQ = C.SEQ
             ORDER BY A.REG_DT DESC
-            )
-            A OFFSET (#{pageIndex} - 1) * #{pageSize}
-            ROWS FETCH NEXT #{pageSize} ROWS ONLY </select>
+        ) A OFFSET (#{pageIndex} - 1) * #{pageSize}
+        ROWS FETCH NEXT #{pageSize} ROWS ONLY
+    </select>
 
     <insert id="insertApply" parameterType="ApplyDto">
     INSERT INTO APPLY (
@@ -46,9 +46,10 @@
         email,          /* 이메일 */
         phone,          /* 전화번호 */
         path,           /* 지원경로 */
-        reg_dt         /* 등록일시 */
+        reg_dt,        /* 등록일시 */
+        use_yn         /* 승인여부 */
     ) VALUES (
-        #{class_seq},  /* Class 테이블에 존재하는 SEQ만 입력 가능 */
+        #{class_seq},
         #{jumin},
         #{name},
         #{real_zipcode},
@@ -60,116 +61,159 @@
         #{email},
         #{phone},
         #{path},
-        SYSDATE
+        SYSDATE,
+        'N'
     )
-</insert>
+    </insert>
 
     <!-- 주민등록번호 중복 체크 -->
-    <select id="selectByJumin" parameterType="ApplyDto" resultType="Integer">
-        /* 주민등록번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
+    <select id="selectByJumin" parameterType="String" resultType="Integer">
         SELECT COUNT(*)
         FROM APPLY
         WHERE JUMIN = #{jumin}
-    </select>
-
-    <select id="selectActiveByJumin" parameterType="ApplyDto" resultType="Integer">
-        /* 주민등록번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
-        SELECT COUNT(*)
-        FROM APPLY
-        WHERE JUMIN = #{jumin}
-        AND USE_YN='N'
+        AND USE_YN = 'N'
     </select>
 
     <!-- 전화번호 중복 체크 -->
-    <select id="selectByPhone" parameterType="ApplyDto" resultType="Integer">
-        /* 전화번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
+    <select id="selectByPhone" parameterType="String" resultType="Integer">
         SELECT COUNT(*)
         FROM APPLY
         WHERE PHONE = #{phone}
-    </select>
-
-    <select id="selectActiveByPhone" parameterType="ApplyDto" resultType="Integer">
-        /* 전화번호 중복 여부를 확인하는 SELECT 쿼리입니다. */
-        SELECT COUNT(*)
-        FROM APPLY
-        WHERE PHONE = #{phone}
-        AND USE_YN='N'
+        AND USE_YN = 'N'
     </select>
 
     <select id="selectApplyRead" parameterType="String" resultType="map">
     SELECT 
-        ID,
-        CLASS_SEQ as seq,
-        NAME,
+        A.ID, 
+        A.CLASS_SEQ as seq, 
+        A.NAME, 
+        A.JUMIN, 
+        A.PHONE, 
+        A.EMAIL, 
+        A.REAL_ZIPCODE, 
+        A.REAL_ADDRESS1, 
+        A.REAL_ADDRESS2, 
+        A.ZIPCODE, 
+        A.ADDRESS1, 
+        A.ADDRESS2, 
+        A.PATH, 
+        TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS REG_DT, 
+        A.USE_YN,
+        C.ROUND,
+        L.NAME AS LECTURE_NAME,
+        TO_CHAR(C.START_DT, 'YYYY-MM-DD') AS START_DT,
+        TO_CHAR(C.END_DT, 'YYYY-MM-DD') AS END_DT
+    FROM APPLY A
+    INNER JOIN CLASS C ON A.CLASS_SEQ = C.SEQ
+    INNER JOIN LECTURE L ON C.LECTURE_SEQ = L.SEQ
+    WHERE A.ID = #{id}
+    </select>
+
+    <select id="selectApplyById" parameterType="Long" resultType="ApplyDto">
+    SELECT 
+        ID, CLASS_SEQ as class_seq, NAME as name, JUMIN as jumin, PHONE as phone, 
+        EMAIL as email, REAL_ZIPCODE as real_zipcode, REAL_ADDRESS1 as real_address1, 
+        REAL_ADDRESS2 as real_address2, ZIPCODE as zipcode, ADDRESS1 as address1, 
+        ADDRESS2 as address2, PATH as path, REG_DT as reg_dt, USE_YN as use_yn
+    FROM APPLY
+    WHERE ID = #{id}
+    </select>
+
+    <delete id="deleteApply" parameterType="Long">
+        DELETE FROM APPLY WHERE ID = #{id}
+    </delete>
+
+    <select id="selectApplyByStudentInfo" resultType="ApplyDto">
+    SELECT 
+        ID, CLASS_SEQ as seq, NAME as name, JUMIN as jumin, PHONE as phone,
+        EMAIL as email, REAL_ZIPCODE as real_zipcode, REAL_ADDRESS1 as real_address1,
+        REAL_ADDRESS2 as real_address2, ZIPCODE as zipcode, ADDRESS1 as address1,
+        ADDRESS2 as address2, PATH as path, REG_DT as reg_dt, USE_YN as use_yn
+    FROM APPLY
+    WHERE 
+        NAME = #{name}
+        AND EMAIL = #{email}
+        AND JUMIN = #{jumin}
+    </select>
+
+    <select id="selectAdminByEmailAndPassword" resultType="adminDto">
+        SELECT 
+            SEQ, EMAIL, NAME, PHONE, DIVISION, POST,
+            TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT, USE_YN
+        FROM ADMIN
+        WHERE 
+            EMAIL = #{email}
+            AND PASSWORD = #{password}
+    </select>
+
+    <update id="updateStatus" parameterType="map">
+        UPDATE APPLY SET USE_YN = #{useYn} WHERE ID = #{id}
+    </update>
+
+    <insert id="insertStudent" parameterType="ApplyDto">
+    INSERT INTO STUDENT (
+        SEQ,
+        CLASS_SEQ,
         JUMIN,
-        PHONE,
-        EMAIL,
+        NAME,
         REAL_ZIPCODE,
         REAL_ADDRESS1,
         REAL_ADDRESS2,
         ZIPCODE,
         ADDRESS1,
         ADDRESS2,
+        EMAIL,
+        PHONE,
         PATH,
-        TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT,
-        USE_YN
-    FROM 
-        APPLY
-    WHERE 
-        ID = #{id}
-    </select>
-    
-    <select id="selectApplyById" parameterType="Long" resultType="ApplyDto">
-    SELECT 
         ID,
-        CLASS_SEQ as seq,
-        NAME as name,
-        JUMIN as jumin,
-        PHONE as phone,
-        EMAIL as email,
-        REAL_ZIPCODE as real_zipcode,
-        REAL_ADDRESS1 as real_address1,
-        REAL_ADDRESS2 as real_address2,
-        ZIPCODE as zipcode,
-        ADDRESS1 as address1,
-        ADDRESS2 as address2,
-        PATH as path,
-        REG_DT as reg_dt,
-        USE_YN as use_yn
+        PASSWORD,
+        REG_DATE
+    )
+    SELECT 
+        SM.SEQ,
+        #{class_seq,jdbcType=INTEGER},
+        #{jumin,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR},
+        #{real_zipcode,jdbcType=VARCHAR},
+        #{real_address1,jdbcType=VARCHAR},
+        #{real_address2,jdbcType=VARCHAR},
+        NVL(#{zipcode,jdbcType=VARCHAR}, ''),
+        NVL(#{address1,jdbcType=VARCHAR}, ''),
+        NVL(#{address2,jdbcType=VARCHAR}, ''),
+        #{email,jdbcType=VARCHAR},
+        #{phone,jdbcType=VARCHAR},
+        #{path,jdbcType=VARCHAR},
+        C.ROOM || C.ROUND || SM.SEQ,  -- ID 형식 단순화
+        SUBSTR(#{jumin,jdbcType=VARCHAR}, 7),
+        SYSDATE
     FROM 
-        APPLY
+        (SELECT SEQ 
+         FROM SEQ_MANAGEMENT 
+         ORDER BY SEQ DESC 
+         FETCH FIRST 1 ROW ONLY) SM,
+        CLASS C
     WHERE 
-        ID = #{id}
-    </select>
+        C.SEQ = #{class_seq,jdbcType=INTEGER}
+    </insert>
 
-    <delete id="deleteApply" parameterType="Long">
-        DELETE FROM APPLY
+    <update id="updateApplyStatus" parameterType="map">
+        UPDATE APPLY 
+        SET USE_YN = 'Y'
         WHERE ID = #{id}
-    </delete>
+    </update>
 
-    <select id="selectApplyByStudentInfo" resultType="ApplyDto">
-    SELECT 
-        ID,
-        CLASS_SEQ as seq,
-        NAME as name,
-        JUMIN as jumin,
-        PHONE as phone,
-        EMAIL as email,
-        REAL_ZIPCODE as real_zipcode,
-        REAL_ADDRESS1 as real_address1,
-        REAL_ADDRESS2 as real_address2,
-        ZIPCODE as zipcode,
-        ADDRESS1 as address1,
-        ADDRESS2 as address2,
-        PATH as path,
-        REG_DT as reg_dt,
-        USE_YN as use_yn
-    FROM 
-        APPLY
-    WHERE 
-        NAME = #{name}
-        AND EMAIL = #{email}
-        AND JUMIN = #{jumin}
+    <select id="selectClassInfo" parameterType="Integer" resultType="map">
+        SELECT 
+            SEQ,
+            NVL(ROOM, '') as ROOM,
+            ROUND
+        FROM CLASS 
+        WHERE SEQ = #{classSeq}
     </select>
+
+    <insert id="insertSeqManagement">
+        INSERT INTO SEQ_MANAGEMENT (TABLE_NM, REG_DT)
+        VALUES ('STUDENT', SYSDATE)
+    </insert>
 
 </mapper>

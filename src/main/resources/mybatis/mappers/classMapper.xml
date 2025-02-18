@@ -62,7 +62,8 @@
             C.END_TM,
             C.PEOPLE,
             TO_CHAR(C.reg_dt, 'YYYY-MM-DD') AS reg_dt,
-            TO_CHAR(C.Confirm_dt, 'YYYY-MM-DD') AS confirm_dt
+            TO_CHAR(C.Confirm_dt, 'YYYY-MM-DD') AS confirm_dt,
+            C.USE_YN
         FROM CLASS C
         WHERE C.SEQ = #{value}
     </select>

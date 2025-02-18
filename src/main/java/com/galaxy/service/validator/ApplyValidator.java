@@ -30,12 +30,12 @@ public class ApplyValidator extends AbstractValidator<ApplyDto> {
             validateRequiredField(dto.getPath(), "path", "지원경로", errors);
 
             // use_yn이 'N'인 경우에만 중복 체크 수행
-            if (!errors.hasFieldErrors("jumin") && applyMapper.selectActiveByJumin(dto.getJumin()) > 0) {
+            if (!errors.hasFieldErrors("jumin") && applyMapper.selectByJumin(dto.getJumin()) > 0) {
                 System.out.println("Duplicate active jumin found: " + dto.getJumin());
                 errors.rejectValue("jumin", "duplicate.jumin", "이미 등록된 주민등록번호입니다.");
             }
             
-            if (!errors.hasFieldErrors("phone") && applyMapper.selectActiveByPhone(dto.getPhone()) > 0) {
+            if (!errors.hasFieldErrors("phone") && applyMapper.selectByPhone(dto.getPhone()) > 0) {
                 System.out.println("Duplicate active phone found: " + dto.getPhone());
                 errors.rejectValue("phone", "duplicate.phone", "이미 등록된 전화번호입니다.");
             }

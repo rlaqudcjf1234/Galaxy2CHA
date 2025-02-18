@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/Community.css";
 
 function ApplyAdd() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [classes, setClasses] = useState([]);
+
+    // Detail 페이지에서 전달받은 강의 정보 가져오기
+    const passedClassSeq = location.state?.class_seq;
+    const passedLectureSeq = location.state?.lecture_seq;
+    const passedClassInfo = location.state?.classInfo;
 
     // Daum 우편번호 스크립트 로드
     useEffect(() => {
@@ -20,28 +26,9 @@ function ApplyAdd() {
         };
     }, []);
 
-    useEffect(() => {
-        const fetchClasses = async () => {
-            try {
-                const response = await axios.get("http://localhost:8180/class/list");
-                console.log("API Response:", response);
-                console.log("Classes Data:", response.data);
-                console.log("List Data:", response.data.list);
-
-                if (response.data && response.data.list) {
-                    setClasses(response.data.list);
-                }
-            } catch (error) {
-                console.error("Error details:", error.response || error);
-                setClasses([]);
-            }
-        };
-
-        fetchClasses();
-    }, []);
-
+    // 초기 폼 데이터 설정 - 전달받은 강의 정보가 있으면 사용
     const [formData, setFormData] = useState({
-        class_seq: 0,
+        seq: passedClassSeq || "", // 전달받은 class_seq로 초기화
         name: "",
         jumin: "",
         real_zipcode: "",
@@ -55,12 +42,68 @@ function ApplyAdd() {
         path: "",
     });
 
+    useEffect(() => {
+        const fetchClasses = async () => {
+            try {
+                const response = await axios.get("/api/class/list");
+                // items 배열 추출 및 필드명 매핑
+                const classData = response.data.items.map((item) => ({
+                    seq: item.SEQ,
+                    round: item.ROUND,
+                    lecture_name: item.LECTURE_NAME,
+                    start_dt: item.START_DT,
+                    lecture_seq: item.LECTURE_SEQ, // lecture_seq도 추가
+                }));
+                setClasses(classData);
+                console.log("변환된 클래스 데이터:", classData); // 데이터 확인용
+
+                // 클래스 데이터가 로드되면 전달받은 class_seq에 해당하는 항목 선택
+                if (passedClassSeq && classData.length > 0) {
+                    // 이미 formData에 초기값으로 설정되어 있음
+                    console.log(`전달받은 class_seq(${passedClassSeq})로 선택됨`);
+                }
+            } catch (error) {
+                console.error("Error fetching classes:", error);
+                setClasses([]);
+            }
+        };
+        fetchClasses();
+    }, [passedClassSeq]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: name === "class_seq" ? parseInt(value) : value,
-        }));
+
+        if (name === "jumin") {
+            // 숫자만 입력 가능하도록
+            const numbersOnly = value.replace(/[^0-9]/g, "");
+            // 최대 13자리로 제한
+            const formatted = numbersOnly.slice(0, 13);
+
+            setFormData((prev) => ({
+                ...prev,
+                [name]: formatted,
+            }));
+        } else if (name === "phone") {
+            // 숫자만 입력 가능하도록
+            const numbersOnly = value.replace(/[^0-9]/g, "");
+            // 최대 11자리로 제한
+            const formatted = numbersOnly.slice(0, 11);
+
+            setFormData((prev) => ({
+                ...prev,
+                [name]: formatted,
+            }));
+        } else if (name === "seq") {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: parseInt(value),
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
 
     // 실거주지 주소 검색
@@ -102,7 +145,9 @@ function ApplyAdd() {
         try {
             const submitData = {
                 ...formData,
-                class_seq: Number(formData.class_seq),
+                class_seq: Number(formData.seq), // seq값을 class_seq로 변환
+                lecture_seq: passedLectureSeq || null, // 전달받은 lecture_seq 사용
+                seq: undefined, // 기존 seq 필드는 제거
             };
             const response = await axios.post("/api/apply/add", submitData);
             if (response.status === 200) {
@@ -123,48 +168,73 @@ function ApplyAdd() {
         <div className="board-container">
             <div className="board-header">
                 <h2>정보 작성</h2>
+                {passedClassInfo && (
+                    <div>
+                        <p className="text-muted mb-1">
+                            선택된 강의: {passedClassInfo.LECTURE_NAME} [{passedClassInfo.ROUND}기]
+                        </p>
+                        <p className="text-muted small">
+                            <i className="fa fa-info-circle"></i> 강의 변경을 원하시면 이전 페이지로 돌아가 다른 강의를
+                            선택해주세요.
+                        </p>
+                    </div>
+                )}
             </div>
 
             <form onSubmit={handleSubmit}>
                 <table className="board-table">
                     <tbody>
                         <tr id="apply_title">
-                            <th>반(미정)</th>
+                            <th>반</th>
                             <td>
-                                {/* <select
-                                    name="class_seq"
-                                    value={formData.class_seq}
-                                    defaultValue={0}
-                                    onChange={handleInputChange}
-                                    className="form-control"
-                                    required
-                                >
-                                    <option value="">클래스를 선택하세요</option>
-                                    <option value={1}>1기 - A반 (2024-01-01 ~ 2024-06-30)</option>
-                                    <option value={2}>1기 - B반 (2024-01-01 ~ 2024-06-30)</option>
-                                    <option value={3}>2기 - A반 (2024-07-01 ~ 2024-12-31)</option>
-                                </select> */}
-                                <select
-                                    name="class_seq"
-                                    value={formData.class_seq}
-                                    onChange={handleInputChange}
-                                    className="form-control"
-                                    required
-                                >
-                                    <option value="">클래스를 선택하세요</option>
-                                    {classes && classes.length > 0 ? (
-                                        classes.map((classItem) => (
-                                            <option key={classItem.SEQ} value={classItem.SEQ}>
-                                                {classItem.ROOM}호 - {classItem.ROUND}회차 ({classItem.START_DT} ~{" "}
-                                                {classItem.END_DT})
+                                {passedClassSeq ? (
+                                    // 전달받은 class_seq가 있으면 읽기 전용 표시
+                                    <div>
+                                        {classes && classes.length > 0 ? (
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={
+                                                    classes.find((c) => c.seq === parseInt(passedClassSeq))?.round +
+                                                        "기 - " +
+                                                        classes.find((c) => c.seq === parseInt(passedClassSeq))
+                                                            ?.lecture_name || "선택된 강의"
+                                                }
+                                                readOnly
+                                            />
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value="선택된 강의 정보 로드 중..."
+                                                readOnly
+                                            />
+                                        )}
+                                        <input type="hidden" name="seq" value={passedClassSeq} />
+                                    </div>
+                                ) : (
+                                    // 없으면 기존 드롭다운 유지
+                                    <select
+                                        name="seq"
+                                        value={formData.seq}
+                                        onChange={handleInputChange}
+                                        className="form-control"
+                                        required
+                                    >
+                                        <option value="">클래스를 선택하세요</option>
+                                        {classes && classes.length > 0 ? (
+                                            classes.map((classItem) => (
+                                                <option key={classItem.seq} value={classItem.seq}>
+                                                    {classItem.round}기 - {classItem.lecture_name}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option value="" disabled>
+                                                클래스 정보를 불러오는 중...
                                             </option>
-                                        ))
-                                    ) : (
-                                        <option value="" disabled>
-                                            로딩중...
-                                        </option>
-                                    )}
-                                </select>
+                                        )}
+                                    </select>
+                                )}
                             </td>
                         </tr>
                         <tr id="apply_title">
@@ -190,7 +260,8 @@ function ApplyAdd() {
                                     value={formData.jumin}
                                     onChange={handleInputChange}
                                     className="form-control"
-                                    placeholder="주민등록번호를 입력해주세요"
+                                    placeholder=" '-' 외외 주민등록번호 13자리를 입력해주세요"
+                                    maxLength={13}
                                     required
                                 />
                             </td>
@@ -313,7 +384,8 @@ function ApplyAdd() {
                                     value={formData.phone}
                                     onChange={handleInputChange}
                                     className="form-control"
-                                    placeholder="전화번호를 입력해주세요"
+                                    placeholder=" '-' 외 전화번호 11자리를 입력해주세요"
+                                    maxLength={11}
                                     required
                                 />
                             </td>

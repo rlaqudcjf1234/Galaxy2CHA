@@ -19,4 +19,8 @@ public interface ApplyService {
     int deleteApply(Long id);
 
     ApplyDto getStudentApplyInfo(String name, String email, String jumin);
+
+    public void updateStatus(Long id, String useYn) throws Exception;
+
+    void CreateStudent(Long id) throws Exception;
 }
