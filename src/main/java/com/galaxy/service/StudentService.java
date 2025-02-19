@@ -10,6 +10,6 @@ public interface StudentService {
 
     Map<String, Object> getStudentInfo(Long seq) throws Exception;
 
-    Map<String, Object> getStudentAftercare(Long seq) throws Exception;
+    Map<String, Object> getStudentMypage(Long seq) throws Exception;
 }
 

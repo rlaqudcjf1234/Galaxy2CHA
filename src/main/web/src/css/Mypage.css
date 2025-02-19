@@ -1,158 +1,137 @@
-/* src/components/Mypage.css */
+/* 전체 컨테이너 */
 .mypage-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Noto Sans KR', sans-serif;
+    display: flex; /* 사이드바 + 메인콘텐츠 배치 */
+    min-height: 100vh;
+    background-color: #f0f4f8;
+    font-family: sans-serif;
   }
   
-  .mypage-card {
+  /* 사이드바 */
+  .mypage-sidebar {
+    width: 250px;
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
-  
-  .mypage-header {
-    background-color: #f8f9fa;
+    border-right: 1px solid #d1d5db;
     padding: 20px;
-    border-bottom: 1px solid #e9ecef;
   }
   
-  .mypage-header h1 {
+  /* 프로필 섹션 */
+  .profile-section {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    background-color: #b3cde0;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile-placeholder {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .profile-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .profile-email {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* 사이드 메뉴 */
+  .sidebar-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .sidebar-menu li {
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .sidebar-menu li:hover {
+    background-color: #efefef;
+  }
+  
+  /* 메인 콘텐츠 */
+  .mypage-content {
+    flex: 1; /* 나머지 영역 차지 */
+    padding: 20px 30px;
+  }
+  
+  /* 콘텐츠 헤더 */
+  .content-header h1 {
     margin: 0;
     font-size: 24px;
-    color: #343a40;
-    font-weight: 600;
+    font-weight: bold;
   }
   
-  .mypage-content {
+  .content-header p {
+    margin: 5px 0 20px;
+    color: #555;
+  }
+  
+  /* 섹션 */
+  .mypage-section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 20px;
     padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    border: 1px solid lightgray;
   }
   
-  .info-section {
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
-  }
-  
-  .info-section h2 {
+  .mypage-section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
     font-size: 18px;
-    color: #495057;
-    margin-bottom: 15px;
-    font-weight: 500;
+    font-weight: bold;
   }
   
-  .info-group {
+  /* 카드 형식 */
+  .info-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2열 */
+    gap: 16px;
+  }
+  
+  .info-card {
+    background-color: #f9fafb;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid lightgray;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-  }
-  
-  .info-group p {
-    margin: 0;
-    color: #495057;
-    line-height: 1.5;
   }
   
   .label {
-    font-weight: 500;
-    color: #212529;
-    margin-right: 8px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
   }
   
-  .loading {
-    text-align: center;
-    padding: 40px;
-    font-size: 18px;
-    color: #6c757d;
+  .value {
+    font-size: 14px;
+    color: #555;
   }
   
+  /* 로딩, 에러 */
+  .loading,
   .error {
     text-align: center;
-    padding: 40px;
-    color: #dc3545;
-    font-size: 16px;
+    font-size: 18px;
+    color: #555;
+    margin-top: 50px;
   }
   
-  .no-data {
-    text-align: center;
-    padding: 40px;
-    color: #6c757d;
-    font-size: 16px;
-  }
-  
-  /* 반응형 디자인을 위한 미디어 쿼리 */
-  @media (max-width: 768px) {
-    .mypage-container {
-      padding: 10px;
-    }
-  
-    .mypage-content {
-      grid-template-columns: 1fr;
-    }
-  
-    .mypage-header h1 {
-      font-size: 20px;
-    }
-  
-    .info-section h2 {
-      font-size: 16px;
-    }
-  }
-
-  .search-container {
-    text-align: center;
-    padding: 40px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .search-form {
-    display: flex;
-    gap: 10px;
-    max-width: 400px;
-    margin: 20px auto;
-  }
-  
-  .search-input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
-  }
-  
-  .search-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .search-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .search-again-button {
-    padding: 8px 16px;
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-left: 20px;
-  }
-  
-  .search-again-button:hover {
-    background-color: #545b62;
-  }

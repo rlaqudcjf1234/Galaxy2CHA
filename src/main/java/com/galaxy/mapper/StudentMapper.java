@@ -14,7 +14,7 @@ public interface StudentMapper {
 
     Map<String, Object> getStudentInfo(Long seq);
 
-    Map<String, Object> getStudentAftercare(Long seq);
+    Map<String, Object> getStudentMypage(Long seq);
 
 }   
 

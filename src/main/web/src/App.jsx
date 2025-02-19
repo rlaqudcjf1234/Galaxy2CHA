@@ -7,7 +7,6 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Container from "./components/Container";
 
-import Aftercare from './pages/aftercare/Aftercare';
 
 import MyPage from "./pages/mypage/Mypage";
 
@@ -37,15 +36,11 @@ function App() {
                     </Route>
                         
                     <Route path="student">
-                        <Route path="aftercare/:seq" element={<Container />}>
-                            <Route index="index" element={<Aftercare />} />
+                        <Route path="mypage/:seq" element={<Container />}>
+                            <Route index="index" element={<MyPage/>} />
                         </Route>
                     </Route>
 
-
-                        <Route path="mypage" element={<Container />}>
-                        <Route index="index" element={<MyPage />} />
-                    </Route>
                 </Route>
             </Routes>
         </Router>

@@ -22,23 +22,23 @@ public class StudentController {
     private final StudentService studentService;
 
 
-    @GetMapping("/aftercare/{seq}")
-    public ResponseEntity<?> getStudentAftercare(@PathVariable("seq") Long seq) {
+    @GetMapping("/mypage/{seq}")
+    public ResponseEntity<?> getStudentMypage(@PathVariable("seq") Long seq) {
         log.info("============================================");
         log.info("Entering getStudentAftercare method");
         log.info("Requested sequence number: {}", seq);
         
         try {
             // studentService에서 조인된 데이터를 한 번에 가져옴
-            Map<String, Object> aftercareInfo = studentService.getStudentAftercare(seq);
-            log.info("Service response: {}", aftercareInfo);
+            Map<String, Object> mypageInfo = studentService.getStudentMypage(seq);
+            log.info("Service response: {}", mypageInfo);
             
-            if (aftercareInfo == null) {
+            if (mypageInfo == null) {
                 log.warn("No aftercare info found for seq: {}", seq);
                 return ResponseEntity.notFound().build();
             }
             
-            return ResponseEntity.ok(aftercareInfo);
+            return ResponseEntity.ok(mypageInfo);
         } catch (Exception e) {
             log.error("Error processing request for seq: {}", seq, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

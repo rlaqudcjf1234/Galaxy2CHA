@@ -55,8 +55,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Map<String, Object> getStudentAftercare(Long seq) {
-        return studentMapper.getStudentAftercare(seq);
+    public Map<String, Object> getStudentMypage(Long seq) {
+        return studentMapper.getStudentMypage(seq);
     }
 
 

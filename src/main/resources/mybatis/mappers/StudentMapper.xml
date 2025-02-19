@@ -23,7 +23,7 @@
         s.ID = #{id}
     </select>
 
-    <select id="getStudentAftercare" parameterType="Long" resultType="map">
+    <select id="getStudentMypage" parameterType="Long" resultType="map">
        SELECT   
             A.SEQ AS STUDENT_SEQ,
             A.NAME,
