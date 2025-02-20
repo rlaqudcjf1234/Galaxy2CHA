@@ -7,7 +7,6 @@ import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Container from "./components/Container";
 
-
 import MyPage from "./pages/mypage/Mypage";
 
 import ApplyStudent from "./pages/student/ApplyStudent";
@@ -15,7 +14,9 @@ import ApplyAdd from "./pages/student/ApplyAdd";
 import ApplyList from "./pages/student/ApplyList";
 import ApplyRead from "./pages/student/ApplyRead";
 import SlideDetail from "../src/components/slidedetail"; // 추가된 부분
-
+import CommunityList from "./pages/community/List";
+import CommunityAdd from "./pages/community/Add";
+import CommunityRead from "./pages/community/Read";
 import ClassDetail from "./pages/class/Detail";
 
 function App() {
@@ -34,13 +35,25 @@ function App() {
                     <Route path="class/:lecture_seq/:seq" element={<Container />}>
                         <Route index="index" element={<ClassDetail />} />
                     </Route>
-                        
+
                     <Route path="student">
                         <Route path="mypage/:seq" element={<Container />}>
-                            <Route index="index" element={<MyPage/>} />
+                            <Route index="index" element={<MyPage />} />
                         </Route>
                     </Route>
+                    <Route path="community" element={<Container />}>
+                        <Route index="index" element={<CommunityList />} />
 
+                        {/* 클래스 커뮤니티 관련 라우트 */}
+                        <Route path="class/:classSeq" element={<CommunityList type="class" />} />
+                        <Route path="class/:classSeq/add/:studentSeq" element={<CommunityAdd type="class" />} />
+                        <Route path="class/read/:seq" element={<CommunityRead />} />
+
+                        {/* 학생 커뮤니티 관련 라우트 */}
+                        <Route path="student" element={<CommunityList type="student" />} />
+                        <Route path="student/add/:seq" element={<CommunityAdd type="student" />} />
+                        <Route path="student/read/:seq" element={<CommunityRead />} />
+                    </Route>
                 </Route>
             </Routes>
         </Router>

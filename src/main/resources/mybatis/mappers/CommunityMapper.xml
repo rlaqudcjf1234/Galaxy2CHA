@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.CommunityMapper">
+    
+    <sql id="sqlSearch">
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                (UPPER(TITLE) LIKE '%' || UPPER(#{searchKeyword}) || '%'
+                OR UPPER(DETAIL) LIKE '%' || UPPER(#{searchKeyword}) || '%')
+            </if>
+            <if test="classSeq != null and tableType == 'CLASS'">
+                AND c.CLASS_SEQ = #{classSeq}
+            </if>
+            <if test="classSeq != null and tableType != 'CLASS'">
+                AND s.CLASS_SEQ = #{classSeq}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectCommunityCount" parameterType="com.galaxy.dto.CommSearchDto" resultType="int">
+        SELECT COUNT(*) 
+        FROM 
+        <choose>
+            <when test="tableType == 'CLASS'">CLASS_COMMUNITY</when>
+            <otherwise>STUDENT_COMMUNITY</otherwise>
+        </choose>
+        <where>
+            <if test="classSeq != null and tableType == 'CLASS'">
+                CLASS_SEQ = #{classSeq}
+            </if>
+            <if test="classSeq != null and tableType != 'CLASS'">
+                STUDENT_SEQ IN (SELECT SEQ FROM STUDENT WHERE CLASS_SEQ = #{classSeq})
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (UPPER(TITLE) LIKE '%' || UPPER(#{searchKeyword}) || '%'
+                OR UPPER(DETAIL) LIKE '%' || UPPER(#{searchKeyword}) || '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCommunityList" parameterType="com.galaxy.dto.CommSearchDto" resultType="map">
+        SELECT * FROM (
+            SELECT 
+                ROW_NUMBER() OVER (ORDER BY A.SEQ DESC) AS RNUM,
+                A.*
+            FROM (
+                SELECT 
+                    c.SEQ,
+                    <choose>
+                        <when test="tableType == 'CLASS'">
+                            c.CLASS_SEQ AS AUTHOR_SEQ,
+                            (SELECT MAX(s.NAME) FROM STUDENT s WHERE s.CLASS_SEQ = c.CLASS_SEQ) AS AUTHOR_NAME
+                        </when>
+                        <otherwise>
+                            c.STUDENT_SEQ AS AUTHOR_SEQ,
+                            COALESCE(s.NAME, '미지정') AS AUTHOR_NAME
+                        </otherwise>
+                    </choose>,
+                    c.TITLE,
+                    c.DIVISION,
+                    c.DETAIL,
+                    TO_CHAR(c.REG_DT, 'YYYY-MM-DD') AS REG_DT
+                FROM 
+                <choose>
+                    <when test="tableType == 'CLASS'">
+                        CLASS_COMMUNITY c
+                    </when>
+                    <otherwise>
+                        STUDENT_COMMUNITY c
+                        LEFT JOIN STUDENT s ON c.STUDENT_SEQ = s.SEQ
+                    </otherwise>
+                </choose>
+                <where>
+                    <if test="classSeq != null and tableType == 'CLASS'">
+                        c.CLASS_SEQ = #{classSeq}
+                    </if>
+                    <if test="classSeq != null and tableType != 'CLASS'">
+                        s.CLASS_SEQ = #{classSeq}
+                    </if>
+                    <if test="searchKeyword != null and searchKeyword != ''">
+                        AND (UPPER(c.TITLE) LIKE '%' || UPPER(#{searchKeyword}) || '%'
+                        OR UPPER(c.DETAIL) LIKE '%' || UPPER(#{searchKeyword}) || '%')
+                    </if>
+                </where>
+            ) A
+        )
+        WHERE RNUM &gt; (#{pageIndex} - 1) * #{pageSize} 
+        AND RNUM &lt;= #{pageIndex} * #{pageSize}
+    </select>
+
+    <insert id="insertCommunityPost" parameterType="map">
+        INSERT ALL 
+            INTO SEQ_MANAGEMENT(
+                SEQ, TABLE_NM, REG_DT
+            ) VALUES (
+                SEQ.NEXTVAL, 
+                <choose>
+                    <when test="tableType == 'CLASS'">'CLASS_COMMUNITY'</when>
+                    <otherwise>'STUDENT_COMMUNITY'</otherwise>
+                </choose>, 
+                SYSDATE
+            )
+            INTO 
+            <choose>
+                <when test="tableType == 'CLASS'">
+                    CLASS_COMMUNITY (
+                        SEQ, 
+                        CLASS_SEQ,
+                        <if test="studentSeq != null">STUDENT_SEQ,</if>
+                        TITLE, 
+                        DIVISION, 
+                        DETAIL, 
+                        REG_DT
+                    ) VALUES (
+                        SEQ.CURRVAL, 
+                        #{authorSeq},
+                        <if test="studentSeq != null">#{studentSeq},</if>
+                        #{title}, 
+                        #{division}, 
+                        #{detail}, 
+                        SYSDATE
+                    )
+                </when>
+                <otherwise>
+                    STUDENT_COMMUNITY (
+                        SEQ, 
+                        STUDENT_SEQ,
+                        <if test="classSeq != null">CLASS_SEQ,</if>
+                        TITLE, 
+                        DIVISION, 
+                        DETAIL, 
+                        REG_DT
+                    ) VALUES (
+                        SEQ.CURRVAL, 
+                        #{authorSeq},
+                        <if test="classSeq != null">#{classSeq},</if>
+                        #{title}, 
+                        #{division}, 
+                        #{detail}, 
+                        SYSDATE
+                    )
+                </otherwise>
+            </choose>
+        SELECT * FROM DUAL
+    </insert>
+
+   <select id="selectCommunityPost" parameterType="map" resultType="map">
+        SELECT 
+            c.SEQ,
+            <choose>
+                <when test="tableType == 'CLASS'">
+                    c.CLASS_SEQ as "AUTHOR_SEQ",
+                    GET_ADMIN_NAME((SELECT ADMIN_SEQ FROM CLASS WHERE SEQ = c.CLASS_SEQ)) as "AUTHOR_NAME"
+                </when>
+                <otherwise>
+                    c.STUDENT_SEQ as "AUTHOR_SEQ",
+                    s.NAME as "AUTHOR_NAME"
+                </otherwise>
+            </choose>,
+            c.TITLE,
+            c.DIVISION,
+            c.DETAIL,
+            TO_CHAR(c.REG_DT, 'YYYY-MM-DD') AS REG_DT
+        FROM 
+        <choose>
+            <when test="tableType == 'CLASS'">
+                CLASS_COMMUNITY c
+            </when>
+            <otherwise>
+                STUDENT_COMMUNITY c
+                LEFT JOIN STUDENT s ON c.STUDENT_SEQ = s.SEQ
+            </otherwise>
+        </choose>
+        WHERE c.SEQ = #{seq}
+    </select>
+
+    <delete id="deletePost" parameterType="java.lang.Long">
+        DELETE FROM 
+        (
+            SELECT * FROM CLASS_COMMUNITY WHERE SEQ = #{seq}
+            UNION ALL
+            SELECT * FROM STUDENT_COMMUNITY WHERE SEQ = #{seq}
+        )
+        WHERE SEQ = #{seq}
+    </delete>
+    
+</mapper>
