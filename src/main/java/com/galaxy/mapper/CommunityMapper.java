@@ -19,5 +19,7 @@ public interface CommunityMapper {
 
     Map<String, Object> selectCommunityPost(Map<String, Object> params);
 
-    int deletePost(Long seq); // 추가된 삭제 메소드
+    int updatePost(Map<String, Object> params); // 수정 메소드
+
+    int deletePost(Map<String, Object> params); // 삭제 메소드
 }

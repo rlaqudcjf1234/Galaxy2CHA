@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,18 +65,38 @@ public class CommunityController {
         }
     }
 
-    @DeleteMapping("/read/{seq}")
-    public ResponseEntity<?> deletePost(@PathVariable Long seq) {
+    @PutMapping("/{communityType}/read/{seq}")
+    public ResponseEntity<?> updatePost(
+            @PathVariable("communityType") String communityType,
+            @PathVariable("seq") Long seq,
+            @RequestBody CommListDto.CommItem postItem) {
         try {
-            boolean deleted = communityService.deletePost(seq);
+            postItem.setSeq(seq);
+            boolean updated = communityService.updatePost(postItem, communityType);
 
+            if (updated) {
+                return ResponseEntity.ok("게시글이 성공적으로 수정되었습니다.");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("오류 발생: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{communityType}/read/{seq}")
+    public ResponseEntity<?> deletePost(
+            @PathVariable("communityType") String communityType,
+            @PathVariable("seq") Long seq) {
+        try {
+            boolean deleted = communityService.deletePost(seq, communityType);
             if (deleted) {
                 return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("오류 발생: " + e.getMessage());
         }

@@ -14,9 +14,12 @@ import ApplyAdd from "./pages/student/ApplyAdd";
 import ApplyList from "./pages/student/ApplyList";
 import ApplyRead from "./pages/student/ApplyRead";
 import SlideDetail from "../src/components/slidedetail"; // 추가된 부분
+
 import CommunityList from "./pages/community/List";
 import CommunityAdd from "./pages/community/Add";
 import CommunityRead from "./pages/community/Read";
+import CommunityModify from "./pages/community/Mod";
+
 import ClassDetail from "./pages/class/Detail";
 
 function App() {
@@ -48,11 +51,13 @@ function App() {
                         <Route path="class/:classSeq" element={<CommunityList type="class" />} />
                         <Route path="class/:classSeq/add/:studentSeq" element={<CommunityAdd type="class" />} />
                         <Route path="class/read/:seq" element={<CommunityRead />} />
+                        <Route path="class/edit/:seq" element={<CommunityModify />} />
 
                         {/* 학생 커뮤니티 관련 라우트 */}
                         <Route path="student" element={<CommunityList type="student" />} />
                         <Route path="student/add/:seq" element={<CommunityAdd type="student" />} />
                         <Route path="student/read/:seq" element={<CommunityRead />} />
+                        <Route path="student/edit/:seq" element={<CommunityModify />} />
                     </Route>
                 </Route>
             </Routes>

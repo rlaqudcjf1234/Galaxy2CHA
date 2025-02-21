@@ -85,10 +85,7 @@ function Read() {
         if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
         try {
-            // 삭제 API 경로 수정 - /api 추가
-            await axios.delete(`/api/community/delete/${seq}`, {
-                params: { type: communityType },
-            });
+            await axios.delete(`/api/community/${communityType}/read/${seq}`);
             alert("게시글이 삭제되었습니다.");
             handleGoBack();
         } catch (error) {

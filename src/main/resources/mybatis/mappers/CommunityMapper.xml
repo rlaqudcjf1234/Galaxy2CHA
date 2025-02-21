@@ -174,13 +174,33 @@
         WHERE c.SEQ = #{seq}
     </select>
 
-    <delete id="deletePost" parameterType="java.lang.Long">
+    <update id="updatePost" parameterType="map">
+        UPDATE 
+        <choose>
+            <when test="tableType == 'CLASS'">
+                CLASS_COMMUNITY
+            </when>
+            <otherwise>
+                STUDENT_COMMUNITY
+            </otherwise>
+        </choose>
+        SET 
+            TITLE = #{title},
+            DIVISION = #{division},
+            DETAIL = #{detail}
+        WHERE SEQ = #{seq}
+    </update>
+
+    <delete id="deletePost" parameterType="map">
         DELETE FROM 
-        (
-            SELECT * FROM CLASS_COMMUNITY WHERE SEQ = #{seq}
-            UNION ALL
-            SELECT * FROM STUDENT_COMMUNITY WHERE SEQ = #{seq}
-        )
+        <choose>
+            <when test="tableType == 'CLASS'">
+                CLASS_COMMUNITY
+            </when>
+            <otherwise>
+                STUDENT_COMMUNITY
+            </otherwise>
+        </choose>
         WHERE SEQ = #{seq}
     </delete>
     

@@ -12,5 +12,7 @@ public interface CommunityService {
 
     CommListDto.CommItem selectPost(Long seq) throws Exception;
 
-    boolean deletePost(Long seq) throws Exception; // 추가된 삭제 메소드
+    boolean updatePost(CommListDto.CommItem postItem, String communityType) throws Exception;
+
+    boolean deletePost(Long seq, String communityType) throws Exception; // 삭제 메소드
 }

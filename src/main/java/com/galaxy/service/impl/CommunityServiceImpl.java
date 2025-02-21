@@ -135,12 +135,6 @@ public class CommunityServiceImpl implements CommunityService {
         return mapToCommItem(map);
     }
 
-    @Override
-    public boolean deletePost(Long seq) throws Exception {
-        int deletedCount = communityMapper.deletePost(seq);
-        return deletedCount > 0; // 삭제된 행이 있으면 true, 없으면 false 반환
-    }
-
     // 입력값 검증 메서드
     private void validatePostData(CommPostDto postDto) {
         if (postDto.getTitle() == null || postDto.getTitle().trim().isEmpty()) {
@@ -214,5 +208,33 @@ public class CommunityServiceImpl implements CommunityService {
     private String getStringValueOrEmpty(Map<String, Object> map, String key) {
         Object value = map.get(key);
         return value != null ? value.toString() : "";
+    }
+
+    @Override
+    public boolean updatePost(CommListDto.CommItem postItem, String communityType) throws Exception {
+        // 입력값 검증
+        if (postItem.getTitle() == null || postItem.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("제목은 필수 입력 항목입니다.");
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("seq", postItem.getSeq());
+        params.put("title", postItem.getTitle());
+        params.put("division", postItem.getDivision());
+        params.put("detail", postItem.getDetail());
+        params.put("tableType", communityType.toUpperCase());
+
+        int updatedCount = communityMapper.updatePost(params);
+        return updatedCount > 0;
+    }
+
+    @Override
+    public boolean deletePost(Long seq, String communityType) throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        params.put("seq", seq);
+        params.put("tableType", communityType.toUpperCase());
+
+        int deletedCount = communityMapper.deletePost(params);
+        return deletedCount > 0;
     }
 }
