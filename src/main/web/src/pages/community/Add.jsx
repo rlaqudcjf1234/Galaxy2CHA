@@ -6,7 +6,7 @@ import "../../css/Community.css";
 
 function Add({ type }) {
     const navigate = useNavigate();
-    const { seq, classSeq } = useParams(); // 명시적으로 URL 파라미터 추출
+    const { seq, classSeq } = useParams();
     const location = useLocation();
     const [communityType, setCommunityType] = useState(type || "student");
     const [loading, setLoading] = useState(false);
@@ -22,14 +22,12 @@ function Add({ type }) {
         studentSeq: null,
     });
 
-    // 학생 ID 유효성 검증 함수
     const validateStudentId = async (studentId) => {
         if (!studentId) return false;
         setValidating(true);
-
         try {
-            // 실제 API 엔드포인트로 수정하세요
-            const response = await axios.get(`/api/student/${studentId}`);
+            // community가 아닌 기본 student 정보를 조회하는 API를 사용해야 함
+            const response = await axios.get(`/student/${studentId}`);
             return response.status === 200;
         } catch (error) {
             console.error("학생 ID 검증 오류:", error);
@@ -39,14 +37,12 @@ function Add({ type }) {
         }
     };
 
-    // 클래스 ID 유효성 검증 함수
     const validateClassId = async (classId) => {
         if (!classId) return false;
         setValidating(true);
-
         try {
-            // 실제 API 엔드포인트로 수정하세요
-            const response = await axios.get(`/api/class/${classId}`);
+            // community가 아닌 기본 class 정보를 조회하는 API를 사용해야 함
+            const response = await axios.get(`/class/${classId}`);
             return response.status === 200;
         } catch (error) {
             console.error("클래스 ID 검증 오류:", error);
@@ -59,30 +55,23 @@ function Add({ type }) {
     useEffect(() => {
         const processPath = async () => {
             setLoading(true);
-            // URL 경로에서 커뮤니티 타입과 작성자 번호 확인
             const path = location.pathname;
             const pathSegments = path.split("/").filter((segment) => segment);
 
             if (path.includes("/class")) {
                 setCommunityType("class");
-
-                // 클래스 ID 확인 - useParams에서 가져온 값 사용
                 const classId = classSeq ? Number(classSeq) : null;
-
-                // URL 경로에서 추출 (useParams에 없는 경우)
                 let classIdFromPath = null;
+
                 if (!classId && pathSegments.length >= 3) {
                     const potentialClassId = pathSegments[2];
                     classIdFromPath = !isNaN(Number(potentialClassId)) ? Number(potentialClassId) : null;
                 }
 
-                // 유효한 클래스 ID 사용, 없으면 null
                 const validClassId = classId || classIdFromPath;
 
                 if (validClassId) {
-                    // 클래스 ID 유효성 검증
                     const isValid = await validateClassId(validClassId);
-
                     if (isValid) {
                         setFormData((prev) => ({
                             ...prev,
@@ -101,31 +90,19 @@ function Add({ type }) {
                 }
             } else if (path.includes("/student")) {
                 setCommunityType("student");
-
-                // 학생 ID 확인 - useParams에서 가져온 값 사용
                 const studentId = seq ? Number(seq) : null;
-
-                // URL 경로에서 추출 (useParams에 없는 경우)
                 let studentIdFromPath = null;
 
-                // /community/student/add/1 형식 확인
+                // /community/student/add/{seq} 형식 처리
                 if (!studentId && pathSegments.length >= 4 && pathSegments[2] === "add") {
                     const potentialStudentId = pathSegments[3];
                     studentIdFromPath = !isNaN(Number(potentialStudentId)) ? Number(potentialStudentId) : null;
                 }
-                // /community/student/1/add 형식 확인
-                else if (!studentId && pathSegments.length >= 4 && pathSegments[3] === "add") {
-                    const potentialStudentId = pathSegments[2];
-                    studentIdFromPath = !isNaN(Number(potentialStudentId)) ? Number(potentialStudentId) : null;
-                }
 
-                // 유효한 학생 ID 사용, 없으면 null
                 const validStudentId = studentId || studentIdFromPath;
 
                 if (validStudentId) {
-                    // 학생 ID 유효성 검증
                     const isValid = await validateStudentId(validStudentId);
-
                     if (isValid) {
                         setFormData((prev) => ({
                             ...prev,
@@ -141,6 +118,37 @@ function Add({ type }) {
                 } else {
                     alert("유효한 학생 정보가 없습니다. 학생 게시판으로 이동합니다.");
                     navigate("/community/student");
+                }
+            } else if (path.includes("/postbox")) {
+                setCommunityType("postbox");
+                const studentId = seq ? Number(seq) : null;
+                let studentIdFromPath = null;
+
+                // /community/postbox/add/{seq} 형식 처리
+                if (!studentId && pathSegments.length >= 4 && pathSegments[2] === "add") {
+                    const potentialStudentId = pathSegments[3];
+                    studentIdFromPath = !isNaN(Number(potentialStudentId)) ? Number(potentialStudentId) : null;
+                }
+
+                const validStudentId = studentId || studentIdFromPath;
+
+                if (validStudentId) {
+                    const isValid = await validateStudentId(validStudentId);
+                    if (isValid) {
+                        setFormData((prev) => ({
+                            ...prev,
+                            tableType: "STUDENT",
+                            authorSeq: validStudentId,
+                            studentSeq: validStudentId,
+                            classSeq: null,
+                        }));
+                    } else {
+                        alert("존재하지 않는 학생 ID입니다. 건의 게시판으로 이동합니다.");
+                        navigate("/community/postbox");
+                    }
+                } else {
+                    alert("유효한 학생 정보가 없습니다. 건의 게시판으로 이동합니다.");
+                    navigate("/community/postbox");
                 }
             }
             setLoading(false);
@@ -160,7 +168,6 @@ function Add({ type }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 필수 정보 확인
         if (!formData.authorSeq) {
             alert("작성자 정보가 없습니다. 게시판 목록으로 이동합니다.");
             navigate(`/community/${communityType}`);
@@ -175,11 +182,12 @@ function Add({ type }) {
             if (response.status === 200) {
                 alert("게시글이 성공적으로 등록되었습니다.");
 
-                // 타입에 따라 리다이렉트 경로 설정
                 if (communityType === "class" && formData.classSeq) {
                     navigate(`/community/class/${formData.classSeq}`);
                 } else if (communityType === "student" && formData.studentSeq) {
                     navigate(`/community/student`);
+                } else if (communityType === "postbox") {
+                    navigate(`/community/postbox`);
                 }
             }
         } catch (error) {
@@ -221,7 +229,10 @@ function Add({ type }) {
     return (
         <div className="board-container">
             <div className="board-header">
-                <h2>{communityType === "class" ? "강의" : "학생"} 게시글 작성</h2>
+                <h4>
+                    {communityType === "class" ? `${classSeq}반` : communityType === "postbox" ? "건의사항" : "학생"}{" "}
+                    게시판 글 작성
+                </h4>
                 {formData.authorSeq && (
                     <p className="text-muted">
                         {communityType === "class" ? "강의" : "학생"} ID: {formData.authorSeq}
@@ -244,10 +255,19 @@ function Add({ type }) {
                                     required
                                 >
                                     <option value="">선택해주세요</option>
-                                    <option value="공지">공지</option>
-                                    <option value="일반">일반</option>
-                                    {communityType === "class" && <option value="질문">질문</option>}
-                                    {communityType === "student" && <option value="상담">상담</option>}
+                                    {communityType === "postbox" ? (
+                                        <>
+                                            <option value="건의">건의</option>
+                                            <option value="질의">질의</option>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <option value="공지">공지</option>
+                                            <option value="일반">일반</option>
+                                            {communityType === "class" && <option value="질문">질문</option>}
+                                            {communityType === "student" && <option value="상담">상담</option>}
+                                        </>
+                                    )}
                                 </select>
                             </td>
                         </tr>

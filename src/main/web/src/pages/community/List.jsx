@@ -72,13 +72,13 @@ function List({ type }) {
     const fetchData = async (pageIndex) => {
         setLoading(true);
         try {
-            // 명시적인 tableType 설정
             const requestParams = {
                 pageIndex: pageIndex,
                 pageSize: params.pageSize,
                 searchKeyword: params.searchKeyword,
                 tableType: tableType,
-                classSeq: communityType === "class" ? classSeq : null, // 클래스 ID 추가
+                classSeq: communityType === "class" ? classSeq : null,
+                division: communityType === "postbox" ? "건의, 질의" : null, // 쉼표로 구분된 문자열로 변경
             };
 
             console.log("API 요청 파라미터:", requestParams);
@@ -127,6 +127,9 @@ function List({ type }) {
             // 학생 seq가 URL에 있으면 그것을 사용, 없으면 기본 경로 사용
             const studentSeq = seq || getStudentSeqFromPath();
             return studentSeq ? `/community/student/add/${studentSeq}` : "/community/student";
+        } else if (communityType === "postbox") {
+            const studentSeq = seq || getStudentSeqFromPath();
+            return studentSeq ? `/community/postbox/add/${studentSeq}` : "/community/postbox";
         }
         return `/community/${communityType}`;
     };
@@ -138,7 +141,10 @@ function List({ type }) {
     return (
         <div>
             <div className="board-header mb-4">
-                <h4>{communityType === "class" ? `${classSeq}반` : "학생"} 게시판</h4>
+                <h4>
+                    {communityType === "class" ? `${classSeq}반` : communityType === "postbox" ? "건의" : "학생"}
+                    게시판
+                </h4>
                 {/* <p className="text-muted small">테이블 타입: {tableType}</p> */}
             </div>
 

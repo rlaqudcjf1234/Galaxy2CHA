@@ -18,7 +18,7 @@ import SlideDetail from "../src/components/slidedetail"; // 추가된 부분
 import CommunityList from "./pages/community/List";
 import CommunityAdd from "./pages/community/Add";
 import CommunityRead from "./pages/community/Read";
-import CommunityModify from "./pages/community/Mod";
+import CommunityMod from "./pages/community/Mod";
 
 import ClassDetail from "./pages/class/Detail";
 
@@ -51,13 +51,19 @@ function App() {
                         <Route path="class/:classSeq" element={<CommunityList type="class" />} />
                         <Route path="class/:classSeq/add/:studentSeq" element={<CommunityAdd type="class" />} />
                         <Route path="class/read/:seq" element={<CommunityRead />} />
-                        <Route path="class/edit/:seq" element={<CommunityModify />} />
+                        <Route path="class/edit/:seq" element={<CommunityMod />} />
 
                         {/* 학생 커뮤니티 관련 라우트 */}
                         <Route path="student" element={<CommunityList type="student" />} />
-                        <Route path="student/add/:seq" element={<CommunityAdd type="student" />} />
+                        <Route path="student/add/:studentSeq" element={<CommunityAdd type="student" />} />
                         <Route path="student/read/:seq" element={<CommunityRead />} />
-                        <Route path="student/edit/:seq" element={<CommunityModify />} />
+                        <Route path="student/edit/:seq" element={<CommunityMod />} />
+
+                        {/* 건의사항 POSTBOX */}
+                        <Route path="postbox" element={<CommunityList type="postbox" />} />
+                        <Route path="postbox/add/:studentSeq" element={<CommunityAdd type="postbox" />} />
+                        <Route path="postbox/read/:seq" element={<CommunityRead />} />
+                        <Route path="postbox/edit/:seq" element={<CommunityMod />} />
                     </Route>
                 </Route>
             </Routes>
