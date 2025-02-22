@@ -35,6 +35,9 @@
                 AND (UPPER(TITLE) LIKE '%' || UPPER(#{searchKeyword}) || '%'
                 OR UPPER(DETAIL) LIKE '%' || UPPER(#{searchKeyword}) || '%')
             </if>
+            <if test="division != null and division != ''">
+                AND DIVISION IN (${division})
+            </if>
         </where>
     </select>
 
@@ -70,7 +73,14 @@
                         LEFT JOIN STUDENT s ON c.STUDENT_SEQ = s.SEQ
                     </otherwise>
                 </choose>
-                <where>
+                 <where>
+                   <if test="tableType == 'STUDENT'">
+                        c.DIVISION NOT IN ('건의', '질의')
+                    </if>
+                    <if test="tableType == 'POSTBOX'">
+                        c.DIVISION IN ('건의', '질의')
+                    </if>
+                    <!-- 기존 조건들 -->
                     <if test="classSeq != null and tableType == 'CLASS'">
                         c.CLASS_SEQ = #{classSeq}
                     </if>

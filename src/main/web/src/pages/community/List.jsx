@@ -78,8 +78,12 @@ function List({ type }) {
                 searchKeyword: params.searchKeyword,
                 tableType: tableType,
                 classSeq: communityType === "class" ? classSeq : null,
-                division: communityType === "postbox" ? "건의, 질의" : null, // 쉼표로 구분된 문자열로 변경
             };
+            if (communityType === "student") {
+                requestParams.division = "'공지', '일반', '상담'";
+            } else if (communityType === "postbox") {
+                requestParams.division = "'건의', '질의'";
+            }
 
             console.log("API 요청 파라미터:", requestParams);
 
