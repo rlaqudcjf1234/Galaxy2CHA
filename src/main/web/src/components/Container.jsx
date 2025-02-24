@@ -1,14 +1,23 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/Container.css';
-import {Outlet} from 'react-router-dom';
+import {Outlet, Navigate} from 'react-router-dom';
+import {tokenSelector} from "../redux/store"
 
-const Container = () => {
+export const Container = () => {
     return (
         <div className="container">
-        <Outlet/>
+            <Outlet/>
         </div>
     )
 }
 
-export default Container;
+export const PrivateCotainer = () => {
+    const {val} = tokenSelector(state => state.accessToken);
+    if(val == ""){
+        return <Navigate to="/login" />
+    }
+    return (
+        <div className="container">
+            <Outlet/>
+        </div>
+    )
+};

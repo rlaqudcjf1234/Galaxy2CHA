@@ -1,8 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
+import {persistor} from "../main";
+import {tokenSelector} from "../redux/store"
 import "../css/Header.css";
 
 function Header() {
+    const {val} = tokenSelector(state => state.accessToken);
+    const handleClick = async () => {
+        await persistor.purge();
+    }
+
     return (
         <header className="d-flex flex-wrap align-items-center justify-content-center p-3 mb-4 border-bottom">
             <div className="col-md-3 mb-2 mb-md-0">
@@ -11,7 +18,9 @@ function Header() {
                 </Link>
             </div>
 
-           {/* <nav id="menu" className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+           {
+            val?(
+                <nav id="menu" className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <div className="menu-item">
                      <div className="menu-text">
                         <Link to="/" className="nav-link px-2">
@@ -204,14 +213,24 @@ function Header() {
                         <div className="sub-menu-holder"></div>
                     </div>
                 </div>
-            </nav>*/}
-
-            <div className="col-md-3 text-end">
-                <button type="button" className="btn btn-outline-primary me-2">
-                    Login
-                </button>
-               
-            </div>
+            </nav>
+            ):(
+                null
+            )
+            }
+            {
+                val?(
+                    <div className="col-md-3 text-end">
+                        <button type="button" className="btn btn-outline-primary me-2" onClick={handleClick}>Logout</button>
+                    </div>
+                ):(
+                    <div className="col-md-3 text-end">
+                        <Link to="/login" className="btn btn-outline-primary me-2">
+                            Login
+                        </Link>
+                    </div>
+                )
+            }
         </header>
     );
 }

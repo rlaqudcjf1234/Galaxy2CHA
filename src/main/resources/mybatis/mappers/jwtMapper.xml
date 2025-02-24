@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.JwtMapper">
+
+    <insert id="insertOne" parameterType="map">
+        INSERT INTO ADMIN_TOKEN(REFRESH_TOKEN, EMAIL, EXPIRATION)
+        VALUES (#{refresh_token}, #{email}, SYSDATE + interval '0.001' second * #{expiration})
+    </insert>
+
+    <delete id="deleteOne" parameterType="String">
+        DELETE FROM ADMIN_TOKEN WHERE REFRESH_TOKEN = #{refresh_token}
+    </delete>
+
+    <delete id="deleteExpir">
+        DELETE FROM ADMIN_TOKEN WHERE EXPIRATION <![CDATA[<]]> SYSDATE
+    </delete>
+
+    <select id="selectOne" parameterType="String" resultType="String">
+        SELECT EMAIL FROM ADMIN_TOKEN WHERE REFRESH_TOKEN = #{refresh_token}
+    </select>
+
+</mapper>

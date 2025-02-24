@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class SeqDto extends SearchDto {
 
-    private Long seq;
+    private String seq;
 
     private String table_nm;
 

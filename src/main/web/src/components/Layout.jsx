@@ -5,10 +5,10 @@ import Footer from './footer';
 import Mode from './mode';
 import React from 'react';
 
-function Layout() {
+const Layout = () => {
     return (
         <div className="d-flex flex-column h-100">
-            <Mode/>
+            {/* <Mode/>  */}
             <Header/>
             <main className="flex-shrink-0">
                 <Outlet/>

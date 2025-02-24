@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.UserMapper">
+
+    <select id="selectUseOne" parameterType="string" resultType="userDto">
+        SELECT SEQ, CLASS_SEQ, NAME, EMAIL, ID, PASSWORD
+        FROM STUDENT
+        WHERE ID = #{id}
+    </select>
+
+</mapper>
