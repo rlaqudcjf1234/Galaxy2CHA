@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.galaxy.mapper.LectureDocMapper">
-
-    <resultMap id="clobDataResult" type="String">
-        <result property="DETAIL" column="DETAIL" jdbcType="CLOB" javaType="java.lang.String"/>
-    </resultMap>
-
-    <select id="selectList" parameterType="String" resultMap="clobDataResult">
-        SELECT DETAIL
-        FROM LECTURE_DOCUMENT
-        WHERE LECTURE_SEQ = #{lecture_seq}
-        AND DIVISION = #{division}
-        AND DETAIL IS NOT NULL
-        ORDER BY SORT ASC
-    </select>
-
+	<resultMap id="clobDataResult" type="String">
+		<result property="DETAIL" column="DETAIL" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
+	<select id="selectList" parameterType="String" resultMap="clobDataResult">
+		SELECT DETAIL
+		FROM LECTURE_DOCUMENT
+		WHERE LECTURE_SEQ = #{lecture_seq}
+		AND DIVISION = #{division}
+		AND DETAIL IS NOT NULL
+		ORDER BY SORT ASC
+	</select>
 </mapper>

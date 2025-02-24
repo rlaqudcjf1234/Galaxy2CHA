@@ -154,11 +154,11 @@ function Header() {
 
                 <div className="menu-item">
                     <div className="menu-text">
-                        <Link to="/Survey_YN" className="nav-link px-2">
+                        <Link to="/survey" className="nav-link px-2">
                             설문평가
                         </Link>
                     </div>
-                    <div className="sub-menu">
+                    {/* <div className="sub-menu">
                         <div className="box">
                             {[
                                 {
@@ -180,7 +180,7 @@ function Header() {
                             ))}
                         </div>
                         <div className="sub-menu-holder"></div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="menu-item">

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.SurveyItemMapper">
+	<select id="selectList" parameterType="String" resultType="map">
+		SELECT A.QUESTION_SEQ, A.SORT, A.TITLE, A.DIVISION, GET_CODE_NAME(17, A.DIVISION) AS DIVISION_NAME, A.ITEM, B.RESULT
+		FROM QUESTION_ITEM A, (SELECT * FROM SURVEY_RESULT WHERE STUDENT_SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}') B
+		WHERE A.QUESTION_SEQ = B.QUESTION_SEQ(+)
+		AND A.SORT = B.SORT(+)
+		AND A.QUESTION_SEQ = #{question_seq}
+		ORDER BY A.SORT
+	</select>
+	<delete id="deleteList" parameterType="String">
+		DELETE FROM SURVEY_RESULT WHERE QUESTION_SEQ = #{question_seq} AND STUDENT_SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}'
+	</delete>
+	<insert id="insertOne" parameterType="questionResultDto">
+		INSERT INTO SURVEY_RESULT (QUESTION_SEQ, SORT, STUDENT_SEQ, RESULT)
+		VALUES (#{question_seq}, #{sort}, '${@com.galaxy.util.HttpLoginUtil@getSeq()}', #{result})
+	</insert>
+</mapper>

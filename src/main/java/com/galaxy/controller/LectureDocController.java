@@ -17,21 +17,22 @@ import com.galaxy.service.LectureDocService;
 @RequestMapping(value = "/lectureDoc")
 public class LectureDocController {
 
-    @Autowired private CodeService codeService;
+    @Autowired
+    private CodeService codeService;
 
-    @Autowired private LectureDocService lectureDocService;
+    @Autowired
+    private LectureDocService lectureDocService;
 
     @GetMapping("/list")
-    public Map<String, Object> list(
-        @RequestParam(name = "lecture_seq")String lecture_seq
-    )throws Exception {
+    public Map<String, Object> list(@RequestParam(name = "lecture_seq") String lecture_seq)
+            throws Exception {
 
         Map<String, Object> result = new HashMap<>();
 
         List<Map<String, Object>> codeList = codeService.selectUseCode(10);
 
         for (Map<String, Object> map : codeList) {
-            String division = (String)map.get("CODE_ID");
+            String division = (String) map.get("CODE_ID");
 
             List<String> list = lectureDocService.selectList(lecture_seq, division);
 

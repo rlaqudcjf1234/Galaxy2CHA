@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.SurveyMapper">
+	<select id="selectCount" parameterType="searchDto">
+		SELECT COUNT(*)
+		FROM QUESTION_SHARE
+		WHERE CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}'
+	</select>
+	<select id="selectList" parameterType="searchDto" resultType="map">
+		SELECT
+		QUESTION_SEQ, GET_QUESTION_NAME(QUESTION_SEQ) AS QUESTION_NAME,
+		CLASS_SEQ, GET_CLASS_NAME(CLASS_SEQ) AS CLASS_NAME,
+		(SELECT COUNT(*) FROM SURVEY WHERE QUESTION_SEQ = A.QUESTION_SEQ AND STUDENT_SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}') AS SURVEY,
+		TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT, ROWNUM AS RNUM
+		FROM (
+		SELECT QUESTION_SEQ, CLASS_SEQ, REG_DT
+		FROM QUESTION_SHARE A
+		WHERE CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}'
+		)A OFFSET (#{pageIndex} - 1) * #{pageSize} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+	</select>
+	<select id="selectOne" parameterType="String" resultType="map">
+		SELECT SEQ, TITLE, DETAIL,
+		GET_ADMIN_NAME(ADMIN_SEQ) AS ADMIN_NAME,
+		TO_CHAR(REG_DT, 'YYYY-MM-DD') AS REG_DT,
+		(SELECT COUNT(*) FROM SURVEY WHERE QUESTION_SEQ = A.SEQ AND STUDENT_SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}') AS SURVEY
+		FROM QUESTION A
+		WHERE SEQ = #{seq}
+	</select>
+	<delete id="deleteOne" parameterType="String">
+		DELETE FROM SURVEY WHERE QUESTION_SEQ = #{seq} AND STUDENT_SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}'
+	</delete>
+	<insert id="insertOne" parameterType="String">
+		MERGE INTO SURVEY A
+		USING DUAL ON (
+		A.QUESTION_SEQ = #{seq}
+		AND A.STUDENT_SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}'
+		)
+		WHEN NOT MATCHED THEN
+		INSERT (QUESTION_SEQ, STUDENT_SEQ, REG_DT)
+		VALUES (#{seq}, '${@com.galaxy.util.HttpLoginUtil@getSeq()}', SYSDATE)
+	</insert>
+</mapper>
