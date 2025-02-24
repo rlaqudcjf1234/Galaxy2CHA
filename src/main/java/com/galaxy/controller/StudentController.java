@@ -65,4 +65,5 @@ public class StudentController {
         log.info("학생 정보 조회 성공 - ID: {}, 이름: {}", id, studentInfo.getName());
         return ResponseEntity.ok(studentInfo);
     }
+
 }

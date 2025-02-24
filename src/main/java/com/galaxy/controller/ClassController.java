@@ -13,8 +13,13 @@ import com.galaxy.dto.ListDto;
 import com.galaxy.dto.SearchDto;
 import com.galaxy.service.ClassService;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping(value = "/class")
+@RequiredArgsConstructor
+@Slf4j
 public class ClassController {
 
     @Autowired
@@ -57,4 +62,6 @@ public class ClassController {
                     .body("상세 정보 조회 중 오류가 발생했습니다.");
         }
     }
+
+
 }

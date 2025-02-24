@@ -16,4 +16,6 @@ public interface ClassService {
     Map<String, Object> getClassDetail(int seq) throws Exception;
 
     List<Map<String, Object>> selectClassOptionsForApply() throws Exception;
+
+
 }

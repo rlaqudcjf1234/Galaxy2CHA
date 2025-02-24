@@ -11,7 +11,12 @@ import com.galaxy.dto.SearchDto;
 import com.galaxy.mapper.ClassMapper;
 import com.galaxy.service.ClassService;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class ClassServiceImpl implements ClassService{
 
 	protected final String table_nm = "class";
@@ -43,4 +48,6 @@ public class ClassServiceImpl implements ClassService{
     public List<Map<String, Object>> selectClassOptionsForApply() throws Exception {
         return classMapper.selectClassOptionsForApply();
     }
+
+   
 }

@@ -1,137 +1,337 @@
 /* 전체 컨테이너 */
 .mypage-container {
-    display: flex; /* 사이드바 + 메인콘텐츠 배치 */
-    min-height: 100vh;
-    background-color: #f0f4f8;
-    font-family: sans-serif;
-  }
-  
-  /* 사이드바 */
-  .mypage-sidebar {
-    width: 250px;
-    background-color: #ffffff;
-    border-right: 1px solid #d1d5db;
-    padding: 20px;
-  }
-  
-  /* 프로필 섹션 */
-  .profile-section {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  .profile-image {
-    width: 100px;
-    height: 100px;
-    background-color: #b3cde0;
-    border-radius: 50%;
-    margin: 0 auto 10px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .profile-placeholder {
-    color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-  }
-  
-  .profile-name {
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-  
-  .profile-email {
-    font-size: 14px;
-    color: #666;
-  }
-  
-  /* 사이드 메뉴 */
-  .sidebar-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .sidebar-menu li {
-    padding: 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-  }
-  
-  .sidebar-menu li:hover {
-    background-color: #efefef;
-  }
-  
-  /* 메인 콘텐츠 */
-  .mypage-content {
-    flex: 1; /* 나머지 영역 차지 */
-    padding: 20px 30px;
-  }
-  
-  /* 콘텐츠 헤더 */
-  .content-header h1 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  .content-header p {
-    margin: 5px 0 20px;
-    color: #555;
-  }
-  
-  /* 섹션 */
-  .mypage-section {
-    background-color: #ffffff;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    padding: 20px;
-    border: 1px solid lightgray;
-  }
-  
-  .mypage-section h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  /* 카드 형식 */
-  .info-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2열 */
-    gap: 16px;
-  }
-  
-  .info-card {
-    background-color: #f9fafb;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid lightgray;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .label {
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: #333;
-  }
-  
-  .value {
-    font-size: 14px;
-    color: #555;
-  }
-  
-  /* 로딩, 에러 */
-  .loading,
-  .error {
-    text-align: center;
-    font-size: 18px;
-    color: #555;
-    margin-top: 50px;
-  }
-  
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f4f8;
+  font-family: sans-serif;
+}
+
+/* 사이드바 */
+.mypage-sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid #d1d5db;
+  padding: 20px;
+}
+
+/* 프로필 섹션 */
+.profile-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  background-color: #b3cde0;
+  border-radius: 50%;
+  margin: 0 auto 10px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-placeholder {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.profile-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.profile-email {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 사이드 메뉴 */
+.sidebar-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-menu li:hover {
+  background-color: #efefef;
+}
+
+/* 메인 콘텐츠 */
+.mypage-content {
+  flex: 1;
+  padding: 20px 30px;
+}
+
+/* 콘텐츠 헤더 */
+.content-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.content-header p {
+  margin: 5px 0 20px;
+  color: #555;
+}
+
+/* 섹션 */
+.mypage-section {
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid lightgray;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* 카드 형식 */
+.info-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-card {
+  background-color: #f9fafb;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid lightgray;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.value {
+  font-size: 14px;
+  color: #555;
+}
+
+/* 로딩, 에러 */
+.loading,
+.error {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  margin-top: 50px;
+}
+
+/* 빈 상태 표시 */
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+/* 테이블 스타일 */
+.table-responsive {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.certification-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.certification-table th,
+.certification-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.certification-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.certification-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.button-wrapper {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 버튼 스타일 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+/* 모달 관련 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 500px;
+  max-width: 90%;
+  z-index: 1001;
+}
+
+.certification-table td:last-child {
+  text-align: center;
+  width: 80px;
+}
+
+.delete-btn:hover {
+  background-color: #c82333 !important;
+}
+
+.certification-table .delete-btn {
+  transition: background-color 0.2s;
+}
+
+.certification-table td:last-child {
+  text-align: center;
+  width: 80px;
+}
+
+.delete-btn:hover {
+  background-color: #c82333 !important;
+}
+
+.certification-table .delete-btn {
+  transition: background-color 0.2s;
+}
+
+/* 학력 정보 섹션 추가 스타일 */
+.academic-info {
+  margin-top: 20px;
+}
+
+.academic-info .info-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.academic-info .button-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.academic-info .warning-text {
+  color: gray;
+  font-size: 12px;
+}
+
+/* 학력 정보 삭제 버튼 스타일 */
+.academic-delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 10px;
+  transition: background-color 0.2s;
+}
+
+.academic-delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* 학력 정보 수정 버튼 스타일 */
+.academic-edit-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.academic-edit-btn:hover {
+  background-color: #2563eb;
+}
+
+.button-wrapper.academic-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding: 10px 0;
+}
+
+.warning-text {
+  color: gray;
+  font-size: 12px;
+  text-align: left;
+}
+
+.academic-delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.academic-delete-btn:hover {
+  background-color: #c82333;
+}

@@ -9,4 +9,5 @@ public interface LectureMapper {
 
     Map<String, Object> selectOne(String seq)throws Exception;
 
+    
 }

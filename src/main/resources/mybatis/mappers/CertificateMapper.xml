@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.CertificateMapper">
+
+
+        <insert id="insertCertificate" parameterType="java.util.Map">
+        INSERT INTO CERTIFICATE (
+            STUDENT_SEQ,
+            SORT,
+            CERT_NAME,
+            CERT_NO,
+            PASS_DT,
+            ISSUER
+        ) VALUES (
+            #{STUDENT_SEQ},
+            (SELECT NVL(MAX(SORT), 0) + 1 FROM CERTIFICATE WHERE STUDENT_SEQ = #{STUDENT_SEQ}),
+            #{CERT_NAME},
+            #{CERT_NO},
+            #{PASS_DT},
+            #{ISSUER}
+        )
+    </insert>
+
+   <select id="readCertificate" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT 
+        C.CERT_NAME,
+        C.CERT_NO,
+        TO_CHAR(C.PASS_DT, 'YYYY-MM-DD') as PASS_DT,
+        C.ISSUER,
+        C.SORT
+    FROM CERTIFICATE C
+    WHERE C.STUDENT_SEQ = #{seq}
+    ORDER BY C.SORT DESC
+</select>
+
+
+    <delete id="deleteCertificate" parameterType="java.util.Map">
+        DELETE FROM CERTIFICATE 
+        WHERE STUDENT_SEQ = #{STUDENT_SEQ} 
+        AND SORT = #{SORT}
+    </delete>
+</mapper>

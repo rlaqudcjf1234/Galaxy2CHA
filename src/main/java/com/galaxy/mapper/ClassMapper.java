@@ -18,4 +18,6 @@ public interface ClassMapper {
     List<Map<String, Object>> selectClassOptionsForApply() throws Exception;
 
     Map<String, Object> classDetail(int seq) throws Exception;
+
+   
 }
