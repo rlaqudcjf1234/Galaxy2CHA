@@ -1,11 +1,11 @@
 import axios from "axios";
-import {setAccessToken} from "../redux/tokenSlice"
-import {store} from "../redux/store"
+import { setAccessToken } from "../redux/tokenSlice"
+import { store } from "../redux/store"
 
 let retryCallbacks = [];//실패한 요청을 재시도하기 위한 콜백함수 배열
 let isLocked = false;//갱신 요청을 한 번만 보내기 위한 락
 
-const reissueTokenAndRetry = async (err) => {
+const reissueTokenAndRetry = async (instance, err) => {
     try {
         const { response } = err;
 
@@ -24,12 +24,12 @@ const reissueTokenAndRetry = async (err) => {
         });
 
         // 락이 걸려있지 않은 경우 
-        if (!isLocked){
+        if (!isLocked) {
             //락을 걸고
             isLocked = true;
             //갱신 요청을 보낸다
-            await instance.get("refresh")
-                .then((res)=> {
+            await instance.get("/api/refresh")
+                .then((res) => {
                     //요청에 성공해 토큰을 받아왔다면
                     const reissuedToken = res.headers.authorization;
                     //저장하고
@@ -40,14 +40,14 @@ const reissueTokenAndRetry = async (err) => {
                 .finally(() => {
                     //갱신에 성공했다면 콜백함수들이 모두 실행됐을 것이므로 비워주고
                     //실패했다면 갱신이 불가능하므로 비워준다. 
-                    retryCallbacks= [];
+                    retryCallbacks = [];
                     //락도 풀어준다.
                     isLocked = false
                 })
-       }
-       return retry;
+        }
+        return retry;
     }
-    catch (err){
+    catch (err) {
         return Promise.reject(err);
     }
 }
@@ -60,33 +60,33 @@ const createAxiosInstance = (needAuthentication) => {
     })
 
     instance.interceptors.request.use((req) => {
-		// 인증이 필요한 요청인 경우 
+        // 인증이 필요한 요청인 경우 
         if (needAuthentication) {
-			//redux 스토어에서 액세스 토큰의 값을 가져오자
-			const accessToken = store.getState().accessToken.val;
-			//요청 헤더에 담아주고 
+            //redux 스토어에서 액세스 토큰의 값을 가져오자
+            const accessToken = store.getState().accessToken.val;
+            //요청 헤더에 담아주고 
             req.headers.Authorization = accessToken;
         }
-		// 그대로 진행하자
+        // 그대로 진행하자
         return req;
     });
 
     instance.interceptors.response.use(
-		// 성공한 경우
+        // 성공한 경우
         (res) => {
             return res;
         },
-		// 실패한 경우 
+        // 실패한 경우 
         async (err) => {
             const { config, response } = err;
-			// 갱신 요청인데 실패한 경우, 인증 실패로 실패한 게 아닌 경우(401이 아닌 경우), 인증이 필요한 요청을 보내는 axios 인스턴스가 아닌 경우는 그대로 실패로 처리
-            if (config.url === "refresh" || response.status !== 401 || !needAuthentication) {
+            // 갱신 요청인데 실패한 경우, 인증 실패로 실패한 게 아닌 경우(401이 아닌 경우), 인증이 필요한 요청을 보내는 axios 인스턴스가 아닌 경우는 그대로 실패로 처리
+            if (config.url === "/api/refresh" || response.status !== 401 || !needAuthentication) {
                 store.dispatch(setAccessToken(""));
                 return Promise.reject(err);
             }
 
-			// 갱신을 시도해보아야 하는 경우
-            return await reissueTokenAndRetry(err);
+            // 갱신을 시도해보아야 하는 경우
+            return await reissueTokenAndRetry(instance, err);
         }
     )
 
