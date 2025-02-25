@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import "../css/HeroSlider.css";
+import heroslider1 from '../img/heroslider1.jpg';
+import heroslider2 from '../img/heroslider2.jpg';
+import heroslider3 from '../img/heroslider3.jpg';
 
 const HeroSlider = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -7,28 +10,31 @@ const HeroSlider = () => {
     const slides = [
         {
             id: 1,
-            bgColor: '#4A90E2',  // 파란색
-            title: 'SOLDESK deepracer',
-            subtitle: '솔데스크 전경보기 →'
+            bgColor: '#4A90E2',
+            image: heroslider1,
+            // title: 'SOLDESK deepracer',
+            // subtitle: '솔데스크 전경보기 →'
         },
         {
             id: 2,
-            bgColor: '#50C878',  // 초록색
-            title: '전문가 과정',
-            subtitle: '실무 중심 커리큘럼'
+            bgColor: '#50C878',
+            image: heroslider2, 
+            // title: '전문가 과정',
+            // subtitle: '실무 중심 커리큘럼'
         },
         {
             id: 3,
-            bgColor: '#E6A817',  // 주황색
-            title: '취업 연계',
-            subtitle: '취업 성공을 위한 완벽한 준비'
+            bgColor: '#E6A817',
+            image: heroslider3, 
+            // title: '취업 연계',
+            // subtitle: '취업 성공을 위한 완벽한 준비'
         }
     ];
 
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % slides.length);
-        }, 5000);
+        }, 7000);
 
         return () => clearInterval(timer);
     }, []);
@@ -50,22 +56,19 @@ const HeroSlider = () => {
             <div className="hero-slider-wrapper">
                 <div 
                     className="hero-slider-track" 
-                    style={{ 
-                        transform: `translateX(-${currentSlide * 100}%)`
-                    }}
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
-                    {slides.map((slide, index) => (
+                    {slides.map((slide) => (
                         <div 
                             key={slide.id} 
                             className="hero-slider-slide"
-                            style={{ backgroundColor: slide.bgColor }}
+                            style={{ 
+                                backgroundColor: slide.bgColor,
+                                backgroundImage: `url(${slide.image})`, // 이미지 추가
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center'
+                            }}
                         >
-                            <div className="hero-slider-content">
-                                <h2>{slide.title}</h2>
-                                <div className="hero-slider-button">
-                                    {slide.subtitle}
-                                </div>
-                            </div>
                         </div>
                     ))}
                 </div>
