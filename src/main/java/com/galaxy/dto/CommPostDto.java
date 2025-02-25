@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CommPostDto {
+    private String tableType;
     private Long authorSeq;
     private Long classSeq;
     private Long studentSeq;

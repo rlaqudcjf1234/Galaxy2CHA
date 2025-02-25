@@ -1,161 +1,75 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/Community.css";
+import { authenticatedRequest as axios } from "../../plugins/axios";
 
 function Add({ type }) {
     const navigate = useNavigate();
-    const { seq, classSeq } = useParams();
     const location = useLocation();
     const [communityType, setCommunityType] = useState(type || "student");
     const [loading, setLoading] = useState(false);
-    const [validating, setValidating] = useState(false);
+    const [userInfo, setUserInfo] = useState(null);
 
     const [formData, setFormData] = useState({
         title: "",
         division: "",
         detail: "",
-        tableType: "STUDENT",
-        authorSeq: null,
-        classSeq: null,
-        studentSeq: null,
+        tableType: type?.toUpperCase() || "STUDENT",
     });
 
-    const validateStudentId = async (studentId) => {
-        if (!studentId) return false;
-        setValidating(true);
-        try {
-            // community가 아닌 기본 student 정보를 조회하는 API를 사용해야 함
-            const response = await axios.get(`/student/${studentId}`);
-            return response.status === 200;
-        } catch (error) {
-            console.error("학생 ID 검증 오류:", error);
-            return false;
-        } finally {
-            setValidating(false);
-        }
-    };
-
-    const validateClassId = async (classId) => {
-        if (!classId) return false;
-        setValidating(true);
-        try {
-            // community가 아닌 기본 class 정보를 조회하는 API를 사용해야 함
-            const response = await axios.get(`/class/${classId}`);
-            return response.status === 200;
-        } catch (error) {
-            console.error("클래스 ID 검증 오류:", error);
-            return false;
-        } finally {
-            setValidating(false);
-        }
-    };
-
     useEffect(() => {
-        const processPath = async () => {
-            setLoading(true);
-            const path = location.pathname;
-            const pathSegments = path.split("/").filter((segment) => segment);
-
-            if (path.includes("/class")) {
-                setCommunityType("class");
-                const classId = classSeq ? Number(classSeq) : null;
-                let classIdFromPath = null;
-
-                if (!classId && pathSegments.length >= 3) {
-                    const potentialClassId = pathSegments[2];
-                    classIdFromPath = !isNaN(Number(potentialClassId)) ? Number(potentialClassId) : null;
-                }
-
-                const validClassId = classId || classIdFromPath;
-
-                if (validClassId) {
-                    const isValid = await validateClassId(validClassId);
-                    if (isValid) {
-                        setFormData((prev) => ({
-                            ...prev,
-                            tableType: "CLASS",
-                            authorSeq: validClassId,
-                            classSeq: validClassId,
-                            studentSeq: null,
-                        }));
-                    } else {
-                        alert("존재하지 않는 강의 ID입니다. 강의 목록으로 이동합니다.");
-                        navigate("/community/class");
-                    }
-                } else {
-                    alert("유효한 강의 정보가 없습니다. 강의 목록으로 이동합니다.");
-                    navigate("/community/class");
-                }
-            } else if (path.includes("/student")) {
-                setCommunityType("student");
-                const studentId = seq ? Number(seq) : null;
-                let studentIdFromPath = null;
-
-                // /community/student/add/{seq} 형식 처리
-                if (!studentId && pathSegments.length >= 4 && pathSegments[2] === "add") {
-                    const potentialStudentId = pathSegments[3];
-                    studentIdFromPath = !isNaN(Number(potentialStudentId)) ? Number(potentialStudentId) : null;
-                }
-
-                const validStudentId = studentId || studentIdFromPath;
-
-                if (validStudentId) {
-                    const isValid = await validateStudentId(validStudentId);
-                    if (isValid) {
-                        setFormData((prev) => ({
-                            ...prev,
-                            tableType: "STUDENT",
-                            authorSeq: validStudentId,
-                            studentSeq: validStudentId,
-                            classSeq: null,
-                        }));
-                    } else {
-                        alert("존재하지 않는 학생 ID입니다. 학생 게시판으로 이동합니다.");
-                        navigate("/community/student");
-                    }
-                } else {
-                    alert("유효한 학생 정보가 없습니다. 학생 게시판으로 이동합니다.");
-                    navigate("/community/student");
-                }
-            } else if (path.includes("/postbox")) {
-                setCommunityType("postbox");
-                const studentId = seq ? Number(seq) : null;
-                let studentIdFromPath = null;
-
-                // /community/postbox/add/{seq} 형식 처리
-                if (!studentId && pathSegments.length >= 4 && pathSegments[2] === "add") {
-                    const potentialStudentId = pathSegments[3];
-                    studentIdFromPath = !isNaN(Number(potentialStudentId)) ? Number(potentialStudentId) : null;
-                }
-
-                const validStudentId = studentId || studentIdFromPath;
-
-                if (validStudentId) {
-                    const isValid = await validateStudentId(validStudentId);
-                    if (isValid) {
-                        setFormData((prev) => ({
-                            ...prev,
-                            tableType: "STUDENT",
-                            authorSeq: validStudentId,
-                            studentSeq: validStudentId,
-                            classSeq: null,
-                        }));
-                    } else {
-                        alert("존재하지 않는 학생 ID입니다. 건의 게시판으로 이동합니다.");
-                        navigate("/community/postbox");
-                    }
-                } else {
-                    alert("유효한 학생 정보가 없습니다. 건의 게시판으로 이동합니다.");
-                    navigate("/community/postbox");
-                }
+        const checkAuth = async () => {
+            try {
+                const response = await axios.get("/api/community/auth/me");
+                console.log("인증 정보:", response.data);
+                // 성공 - 로그인됨
+            } catch (error) {
+                console.error("인증 오류:", error);
+                alert("로그인이 필요합니다");
+                navigate("/login");
             }
-            setLoading(false);
         };
+        checkAuth();
+    }, []);
 
-        processPath();
-    }, [location.pathname, type, seq, classSeq, navigate]);
+    // 사용자 정보 조회
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await axios.get("/api/community/auth/me");
+                setUserInfo(response.data);
+                console.log("사용자 정보:", response.data);
+            } catch (error) {
+                console.error("사용자 정보 조회 오류:", error);
+                alert("사용자 정보를 불러오지 못했습니다.");
+                navigate("/community");
+            }
+        };
+        fetchUserInfo();
+    }, [navigate]);
+
+    // 커뮤니티 타입 설정
+    useEffect(() => {
+        const path = location.pathname;
+        let newType;
+
+        if (path.includes("/class")) {
+            newType = "class";
+            setCommunityType("class");
+            setFormData((prev) => ({ ...prev, tableType: "CLASS" }));
+        } else if (path.includes("/postbox")) {
+            newType = "postbox";
+            setCommunityType("postbox");
+            setFormData((prev) => ({ ...prev, tableType: "STUDENT" }));
+        } else {
+            newType = "student";
+            setCommunityType("student");
+            setFormData((prev) => ({ ...prev, tableType: "STUDENT" }));
+        }
+
+        console.log("커뮤니티 타입 설정:", newType);
+    }, [location.pathname, type]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -168,44 +82,17 @@ function Add({ type }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.authorSeq) {
-            alert("작성자 정보가 없습니다. 게시판 목록으로 이동합니다.");
-            navigate(`/community/${communityType}`);
-            return;
-        }
-
         try {
             setLoading(true);
             console.log("게시글 등록 요청 데이터:", formData);
+
             const response = await axios.post("/api/community/add", formData);
 
-            if (response.status === 200) {
-                alert("게시글이 성공적으로 등록되었습니다.");
-
-                if (communityType === "class" && formData.classSeq) {
-                    navigate(`/community/class/${formData.classSeq}`);
-                } else if (communityType === "student" && formData.studentSeq) {
-                    navigate(`/community/student`);
-                } else if (communityType === "postbox") {
-                    navigate(`/community/postbox`);
-                }
-            }
+            alert("게시글이 성공적으로 등록되었습니다.");
+            navigate(`/community/${communityType}`);
         } catch (error) {
             console.error("게시글 등록 오류:", error);
-            console.error("오류 상세:", {
-                status: error.response?.status,
-                data: error.response?.data,
-                message: error.message,
-            });
-
-            if (
-                error.response?.data?.includes("무결성 제약조건") ||
-                error.response?.data?.includes("부모 키가 없습니다")
-            ) {
-                alert("존재하지 않는 학생/강의 ID입니다. 올바른 ID를 사용해주세요.");
-            } else {
-                alert(error.response?.data || "게시글 등록 중 오류가 발생했습니다.");
-            }
+            alert(error.response?.data || "게시글 등록 중 오류가 발생했습니다.");
         } finally {
             setLoading(false);
         }
@@ -215,7 +102,7 @@ function Add({ type }) {
         navigate(-1);
     };
 
-    if (loading || validating) {
+    if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
                 <div className="spinner-border text-primary" role="status">
@@ -230,12 +117,12 @@ function Add({ type }) {
         <div className="board-container">
             <div className="board-header">
                 <h4>
-                    {communityType === "class" ? `${classSeq}반` : communityType === "postbox" ? "건의사항" : "학생"}{" "}
-                    게시판 글 작성
+                    {communityType === "class" ? "반" : communityType === "postbox" ? "건의사항" : "학생"} 게시판 글
+                    작성
                 </h4>
-                {formData.authorSeq && (
+                {userInfo && (
                     <p className="text-muted">
-                        {communityType === "class" ? "강의" : "학생"} ID: {formData.authorSeq}
+                        작성자: {userInfo.name} ({userInfo.id})
                     </p>
                 )}
             </div>
@@ -262,8 +149,8 @@ function Add({ type }) {
                                         </>
                                     ) : (
                                         <>
-                                            <option value="공지">공지</option>
                                             <option value="일반">일반</option>
+                                            <option value="공지">공지</option>
                                             {communityType === "class" && <option value="질문">질문</option>}
                                             {communityType === "student" && <option value="상담">상담</option>}
                                         </>
@@ -306,7 +193,7 @@ function Add({ type }) {
                     <button type="button" onClick={handleGoBack} className="btn btn-secondary">
                         이전으로
                     </button>
-                    <button type="submit" className="btn btn-primary" disabled={!formData.authorSeq || loading}>
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
                         {loading ? (
                             <>
                                 <span

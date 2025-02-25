@@ -1,100 +1,42 @@
 import { useState, useEffect } from "react";
-import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { Link, useParams } from "react-router-dom";
+import { authenticatedRequest as axios } from "../../plugins/axios";
+
 import Pagination from "../../components/Pagination";
 import "../../css/Community.css";
 
 function List({ type }) {
-    const { classSeq, seq } = useParams();
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    // 경로에서 커뮤니티 타입 결정
-    const [communityType, setCommunityType] = useState(type || "student");
-    const [tableType, setTableType] = useState(type?.toUpperCase() || "STUDENT");
+    const [communityType] = useState(type || "student");
+    const [tableType] = useState(type?.toUpperCase() || "STUDENT");
 
     const [items, setItems] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    const [params, setParams] = useState({
-        pageIndex: 1,
-        pageSize: 10,
-        searchKeyword: "",
-        tableType: type?.toUpperCase() || "STUDENT",
-    });
     const [loading, setLoading] = useState(false);
     const [searchInput, setSearchInput] = useState("");
-
-    // URL 경로에서 학생 seq 추출
-    const getStudentSeqFromPath = () => {
-        const pathSegments = location.pathname.split("/").filter((segment) => segment);
-        if (communityType === "student" && pathSegments.length >= 3) {
-            const potentialSeq = pathSegments[2];
-            return !isNaN(Number(potentialSeq)) ? potentialSeq : null;
-        }
-        return null;
-    };
-
-    // URL 경로에서 타입 결정
-    useEffect(() => {
-        const path = location.pathname;
-        let newType, newTableType;
-
-        if (path.includes("/class")) {
-            newType = "class";
-            newTableType = "CLASS";
-        } else if (path.includes("/student")) {
-            newType = "student";
-            newTableType = "STUDENT";
-        } else {
-            newType = type || "student";
-            newTableType = type?.toUpperCase() || "STUDENT";
-        }
-
-        setCommunityType(newType);
-        setTableType(newTableType);
-
-        // 명시적으로 tableType 설정
-        setParams((prev) => ({
-            ...prev,
-            tableType: newTableType,
-        }));
-
-        console.log("커뮤니티 타입 설정:", {
-            path,
-            newType,
-            newTableType,
-            classSeq,
-            seq,
-        });
-    }, [location.pathname, type, classSeq, seq]);
 
     const fetchData = async (pageIndex) => {
         setLoading(true);
         try {
             const requestParams = {
                 pageIndex: pageIndex,
-                pageSize: params.pageSize,
-                searchKeyword: params.searchKeyword,
+                pageSize: 10,
+                searchKeyword: searchInput,
                 tableType: tableType,
-                classSeq: communityType === "class" ? classSeq : null,
             };
-            if (communityType === "student") {
-                requestParams.division = "'공지', '일반', '상담'";
-            } else if (communityType === "postbox") {
+
+            // 커뮤니티 타입에 따른 division 설정
+            if (communityType === "postbox") {
                 requestParams.division = "'건의', '질의'";
+            } else if (communityType === "student") {
+                requestParams.division = "'공지', '일반', '상담'";
             }
 
-            console.log("API 요청 파라미터:", requestParams);
-
             const response = await axios.get("/api/community/list", { params: requestParams });
-            console.log("API 응답:", response.data);
-
             setItems(response.data.items || []);
             setTotalCount(response.data.totalCount || 0);
         } catch (error) {
             console.error("데이터 조회 오류:", error);
-            console.error("오류 상세:", error.response?.data);
         } finally {
             setLoading(false);
         }
@@ -105,7 +47,6 @@ function List({ type }) {
     };
 
     const handleSearch = () => {
-        setParams((prev) => ({ ...prev, searchKeyword: searchInput }));
         setCurrentPage(1);
         fetchData(1);
     };
@@ -116,26 +57,36 @@ function List({ type }) {
         }
     };
 
+    useEffect(() => {
+        if (items && items.length > 0) {
+            console.log("Items data:", items);
+            console.log("First item structure:", items[0]);
+            console.log("Keys in first item:", Object.keys(items[0]));
+        }
+    }, [items]);
+
     // 페이지 변경시 데이터 가져오기
     useEffect(() => {
-        if (tableType) {
-            fetchData(currentPage);
-        }
-    }, [currentPage, tableType]);
+        fetchData(currentPage);
+    }, [currentPage]);
 
-    // 글쓰기 URL 생성
-    const getWriteUrl = () => {
-        if (communityType === "class" && classSeq) {
-            return `/community/class/${classSeq}/add`;
-        } else if (communityType === "student") {
-            // 학생 seq가 URL에 있으면 그것을 사용, 없으면 기본 경로 사용
-            const studentSeq = seq || getStudentSeqFromPath();
-            return studentSeq ? `/community/student/add/${studentSeq}` : "/community/student";
-        } else if (communityType === "postbox") {
-            const studentSeq = seq || getStudentSeqFromPath();
-            return studentSeq ? `/community/postbox/add/${studentSeq}` : "/community/postbox";
+    // 검색어 변경시 재검색
+    useEffect(() => {
+        if (searchInput === "") {
+            fetchData(1);
         }
-        return `/community/${communityType}`;
+    }, [searchInput]);
+
+    // 타입별 게시판 제목
+    const getBoardTitle = () => {
+        switch (communityType) {
+            case "class":
+                return "반 게시판";
+            case "postbox":
+                return "건의함";
+            default:
+                return "학생 게시판";
+        }
     };
 
     if (loading) {
@@ -145,11 +96,7 @@ function List({ type }) {
     return (
         <div>
             <div className="board-header mb-4">
-                <h4>
-                    {communityType === "class" ? `${classSeq}반` : communityType === "postbox" ? "건의" : "학생"}
-                    게시판
-                </h4>
-                {/* <p className="text-muted small">테이블 타입: {tableType}</p> */}
+                <h4>{getBoardTitle()}</h4>
             </div>
 
             <div className="row mb-3">
@@ -171,13 +118,20 @@ function List({ type }) {
                     </div>
                 </div>
                 <div className="col-md-6 text-end">
-                    <Link to={getWriteUrl()}>
+                    <Link to={`/community/${communityType}/add`}>
                         <button className="btn btn-primary">글쓰기</button>
                     </Link>
                 </div>
             </div>
 
             <table className="board-table">
+                <colgroup>
+                    <col width="80px" />
+                    <col width="100px" />
+                    <col />
+                    <col width="120px" />
+                    <col width="120px" />
+                </colgroup>
                 <thead>
                     <tr>
                         <th scope="col">번호</th>
@@ -189,12 +143,12 @@ function List({ type }) {
                 </thead>
                 <tbody>
                     {Array.isArray(items) && items.length > 0 ? (
-                        items.map((item) => (
-                            <tr key={item.seq}>
+                        items.map((item, index) => (
+                            <tr key={`item-${item.seq}`}>
                                 <td>{item.rnum || "-"}</td>
                                 <td>{item.division || "-"}</td>
                                 <td>
-                                    <Link to={`/community/${communityType}/read/${item.seq}`}>{item.title}</Link>
+                                    <Link to={`/community/${communityType}/read/${item.seq}`}>{item.title || "-"}</Link>
                                 </td>
                                 <td>{item.author || "-"}</td>
                                 <td>{item.regDt || "-"}</td>

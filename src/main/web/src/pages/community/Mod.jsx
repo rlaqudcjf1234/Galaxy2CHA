@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import axios from "axios";
+import { authenticatedRequest as axios } from "../../plugins/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/Community.css";
 
@@ -15,43 +15,76 @@ function Mod() {
         title: "",
         division: "",
         detail: "",
+        tableType: "",
     });
 
     // URL 경로에서 타입 추출
     useEffect(() => {
         const path = location.pathname;
+        let type, tableType;
+
         if (path.includes("/class/")) {
-            setCommunityType("class");
+            type = "class";
+            tableType = "CLASS";
         } else if (path.includes("/student/")) {
-            setCommunityType("student");
+            type = "student";
+            tableType = "STUDENT";
+        } else if (path.includes("/postbox/")) {
+            type = "postbox";
+            tableType = "STUDENT"; // postbox도 STUDENT 테이블 사용
         }
+
+        setCommunityType(type);
+        setFormData((prev) => ({ ...prev, tableType }));
     }, [location]);
+
+    // 사용자 인증 확인
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                await axios.get("/api/community/auth/me");
+                // 성공 - 인증됨
+            } catch (error) {
+                console.error("인증 오류:", error);
+                alert("로그인이 필요합니다");
+                navigate("/login");
+            }
+        };
+
+        checkAuth();
+    }, [navigate]);
 
     // 기존 게시글 데이터 로드
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`/api/community/${communityType}/read/${seq}`);
+                // tableType 파라미터 추가
+                const response = await axios.get(`/api/community/read/${seq}`, {
+                    params: { tableType: formData.tableType },
+                });
+
+                console.log("게시글 데이터:", response.data);
+
                 const post = Array.isArray(response.data) ? response.data[0] : response.data;
 
-                setFormData({
-                    seq: seq,
-                    title: post.TITLE || post.title,
-                    division: post.DIVISION || post.division,
-                    detail: post.DETAIL || post.detail,
-                });
+                setFormData((prev) => ({
+                    ...prev,
+                    title: post.title || post.TITLE || "",
+                    division: post.division || post.DIVISION || "",
+                    detail: post.detail || post.DETAIL || "",
+                }));
                 setLoading(false);
             } catch (error) {
-                console.error("Error:", error);
+                console.error("게시글 로드 오류:", error);
                 alert("게시글을 불러오는데 실패했습니다.");
                 navigate(-1);
             }
         };
 
-        if (communityType && seq) {
+        if (communityType && seq && formData.tableType) {
             fetchPost();
         }
-    }, [communityType, seq]);
+    }, [communityType, seq, formData.tableType, navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -61,14 +94,38 @@ function Mod() {
         }));
     };
 
+    // 토큰 확인 로직 추가
+    const checkToken = async () => {
+        try {
+            const response = await axios.get("/api/community/auth/me");
+            console.log("인증 상태:", response.data);
+            return true;
+        } catch (error) {
+            console.error("인증 오류:", error);
+            alert("로그인이 필요합니다");
+            navigate("/login");
+            return false;
+        }
+    };
+
+    // 제출 처리 함수 수정
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`/api/community/${communityType}/read/${seq}`, formData);
+            console.log("수정 요청 데이터:", formData);
+
+            // tableType을 URL 쿼리 파라미터로 전달
+            await axios.put(`/api/community/read/${seq}?tableType=${formData.tableType}`, {
+                seq: formData.seq,
+                title: formData.title,
+                division: formData.division,
+                detail: formData.detail,
+            });
+
             alert("게시글이 수정되었습니다.");
             navigate(`/community/${communityType}/read/${seq}`);
         } catch (error) {
-            console.error("Error:", error);
+            console.error("게시글 수정 오류:", error);
             alert("게시글 수정에 실패했습니다.");
         }
     };
@@ -102,10 +159,26 @@ function Mod() {
                                     required
                                 >
                                     <option value="">선택해주세요</option>
-                                    <option value="공지">공지</option>
-                                    <option value="일반">일반</option>
-                                    {communityType === "class" && <option value="질문">질문</option>}
-                                    {communityType === "student" && <option value="상담">상담</option>}
+                                    {communityType === "class" && (
+                                        <>
+                                            <option value="공지">공지</option>
+                                            <option value="일반">일반</option>
+                                            <option value="질문">질문</option>
+                                        </>
+                                    )}
+                                    {communityType === "student" && (
+                                        <>
+                                            <option value="공지">공지</option>
+                                            <option value="일반">일반</option>
+                                            <option value="상담">상담</option>
+                                        </>
+                                    )}
+                                    {communityType === "postbox" && (
+                                        <>
+                                            <option value="건의">건의</option>
+                                            <option value="질의">질의</option>
+                                        </>
+                                    )}
                                 </select>
                             </td>
                         </tr>
