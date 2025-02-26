@@ -79,9 +79,13 @@ const createAxiosInstance = (needAuthentication) => {
         // 실패한 경우 
         async (err) => {
             const { config, response } = err;
-            // 갱신 요청인데 실패한 경우, 인증 실패로 실패한 게 아닌 경우(401이 아닌 경우), 인증이 필요한 요청을 보내는 axios 인스턴스가 아닌 경우는 그대로 실패로 처리
-            if (config.url === "/api/refresh" || response.status !== 401 || !needAuthentication) {
+            // 갱신 요청인데 실패한 경우( + 토큰 말소)
+            // 인증 실패로 실패한 게 아닌 경우(401이 아닌 경우)
+            // 인증이 필요한 요청을 보내는 axios 인스턴스가 아닌 경우는 그대로 실패로 처리
+            if (config.url === "/api/refresh") {
                 store.dispatch(setAccessToken(""));
+                return Promise.reject(err);
+            } else if (response.status !== 401 || !needAuthentication) {
                 return Promise.reject(err);
             }
 
