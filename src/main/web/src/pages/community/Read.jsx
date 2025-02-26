@@ -84,8 +84,8 @@ function Read() {
         if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
         try {
-            // 단순화된 삭제 API 호출
-            await axios.delete(`/api/community/delete/${seq}`, {
+            // 백엔드 API 경로에 맞게 수정 (/delete → /read)
+            await axios.delete(`/api/community/read/${seq}`, {
                 params: { tableType },
             });
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { authenticatedRequest as axios } from "../../plugins/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../css/Community.css";
 

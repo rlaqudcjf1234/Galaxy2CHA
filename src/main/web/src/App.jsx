@@ -3,7 +3,7 @@ import "./App.css";
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Loding from "./components/Loding"
+import Loding from "./components/Loding";
 import Layout from "./components/Layout";
 
 import Login from "./pages/Login";
@@ -12,7 +12,6 @@ import { Container, PrivateCotainer } from "./components/Container";
 
 import MyPage from "./pages/mypage/Mypage";
 
-import ApplyStudent from "./pages/student/ApplyStudent";
 import ApplyAdd from "./pages/student/ApplyAdd";
 import ApplyList from "./pages/student/ApplyList";
 import ApplyRead from "./pages/student/ApplyRead";
@@ -44,7 +43,6 @@ function App() {
                             <Route index="index" element={<ApplyList />} />
                             <Route path="add" element={<ApplyAdd />} />
                             <Route path="read/:id" element={<ApplyRead />} />
-                            <Route path="student" element={<ApplyStudent />} />
                         </Route>
 
                         <Route path="class/:lecture_seq/:seq" element={<Container />}>
@@ -58,28 +56,17 @@ function App() {
                         </Route>
                         <Route path="community" element={<Container />}>
                             <Route index="index" element={<CommunityList />} /> {/* 클래스 커뮤니티 관련 라우트 */}
-                            <Route path="class/:classSeq" element={<CommunityList type="class" />} />
-                            <Route
-                                path="class/:classSeq/add/:studentSeq"
-                                element={<CommunityAdd type="class" />
-                                }
-                            />
+                            <Route path="class" element={<CommunityList type="class" />} />
+                            <Route path="class/add" element={<CommunityAdd type="class" />} />
                             <Route path="class/read/:seq" element={<CommunityRead />} />
-                            <Route path="class/edit/:seq" element={<CommunityMod />} /> {/* 학생 커뮤니티 관련 라우트 */}
+                            <Route path="class/edit/:seq" element={<CommunityMod />} />
+                            {/* 학생 커뮤니티 관련 라우트 */}
                             <Route path="student" element={<CommunityList type="student" />} />
-                            <Route
-                                path="student/add/:studentSeq"
-                                element={<CommunityAdd type="student" />
-                                }
-                            />
+                            <Route path="student/add" element={<CommunityAdd type="student" />} />
                             <Route path="student/read/:seq" element={<CommunityRead />} />
                             <Route path="student/edit/:seq" element={<CommunityMod />} /> {/* 건의사항 POSTBOX */}
                             <Route path="postbox" element={<CommunityList type="postbox" />} />
-                            <Route
-                                path="postbox/add/:studentSeq"
-                                element={<CommunityAdd type="postbox" />
-                                }
-                            />
+                            <Route path="postbox/add" element={<CommunityAdd type="postbox" />} />
                             <Route path="postbox/read/:seq" element={<CommunityRead />} />
                             <Route path="postbox/edit/:seq" element={<CommunityMod />} />
                         </Route>

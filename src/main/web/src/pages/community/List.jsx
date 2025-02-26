@@ -27,9 +27,9 @@ function List({ type }) {
 
             // 커뮤니티 타입에 따른 division 설정
             if (communityType === "postbox") {
-                requestParams.division = "'건의', '질의'";
+                requestParams.division = "'건의'";
             } else if (communityType === "student") {
-                requestParams.division = "'공지', '일반', '상담'";
+                requestParams.division = "'공지', '일반', '유머'";
             }
 
             const response = await axios.get("/api/community/list", { params: requestParams });

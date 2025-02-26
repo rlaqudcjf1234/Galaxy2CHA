@@ -1,27 +1,14 @@
 // ApplyList.js
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../../css/Community.css";
+import { authenticatedRequest as axios } from "../../plugins/axios";
 
 const ApplyList = () => {
-    // 관리자 인증 상태 확인
-    const isAuthenticated = sessionStorage.getItem("isAuthenticated") === "true";
-    const isAdmin = sessionStorage.getItem("authType") === "admin";
-
-    // 관리자면 admin 페이지로 리다이렉션
-    if (isAuthenticated && isAdmin) {
-        return <Navigate to="/apply/admin" replace />;
-    }
-
     // 일반 사용자용 리스트 화면
     return (
         <div>
             <div className="board-header">
-                <Link to="/apply/add" className="write-button">
-                    등록
-                </Link>
-                <Link to="/apply/student" className="write-button">
-                    로그인
-                </Link>
+                <Link to="/apply/add"></Link>
             </div>
             <table className="board-table">
                 <thead>

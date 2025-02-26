@@ -170,13 +170,13 @@ function Mod() {
                                         <>
                                             <option value="공지">공지</option>
                                             <option value="일반">일반</option>
-                                            <option value="상담">상담</option>
+                                            <option value="유머">유머</option>
                                         </>
                                     )}
                                     {communityType === "postbox" && (
                                         <>
                                             <option value="건의">건의</option>
-                                            <option value="질의">질의</option>
+                                            <option value="문의">문의</option>
                                         </>
                                     )}
                                 </select>

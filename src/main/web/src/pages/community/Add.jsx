@@ -117,8 +117,8 @@ function Add({ type }) {
         <div className="board-container">
             <div className="board-header">
                 <h4>
-                    {communityType === "class" ? "반" : communityType === "postbox" ? "건의사항" : "학생"} 게시판 글
-                    작성
+                    {communityType === "class" ? "반 별" : communityType === "postbox" ? "건의함" : "학생 게시판"}{" "}
+                    글쓰기
                 </h4>
                 {userInfo && (
                     <p className="text-muted">
@@ -145,14 +145,13 @@ function Add({ type }) {
                                     {communityType === "postbox" ? (
                                         <>
                                             <option value="건의">건의</option>
-                                            <option value="질의">질의</option>
                                         </>
                                     ) : (
                                         <>
                                             <option value="일반">일반</option>
                                             <option value="공지">공지</option>
                                             {communityType === "class" && <option value="질문">질문</option>}
-                                            {communityType === "student" && <option value="상담">상담</option>}
+                                            {communityType === "student" && <option value="유머">유머</option>}
                                         </>
                                     )}
                                 </select>
