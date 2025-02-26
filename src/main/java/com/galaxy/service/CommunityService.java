@@ -10,9 +10,9 @@ public interface CommunityService {
 
     void addPost(CommPostDto postDto) throws Exception;
 
-    CommListDto.CommItem selectPost(Long seq) throws Exception;
+    CommListDto.CommItem selectPost(Long seq, String tableType) throws Exception;
 
-    boolean updatePost(CommListDto.CommItem postItem, String communityType) throws Exception;
+    boolean updatePost(CommListDto.CommItem postItem, String tableType) throws Exception;
 
-    boolean deletePost(Long seq, String communityType) throws Exception; // 삭제 메소드
+    boolean deletePost(Long seq, String tableType) throws Exception; // 삭제 메소드
 }

@@ -77,17 +77,14 @@ public class CommunityServiceImpl implements CommunityService {
         Map<String, Object> params = new HashMap<>();
 
         // 필수 필드 설정
-        params.put("authorSeq", postDto.getAuthorSeq());
+        params.put("studentSeq", postDto.getStudentSeq());  // authorSeq 대신 studentSeq 사용
         params.put("title", postDto.getTitle());
         params.put("division", postDto.getDivision());
         params.put("detail", postDto.getDetail());
         params.put("regDt", formattedDate);
 
-        // tableType 설정 - 기본값은 STUDENT
-        String tableType = "STUDENT";
-        if (postDto.getClassSeq() != null) {
-            tableType = "CLASS";
-        }
+        // tableType 설정 - 제공된 값 사용 또는 기본값 STUDENT
+        String tableType = postDto.getTableType() != null ? postDto.getTableType() : "STUDENT";
         params.put("tableType", tableType);
 
         // 선택적 필드 설정 - null이 아닌 경우에만 추가
@@ -95,16 +92,15 @@ public class CommunityServiceImpl implements CommunityService {
             params.put("classSeq", postDto.getClassSeq());
         }
 
-        if (postDto.getStudentSeq() != null) {
-            params.put("studentSeq", postDto.getStudentSeq());
-        }
+        // 로그 추가
+        log.info("게시글 등록 파라미터: {}", params);
 
         // 데이터베이스에 저장
         communityMapper.insertCommunityPost(params);
     }
 
     @Override
-    public CommListDto.CommItem selectPost(Long seq) throws Exception {
+    public CommListDto.CommItem selectPost(Long seq, String tableType) throws Exception {
         if (seq == null) {
             throw new IllegalArgumentException("게시글 번호는 필수 입력 항목입니다.");
         }
@@ -140,7 +136,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (postDto.getTitle() == null || postDto.getTitle().trim().isEmpty()) {
             throw new IllegalArgumentException("제목은 필수 입력 항목입니다.");
         }
-        if (postDto.getAuthorSeq() == null) {
+        if (postDto.getStudentSeq() == null) {
             throw new IllegalArgumentException("작성자 정보는 필수 입력 항목입니다.");
         }
     }

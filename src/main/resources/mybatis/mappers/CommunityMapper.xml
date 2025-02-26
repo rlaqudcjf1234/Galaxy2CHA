@@ -9,10 +9,10 @@
                 OR UPPER(DETAIL) LIKE '%' || UPPER(#{searchKeyword}) || '%')
             </if>
             <if test="classSeq != null and tableType == 'CLASS'">
-                AND c.CLASS_SEQ = #{classSeq}
+                AND c.CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}'
             </if>
             <if test="classSeq != null and tableType != 'CLASS'">
-                AND s.CLASS_SEQ = #{classSeq}
+                AND s.CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}'
             </if>
         </where>
     </sql>
@@ -26,10 +26,10 @@
         </choose>
         <where>
             <if test="classSeq != null and tableType == 'CLASS'">
-                CLASS_SEQ = #{classSeq}
+                CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}'
             </if>
             <if test="classSeq != null and tableType != 'CLASS'">
-                STUDENT_SEQ IN (SELECT SEQ FROM STUDENT WHERE CLASS_SEQ = #{classSeq})
+                STUDENT_SEQ IN (SELECT SEQ FROM STUDENT WHERE CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}')
             </if>
             <if test="searchKeyword != null and searchKeyword != ''">
                 AND (UPPER(TITLE) LIKE '%' || UPPER(#{searchKeyword}) || '%'
@@ -82,10 +82,10 @@
                     </if>
                     <!-- 기존 조건들 -->
                     <if test="classSeq != null and tableType == 'CLASS'">
-                        c.CLASS_SEQ = #{classSeq}
+                        c.CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}'
                     </if>
                     <if test="classSeq != null and tableType != 'CLASS'">
-                        s.CLASS_SEQ = #{classSeq}
+                        s.CLASS_SEQ = '${@com.galaxy.util.HttpLoginUtil@getClass_seq()}'
                     </if>
                     <if test="searchKeyword != null and searchKeyword != ''">
                         AND (UPPER(c.TITLE) LIKE '%' || UPPER(#{searchKeyword}) || '%'
@@ -116,15 +116,15 @@
                     CLASS_COMMUNITY (
                         SEQ, 
                         CLASS_SEQ,
-                        <if test="studentSeq != null">STUDENT_SEQ,</if>
+                        STUDENT_SEQ,  <!-- 학생 정보 추가 -->
                         TITLE, 
                         DIVISION, 
                         DETAIL, 
                         REG_DT
                     ) VALUES (
                         SEQ.CURRVAL, 
-                        #{authorSeq},
-                        <if test="studentSeq != null">#{studentSeq},</if>
+                        #{classSeq, jdbcType=NUMERIC},
+                        #{studentSeq, jdbcType=NUMERIC},
                         #{title}, 
                         #{division}, 
                         #{detail}, 
@@ -135,15 +135,13 @@
                     STUDENT_COMMUNITY (
                         SEQ, 
                         STUDENT_SEQ,
-                        <if test="classSeq != null">CLASS_SEQ,</if>
                         TITLE, 
                         DIVISION, 
                         DETAIL, 
                         REG_DT
                     ) VALUES (
                         SEQ.CURRVAL, 
-                        #{authorSeq},
-                        <if test="classSeq != null">#{classSeq},</if>
+                        #{studentSeq, jdbcType=NUMERIC},
                         #{title}, 
                         #{division}, 
                         #{detail}, 
@@ -154,35 +152,40 @@
         SELECT * FROM DUAL
     </insert>
 
-   <select id="selectCommunityPost" parameterType="map" resultType="map">
-        SELECT 
-            c.SEQ,
-            <choose>
-                <when test="tableType == 'CLASS'">
-                    c.CLASS_SEQ as "AUTHOR_SEQ",
-                    GET_ADMIN_NAME((SELECT ADMIN_SEQ FROM CLASS WHERE SEQ = c.CLASS_SEQ)) as "AUTHOR_NAME"
-                </when>
-                <otherwise>
-                    c.STUDENT_SEQ as "AUTHOR_SEQ",
-                    s.NAME as "AUTHOR_NAME"
-                </otherwise>
-            </choose>,
-            c.TITLE,
-            c.DIVISION,
-            c.DETAIL,
-            TO_CHAR(c.REG_DT, 'YYYY-MM-DD') AS REG_DT
-        FROM 
+    <select id="selectCommunityPost" parameterType="map" resultType="map">
         <choose>
+            <!-- CLASS 게시글: CLASS_COMMUNITY에 student_seq가 있으므로 STUDENT와 직접 JOIN -->
             <when test="tableType == 'CLASS'">
-                CLASS_COMMUNITY c
+            SELECT 
+                C.SEQ,
+                C.CLASS_SEQ,
+                C.STUDENT_SEQ AS AUTHOR_SEQ,
+                S.NAME AS AUTHOR_NAME,
+                C.TITLE,
+                C.DIVISION,
+                C.DETAIL,
+                TO_CHAR(C.REG_DT, 'YYYY-MM-DD') AS REG_DT
+            FROM CLASS_COMMUNITY C
+            LEFT JOIN STUDENT S ON C.STUDENT_SEQ = S.SEQ
+            WHERE C.SEQ = #{seq}
             </when>
+
+            <!-- STUDENT 게시글: STUDENT_COMMUNITY + STUDENT JOIN (기존과 동일) -->
             <otherwise>
-                STUDENT_COMMUNITY c
-                LEFT JOIN STUDENT s ON c.STUDENT_SEQ = s.SEQ
+            SELECT 
+                SC.SEQ,
+                SC.STUDENT_SEQ AS AUTHOR_SEQ,
+                S.NAME AS AUTHOR_NAME,
+                SC.TITLE,
+                SC.DIVISION,
+                SC.DETAIL,
+                TO_CHAR(SC.REG_DT, 'YYYY-MM-DD') AS REG_DT
+            FROM STUDENT_COMMUNITY SC
+            LEFT JOIN STUDENT S ON SC.STUDENT_SEQ = S.SEQ
+            WHERE SC.SEQ = #{seq}
             </otherwise>
         </choose>
-        WHERE c.SEQ = #{seq}
-    </select>
+        </select>
 
     <update id="updatePost" parameterType="map">
         UPDATE 
