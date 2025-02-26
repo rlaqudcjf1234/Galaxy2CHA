@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { authenticatedRequest as axios } from '../../plugins/axios';
 import { useParams } from 'react-router-dom';
 import '../../css/Mypage.css';
 import AddEduModal from './AddEduModal';

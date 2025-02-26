@@ -24,31 +24,31 @@
     </select>
 
     <select id="getStudentMypage" parameterType="Long" resultType="map">
-       SELECT   
-            A.SEQ AS STUDENT_SEQ,
-            A.NAME,
-            A.EMAIL,
-            A.PHONE,
-            A.REAL_ZIPCODE,
-            A.REAL_ADDRESS1,
-            A.REAL_ADDRESS2,
-            B.SEQ AS CLASS_SEQ,
-            B.ROOM,
-            B.START_DT,
-            B.END_DT,
-            B.START_TM,
-            B.END_TM,
-            B.ROUND,
-            C.NAME AS LECTURE_NAME,   
-            AD.NAME AS ADMIN_NAME
-        FROM 
-            GALAXY.STUDENT A
-            INNER JOIN GALAXY.CLASS B ON A.CLASS_SEQ = B.SEQ
-            INNER JOIN GALAXY.LECTURE C ON B.LECTURE_SEQ = C.SEQ 
-            LEFT JOIN GALAXY.ADMIN AD ON B.ADMIN_SEQ = AD.SEQ
-        WHERE 
-            A.SEQ = #{seq}
-   </select>
+    SELECT  
+        A.SEQ AS STUDENT_SEQ,
+        A.NAME,
+        A.EMAIL,
+        A.PHONE,
+        A.REAL_ZIPCODE,
+        A.REAL_ADDRESS1,
+        A.REAL_ADDRESS2,
+        B.SEQ AS CLASS_SEQ,
+        B.ROOM,
+        TO_CHAR(B.START_DT, 'YYYY-MM-DD') AS START_DT,
+        TO_CHAR(B.END_DT, 'YYYY-MM-DD') AS END_DT,
+        B.START_TM,
+        B.END_TM,
+        B.ROUND,
+        C.NAME AS LECTURE_NAME,
+        AD.NAME AS ADMIN_NAME
+    FROM
+        GALAXY.STUDENT A
+        INNER JOIN GALAXY.CLASS B ON A.CLASS_SEQ = B.SEQ
+        INNER JOIN GALAXY.LECTURE C ON B.LECTURE_SEQ = C.SEQ
+        LEFT JOIN GALAXY.ADMIN AD ON B.ADMIN_SEQ = AD.SEQ
+    WHERE
+        A.SEQ = #{seq}
+</select>
 
 
     
