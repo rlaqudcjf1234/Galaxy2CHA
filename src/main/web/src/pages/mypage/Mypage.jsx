@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { authenticatedRequest as axios } from '../../plugins/axios';
-import { useParams } from 'react-router-dom';
 import '../../css/Mypage.css';
 import AddEduModal from './AddEduModal';
 import AddCertModal from './AddCertModal';
 
 function Mypage() {
-  const { seq } = useParams();
   const [loading, setLoading] = useState(false);
   const [studentData, setStudentData] = useState(null);
   const [error, setError] = useState(null);
@@ -15,10 +13,23 @@ function Mypage() {
   const [certifications, setCertifications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [academicList, setAcademicList] = useState(null);
+  const [studentSeq, setStudentSeq] = useState(null);
 
-  const studentSeq = window.location.pathname.split('/').pop();
+  // 로그인된 사용자의 시퀀스를 가져오는 함수
+  const fetchUserSeq = async () => {
+    try {
+      const response = await axios.get('/api/auth/user-info');
+      return response.data.seq; // 백엔드에서 HttpLoginUtil.getSeq()를 통해 얻은 값
+    } catch (err) {
+      console.error('Error fetching user sequence:', err);
+      setError('사용자 정보를 불러오는 데 실패했습니다.');
+      return null;
+    }
+  };
 
-  const fetchStudentData = async () => {
+  const fetchStudentData = async (seq) => {
+    if (!seq) return;
+
     setLoading(true);
     setError(null);
 
@@ -49,13 +60,13 @@ function Mypage() {
         STUDENT_SEQ: studentSeq,
         REG_DT: now
       };
-  
+
       const response = await axios.post('/api/student/insert', requestData);
-      
+
       if (response.data) {
         alert('학력 정보가 성공적으로 등록되었습니다.');
         setIsModalOpen(false);
-        fetchStudentData(); // 데이터 새로고침
+        fetchStudentData(studentSeq); // 데이터 새로고침
       }
     } catch (error) {
       console.error('학력 정보 등록 실패:', error.response?.data || error.message);
@@ -69,8 +80,8 @@ function Mypage() {
 
   const handleEducationSave = async (educationData) => {
     try {
-      await axios.post(`/api/student/education/${seq}`, educationData);
-      fetchStudentData();
+      await axios.post(`/api/student/education/${studentSeq}`, educationData);
+      fetchStudentData(studentSeq);
     } catch (error) {
       console.error('Failed to save education data:', error);
     }
@@ -79,9 +90,9 @@ function Mypage() {
   const handleEducationDelete = async () => {
     if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
       try {
-        await axios.delete(`/api/student/education/${seq}`);
+        await axios.delete(`/api/student/education/${studentSeq}`);
         alert('학력 정보가 삭제되었습니다.');
-        await fetchStudentData();
+        await fetchStudentData(studentSeq);
       } catch (error) {
         console.error('Failed to delete education:', error);
         alert('학력 정보 삭제에 실패했습니다.');
@@ -91,9 +102,9 @@ function Mypage() {
 
   const handleCertificationSave = async (certificationData) => {
     try {
-      await axios.post(`/api/student/certification/${seq}`, certificationData);
+      await axios.post(`/api/student/certification/${studentSeq}`, certificationData);
       alert('자격증 정보가 성공적으로 등록되었습니다.');
-      await fetchStudentData();
+      await fetchStudentData(studentSeq);
       setIsCertificationModalOpen(false);
     } catch (error) {
       console.error('Failed to save certification data:', error);
@@ -104,9 +115,9 @@ function Mypage() {
   const handleCertificationDelete = async (certSort) => {
     if (window.confirm('자격증 정보를 삭제하시겠습니까?')) {
       try {
-        await axios.delete(`/api/student/certification/${seq}/${certSort}`);
+        await axios.delete(`/api/student/certification/${studentSeq}/${certSort}`);
         alert('자격증 정보가 삭제되었습니다.');
-        await fetchStudentData();
+        await fetchStudentData(studentSeq);
       } catch (error) {
         console.error('Failed to delete certification:', error);
         alert('자격증 정보 삭제에 실패했습니다.');
@@ -115,7 +126,9 @@ function Mypage() {
   };
 
   // 학력 정보 조회 함수
-  const getAcademicInfo = async () => {
+  const getAcademicInfo = async (seq) => {
+    if (!seq) return;
+
     try {
       const response = await axios.get(`/api/student/academic/info/${seq}`);
       // 응답 데이터가 배열인지 확인하고 처리
@@ -127,15 +140,16 @@ function Mypage() {
       setAcademicList([]); // 에러 시 빈 배열로 설정
     }
   };
-  const deleteAcademic = async (seq) => {
+
+  const deleteAcademic = async () => {
     if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
       try {
         // academicList에서 현재 학생의 SORT 값을 가져옴
         const academicSort = academicList[0]?.SORT || 1; // 기본값 1
 
-        await axios.delete(`/api/student/academic/${seq}/${academicSort}`);
+        await axios.delete(`/api/student/academic/${studentSeq}/${academicSort}`);
         alert('학력 정보가 삭제되었습니다.');
-        fetchStudentData();
+        fetchStudentData(studentSeq);
       } catch (error) {
         console.error('학력 정보 삭제 중 오류 발생:', error);
         alert('학력 정보 삭제에 실패했습니다.');
@@ -144,11 +158,19 @@ function Mypage() {
   };
 
   useEffect(() => {
-    if (seq) {
-      fetchStudentData();
-      getAcademicInfo();
-    }
-  }, [seq]);
+    // 컴포넌트 마운트 시 로그인된 사용자의 시퀀스를 가져옴
+    const initializeUser = async () => {
+      const seq = await fetchUserSeq();
+      setStudentSeq(seq);
+
+      if (seq) {
+        fetchStudentData(seq);
+        getAcademicInfo(seq);
+      }
+    };
+
+    initializeUser();
+  }, []);
 
   if (loading) return <div className="mypage-container"><div className="mypage-content"><div className="loading">로딩 중...</div></div></div>;
   if (error) return <div className="mypage-container"><div className="mypage-content"><div className="error">{error}</div></div></div>;
@@ -282,7 +304,7 @@ function Mypage() {
                   잘못 입력된 정보는 삭제 후 다시 등록해주세요.
                 </span>
                 <button
-                  onClick={() => deleteAcademic(seq)}
+                  onClick={() => deleteAcademic()}
                   className="academic-delete-btn"
                 >
                   삭제
@@ -362,14 +384,14 @@ function Mypage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          studentSeq={studentSeq}  // URL에서 가져온 시퀀스 전달
+          studentSeq={studentSeq}
         />
 
         <AddCertModal
           isOpen={isCertificationModalOpen}
           onClose={() => setIsCertificationModalOpen(false)}
           onSave={handleCertificationSave}
-          studentSeq={parseInt(seq)}
+          studentSeq={studentSeq}
           sort={1}
         />
       </div>
