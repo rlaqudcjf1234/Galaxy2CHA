@@ -23,7 +23,7 @@ function Login() {
 
     const [errors, setErrors] = useState({}); // 오류 내용
     const [loading, setLoading] = useState(false); // 로딩 상태
-    const [cookies, setCookie, removeCookie] = useCookies(["autoStudent"]);
+    const [cookies, setCookie, removeCookie] = useCookies(["autoStudent", "guest"]);
 
     useEffect(() => {
         if (cookies.autoStudent !== undefined && loginMode === "member") {
@@ -51,11 +51,12 @@ function Login() {
             }
 
             dispatch(setAccessToken(response.headers.authorization));
+            removeCookie("guest");
             navigate("/");
         } catch (error) {
             const response = error.response;
             if (response && response.data) {
-                setErrors({ member: response.data });
+                setErrors({ member: "일치하는 로그인 정보가 없습니다." });
             } else {
                 setErrors({ member: "로그인 처리 중 오류가 발생했습니다." });
             }
@@ -71,20 +72,16 @@ function Login() {
         setErrors({});
 
         try {
-            const response = await axios.post("/api/apply/student-info", {
-                name: guestUser.name,
-                email: guestUser.email,
-                jumin: guestUser.jumin,
-            });
+            const formData = new FormData(e.target);
+            const response = await axios.post("/api/apply/guest", formData);
 
-            if (response.data) {
-                // 세션에 정보 저장
-                sessionStorage.setItem("studentAuth", "true");
-                sessionStorage.setItem("studentInfo", JSON.stringify(response.data));
-                navigate("/apply");
-            } else {
-                setErrors({ guest: "입력하신 정보와 일치하는 지원서가 없습니다." });
-            }
+            dispatch(setAccessToken(response.headers.authorization));
+            // 30분짜리 guest허용
+            setCookie("guest", true, {
+                path: "/",
+                expires: new Date(Date.now() + 1800000),
+            });
+            navigate("/apply");
         } catch (error) {
             console.error("비회원 로그인 오류:", error);
             if (error.response?.status === 404) {

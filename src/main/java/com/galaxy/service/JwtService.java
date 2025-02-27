@@ -11,17 +11,25 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface JwtService {
 
+    String generateGuestToken(String email, String name, String jumin) throws Exception;
+
     String generateAccessToken(User user);
+
     String generateRefreshToken();
 
     Optional<String> extractAccessToken(HttpServletRequest request);
+
     Optional<String> extractRefreshToken(HttpServletRequest request);
+
     Optional<String> extractSubject(String accessToken);
+
     Jws<Claims> validateToken(String token) throws Exception;
 
     void setAccessToken(HttpServletResponse response, String accessToken);
+
     void setRefreshToken(HttpServletResponse response, String refreshToken, String username);
 
-	void removeRefreshToken(String refreshToken);  
-	String getUsernameByRefreshToken(String refreshToken) throws Exception;
+    void removeRefreshToken(String refreshToken);
+
+    String getUsernameByRefreshToken(String refreshToken) throws Exception;
 }

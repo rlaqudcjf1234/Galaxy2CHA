@@ -1,5 +1,5 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {PURGE} from "redux-persist";
+import { createSlice } from "@reduxjs/toolkit";
+import { PURGE } from "redux-persist";
 
 const initialState = {
     val: ""
@@ -18,6 +18,6 @@ export const tokenSlice = createSlice({
     }
 })
 
-export const {setAccessToken} = tokenSlice.actions;
+export const { setAccessToken } = tokenSlice.actions;
 
 export default tokenSlice.reducer;

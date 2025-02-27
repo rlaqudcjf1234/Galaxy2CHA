@@ -10,7 +10,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApplyDto extends SeqDto {
+public class ApplyDto extends SearchDto {
+
     private Long class_seq;
 
     @NotNull

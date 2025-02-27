@@ -1,16 +1,19 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Pagination = ({currentPage, totalCount, onPageChange}) => {
+const Pagination = ({ currentPage, totalCount, onPageChange }) => {
+    currentPage = currentPage || 1;
+    totalCount = totalCount || 0;
+
     const pageUnit = 10;  // 한 페이지당 보여줄 레코드 수
     const pageSize = 10;  // 한 화면에 보여줄 페이지 수
 
     // 전체 페이지 수 계산
     const totalPageCount = Math.ceil(totalCount / pageUnit);
-    
+
     // 현재 페이지 목록의 첫 페이지 번호
     const firstPageNoOnPageList = Math.floor((currentPage - 1) / pageSize) * pageSize + 1;
-    
+
     // 현재 페이지 목록의 마지막 페이지 번호
     const lastPageNoOnPageList = Math.min(
         firstPageNoOnPageList + pageSize - 1,
@@ -47,7 +50,7 @@ const Pagination = ({currentPage, totalCount, onPageChange}) => {
                         </button>
                     </li>
                 )}
-                
+
                 {totalPageCount > pageSize && (
                     <li className="page-item">
                         <button
@@ -63,8 +66,8 @@ const Pagination = ({currentPage, totalCount, onPageChange}) => {
                 {pageNumbers.map((number) => (
                     <li key={number} className="page-item">
                         {number === currentPage ? (
-                            <button 
-                                className="page-link active" 
+                            <button
+                                className="page-link active"
                                 aria-current="page"
                             >
                                 {number}
@@ -92,7 +95,7 @@ const Pagination = ({currentPage, totalCount, onPageChange}) => {
                         </button>
                     </li>
                 )}
-                
+
                 {totalPageCount > pageSize && (
                     <li className="page-item">
                         <button
