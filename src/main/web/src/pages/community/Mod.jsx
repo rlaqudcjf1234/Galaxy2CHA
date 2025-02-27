@@ -176,7 +176,6 @@ function Mod() {
                                     {communityType === "postbox" && (
                                         <>
                                             <option value="건의">건의</option>
-                                            <option value="문의">문의</option>
                                         </>
                                     )}
                                 </select>
