@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { persistor } from "../main";
 import { tokenSelector } from "../redux/store";
 import "../css/Header.css";
+import Logo2 from '../img/Logo_hor1.png';
+import Logo from '../img/Logo_hor2.png';
 
 function Header() {
     const { val } = tokenSelector((state) => state.accessToken);
@@ -12,9 +14,22 @@ function Header() {
 
     return (
         <header className="d-flex flex-wrap align-items-center justify-content-center p-3 mb-4 border-bottom">
+            {/* 로고를 중앙에 놓고 싶다면 */}
+            {/* <div className="d-flex flex-wrap align-items-center justify-content-center col-md-3 mb-2 mb-md-0"> */}
             <div className="col-md-3 mb-2 mb-md-0">
                 <Link to="/" className="d-inline-flex link-body-emphasis text-decoration-none">
-                    {"홈페이지 제목(이미지 처리)"}
+                    <img
+                        src={Logo}
+                        alt="Desktop Logo"
+                        className="logo-desktop"
+                        style={{ height: '70px' }}
+                    />
+                    <img
+                        src={Logo2}
+                        alt="Mobile Logo"
+                        className="logo-mobile"
+                        style={{ height: '70px' }}
+                    />
                 </Link>
             </div>
 
