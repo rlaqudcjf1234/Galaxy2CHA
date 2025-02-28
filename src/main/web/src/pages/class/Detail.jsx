@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Dompurify from 'dompurify';
 
 
 const Detail = () => {
@@ -59,68 +60,68 @@ const Detail = () => {
                         <section className="w-80 bg-white p-4">
                             {lectureDoc.plan?.length > 0
                                 ? lectureDoc.plan.map((item, index) => (
-                                      <div key={index}>
-                                          <h1 className="fs-2 fw-bold mb-4">강의설명</h1>
-                                          <div
-                                              className="mb-4"
-                                              dangerouslySetInnerHTML={{
-                                                  __html: Dompurify.sanitize(String(item || "")),
-                                              }}
-                                          ></div>
-                                      </div>
-                                  ))
+                                    <div key={index}>
+                                        <h1 className="fs-2 fw-bold mb-4">강의설명</h1>
+                                        <div
+                                            className="mb-4"
+                                            dangerouslySetInnerHTML={{
+                                                __html: Dompurify.sanitize(String(item || "")),
+                                            }}
+                                        ></div>
+                                    </div>
+                                ))
                                 : null}
                             {lectureDoc.award?.length > 0
                                 ? lectureDoc.award.map((item, index) => (
-                                      <div key={index}>
-                                          <h1 className="fs-2 fw-bold mb-4">수상내역</h1>
-                                          <div
-                                              className="mb-4"
-                                              dangerouslySetInnerHTML={{
-                                                  __html: Dompurify.sanitize(String(item || "")),
-                                              }}
-                                          ></div>
-                                      </div>
-                                  ))
+                                    <div key={index}>
+                                        <h1 className="fs-2 fw-bold mb-4">수상내역</h1>
+                                        <div
+                                            className="mb-4"
+                                            dangerouslySetInnerHTML={{
+                                                __html: Dompurify.sanitize(String(item || "")),
+                                            }}
+                                        ></div>
+                                    </div>
+                                ))
                                 : null}
                             {lectureDoc.progress?.length > 0
                                 ? lectureDoc.progress.map((item, index) => (
-                                      <div key={index}>
-                                          <h1 className="fs-2 fw-bold mb-4">진행과정</h1>
-                                          <div
-                                              className="mb-4"
-                                              dangerouslySetInnerHTML={{
-                                                  __html: Dompurify.sanitize(String(item || "")),
-                                              }}
-                                          ></div>
-                                      </div>
-                                  ))
+                                    <div key={index}>
+                                        <h1 className="fs-2 fw-bold mb-4">진행과정</h1>
+                                        <div
+                                            className="mb-4"
+                                            dangerouslySetInnerHTML={{
+                                                __html: Dompurify.sanitize(String(item || "")),
+                                            }}
+                                        ></div>
+                                    </div>
+                                ))
                                 : null}
                             {lectureDoc.capacity?.length > 0
                                 ? lectureDoc.capacity.map((item, index) => (
-                                      <div key={index}>
-                                          <h1 className="fs-2 fw-bold mb-4">필요자격</h1>
-                                          <div
-                                              className="mb-4"
-                                              dangerouslySetInnerHTML={{
-                                                  __html: Dompurify.sanitize(String(item || "")),
-                                              }}
-                                          ></div>
-                                      </div>
-                                  ))
+                                    <div key={index}>
+                                        <h1 className="fs-2 fw-bold mb-4">필요자격</h1>
+                                        <div
+                                            className="mb-4"
+                                            dangerouslySetInnerHTML={{
+                                                __html: Dompurify.sanitize(String(item || "")),
+                                            }}
+                                        ></div>
+                                    </div>
+                                ))
                                 : null}
                             {lectureDoc.procedure?.length > 0
                                 ? lectureDoc.procedure.map((item, index) => (
-                                      <div key={index}>
-                                          <h1 className="fs-2 fw-bold mb-4">취업과정</h1>
-                                          <div
-                                              className="mb-4"
-                                              dangerouslySetInnerHTML={{
-                                                  __html: Dompurify.sanitize(String(item || "")),
-                                              }}
-                                          ></div>
-                                      </div>
-                                  ))
+                                    <div key={index}>
+                                        <h1 className="fs-2 fw-bold mb-4">취업과정</h1>
+                                        <div
+                                            className="mb-4"
+                                            dangerouslySetInnerHTML={{
+                                                __html: Dompurify.sanitize(String(item || "")),
+                                            }}
+                                        ></div>
+                                    </div>
+                                ))
                                 : null}
                         </section>
                     </div>
