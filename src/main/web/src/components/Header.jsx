@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { persistor } from "../main";
 import { tokenSelector } from "../redux/store";
 import "../css/Header.css";
-import Logo2 from '../img/Logo_hor1.png';
-import Logo from '../img/Logo_hor2.png';
+import Logo2 from "../img/Logo_hor1.png";
+import Logo from "../img/Logo_hor2.png";
 
 function Header() {
     const { val } = tokenSelector((state) => state.accessToken);
@@ -18,18 +18,8 @@ function Header() {
             {/* <div className="d-flex flex-wrap align-items-center justify-content-center col-md-3 mb-2 mb-md-0"> */}
             <div className="col-md-3 mb-2 mb-md-0">
                 <Link to="/" className="d-inline-flex link-body-emphasis text-decoration-none">
-                    <img
-                        src={Logo}
-                        alt="Desktop Logo"
-                        className="logo-desktop"
-                        style={{ height: '70px' }}
-                    />
-                    <img
-                        src={Logo2}
-                        alt="Mobile Logo"
-                        className="logo-mobile"
-                        style={{ height: '70px' }}
-                    />
+                    <img src={Logo} alt="Desktop Logo" className="logo-desktop" style={{ height: "70px" }} />
+                    <img src={Logo2} alt="Mobile Logo" className="logo-mobile" style={{ height: "70px" }} />
                 </Link>
             </div>
 
@@ -37,27 +27,6 @@ function Header() {
                 <nav id="menu" className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                     <div className="menu-item">
                         <div className="menu-text">
-                            <Link to="/" className="nav-link px-2">
-                                통합관리
-                            </Link>
-                        </div>
-                        <div className="sub-menu">
-                            <div className="box">
-                                {[
-                                    {
-                                        label: "코드관리(미정)",
-                                        path: "",
-                                    },
-                                    {
-                                        label: "강사등록",
-                                        path: "admin",
-                                    },
-                                ].map((item, index) => (
-                                    <Link key={index} to={`/${item.path}`}>
-                                        {item.label}
-                                    </Link>
-                                ))}
-                            </div>
                             <div className="sub-menu-holder"></div>
                         </div>
                     </div>
@@ -111,15 +80,15 @@ function Header() {
                                     },
                                     {
                                         label: "출석현황",
-                                        path: "Chulseog",
+                                        path: "#",
                                     },
                                     {
                                         label: "자격증 안내",
-                                        path: "Qualification_Info",
+                                        path: "#",
                                     },
                                     {
                                         label: "시간표 조회",
-                                        path: "Timetable",
+                                        path: "#",
                                     },
                                 ].map((item, index) => (
                                     <Link key={index} to={`/${item.path}`}>
@@ -142,19 +111,19 @@ function Header() {
                                 {[
                                     {
                                         label: "통계 및 분석",
-                                        path: "Stats_Analysis",
+                                        path: "#",
                                     },
                                     {
                                         label: "사후관리 신청",
-                                        path: "Aftercare_Apply",
+                                        path: "#",
                                     },
                                     {
                                         label: "진행 현황",
-                                        path: "Aftercare_Progress",
+                                        path: "#",
                                     },
                                     {
                                         label: "사후관리 결과",
-                                        path: "Aftercare_Results",
+                                        path: "#",
                                     },
                                 ].map((item, index) => (
                                     <Link key={index} to={`/${item.path}`}>
@@ -172,29 +141,31 @@ function Header() {
                                 설문평가
                             </Link>
                         </div>
-                        {/* <div className="sub-menu">
-                        <div className="box">
-                            {[
-                                {
-                                    label: "설문 참여내역",
-                                    path: "Survey_YN",
-                                },
-                                {
-                                    label: "교원평가",
-                                    path: "Admin_Survey",
-                                },
-                                {
-                                    label: "설문 결과",
-                                    path: "Survey_Results",
-                                },
-                            ].map((item, index) => (
-                                <Link key={index} to={`/${item.path}`}>
-                                    {item.label}
-                                </Link>
-                            ))}
-                        </div>
-                        <div className="sub-menu-holder"></div>
-                    </div> */}
+                        {
+                            <div className="sub-menu">
+                                <div className="box">
+                                    {[
+                                        {
+                                            label: "설문 참여내역",
+                                            path: "#",
+                                        },
+                                        {
+                                            label: "교원평가",
+                                            path: "#",
+                                        },
+                                        {
+                                            label: "설문 결과",
+                                            path: "#",
+                                        },
+                                    ].map((item, index) => (
+                                        <Link key={index} to={`/${item.path}`}>
+                                            {item.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                                <div className="sub-menu-holder"></div>
+                            </div>
+                        }
                     </div>
 
                     <div className="menu-item">

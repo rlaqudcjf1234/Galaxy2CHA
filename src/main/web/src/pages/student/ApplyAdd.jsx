@@ -152,7 +152,7 @@ function ApplyAdd() {
             const response = await axios.post("/api/apply/add", submitData);
             if (response.status === 200) {
                 alert("정보가 정상적으로 등록되었습니다.");
-                navigate("/apply");
+                navigate("/");
             }
         } catch (error) {
             console.error("상세 에러:", error.response?.data);
