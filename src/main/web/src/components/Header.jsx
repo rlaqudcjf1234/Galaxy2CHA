@@ -13,7 +13,7 @@ function Header() {
     };
 
     return (
-        <header className="d-flex flex-wrap align-items-center justify-content-center p-3 mb-4 border-bottom">
+        <header className="d-flex flex-wrap align-items-center justify-content-center p-3 border-bottom">
             {/* 로고를 중앙에 놓고 싶다면 */}
             {/* <div className="d-flex flex-wrap align-items-center justify-content-center col-md-3 mb-2 mb-md-0"> */}
             <div className="col-md-3 mb-2 mb-md-0">
@@ -24,47 +24,7 @@ function Header() {
             </div>
 
             {val ? (
-                <nav id="menu" className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                    <div className="menu-item">
-                        <div className="menu-text">
-                            <div className="sub-menu-holder"></div>
-                        </div>
-                    </div>
-                    <div className="menu-item">
-                        <div className="menu-text">
-                            <Link to="/" className="nav-link px-2">
-                                과정등록
-                            </Link>
-                        </div>
-                        <div className="sub-menu">
-                            <div className="box">
-                                {[
-                                    {
-                                        label: "교육과정현황",
-                                        path: "lecture",
-                                    },
-                                    {
-                                        label: "학습안내서",
-                                        path: "",
-                                    },
-                                    {
-                                        label: "강의현황",
-                                        path: "class",
-                                    },
-                                    {
-                                        label: "시간표 현황",
-                                        path: "",
-                                    },
-                                ].map((item, index) => (
-                                    <Link key={index} to={`/${item.path}`}>
-                                        {item.label}
-                                    </Link>
-                                ))}
-                            </div>
-                            <div className="sub-menu-holder"></div>
-                        </div>
-                    </div>
-
+                <nav id="menu" className="nav col-md-4 col-md-auto mb-2 justify-content-center mb-md-0">
                     <div className="menu-item">
                         <div className="menu-text">
                             <Link to="/apply" className="nav-link px-2">
@@ -79,17 +39,17 @@ function Header() {
                                         path: "apply",
                                     },
                                     {
-                                        label: "출석현황",
+                                        label: "출석 및 시간표",
                                         path: "#",
                                     },
-                                    {
-                                        label: "자격증 안내",
-                                        path: "#",
-                                    },
-                                    {
-                                        label: "시간표 조회",
-                                        path: "#",
-                                    },
+                                    // {
+                                    //     label: "자격증 안내",
+                                    //     path: "#",
+                                    // },
+                                    // {
+                                    //     label: "시간표 조회",
+                                    //     path: "#",
+                                    // },
                                 ].map((item, index) => (
                                     <Link key={index} to={`/${item.path}`}>
                                         {item.label}
@@ -99,42 +59,6 @@ function Header() {
                             <div className="sub-menu-holder"></div>
                         </div>
                     </div>
-
-                    <div className="menu-item">
-                        <div className="menu-text">
-                            <Link to="/Stats_Analysis" className="nav-link px-2">
-                                사후관리
-                            </Link>
-                        </div>
-                        <div className="sub-menu">
-                            <div className="box">
-                                {[
-                                    {
-                                        label: "통계 및 분석",
-                                        path: "#",
-                                    },
-                                    {
-                                        label: "사후관리 신청",
-                                        path: "#",
-                                    },
-                                    {
-                                        label: "진행 현황",
-                                        path: "#",
-                                    },
-                                    {
-                                        label: "사후관리 결과",
-                                        path: "#",
-                                    },
-                                ].map((item, index) => (
-                                    <Link key={index} to={`/${item.path}`}>
-                                        {item.label}
-                                    </Link>
-                                ))}
-                            </div>
-                            <div className="sub-menu-holder"></div>
-                        </div>
-                    </div>
-
                     <div className="menu-item">
                         <div className="menu-text">
                             <Link to="/survey" className="nav-link px-2">
@@ -146,17 +70,17 @@ function Header() {
                                 <div className="box">
                                     {[
                                         {
-                                            label: "설문 참여내역",
-                                            path: "#",
+                                            label: "설문 참여",
+                                            path: "survey",
                                         },
-                                        {
-                                            label: "교원평가",
-                                            path: "#",
-                                        },
-                                        {
-                                            label: "설문 결과",
-                                            path: "#",
-                                        },
+                                        // {
+                                        //     label: "교원평가",
+                                        //     path: "#",
+                                        // },
+                                        // {
+                                        //     label: "설문 결과",
+                                        //     path: "#",
+                                        // },
                                     ].map((item, index) => (
                                         <Link key={index} to={`/${item.path}`}>
                                             {item.label}
@@ -167,7 +91,6 @@ function Header() {
                             </div>
                         }
                     </div>
-
                     <div className="menu-item">
                         <div className="menu-text">
                             <Link to="/Class_Community" className="nav-link px-2">
@@ -206,9 +129,14 @@ function Header() {
                         </div>
                     </div>
                 </nav>
-            ) : null}
+            ) : (
+                <nav id="menu" className="nav col-md-4 col-md-auto mb-2 justify-content-center mb-md-0"></nav>
+            )}
             {val ? (
                 <div className="col-md-3 text-end">
+                    <Link to="/student/mypage" className="btn btn-outline-primary me-2">
+                        My Page
+                    </Link>
                     <button type="button" className="btn btn-outline-primary me-2" onClick={handleClick}>
                         Logout
                     </button>
