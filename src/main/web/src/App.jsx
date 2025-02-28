@@ -50,8 +50,8 @@ function App() {
                         </Route>
 
                         <Route path="student">
-                            <Route path="mypage/:seq" element={<Container />}>
-                                <Route index="index" element={<MyPage />} />
+                            <Route path="mypage" element={<Container />}>
+                                <Route index element={<MyPage />} />
                             </Route>
                         </Route>
                         <Route path="community" element={<Container />}>

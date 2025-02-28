@@ -82,24 +82,39 @@ const SearchSchoolModal = ({ isOpen, onClose, onSelect, schoolLevel }) => {
         setError(null);
 
         try {
-            const response = await fetch(
+            // 고등학교와 대학교를 동시에 검색
+            const highSchoolPromise = fetch(
                 `https://www.career.go.kr/cnet/openapi/getOpenApi.json?apiKey=${API_KEY}` +
                 `&svcType=api&svcCode=SCHOOL&contentType=json` +
-                `&gubun=${encodeURIComponent(schoolLevel === "high" ? "high_list" : "univ_list")}` +
+                `&gubun=high_list` +
                 `&searchSchulNm=${encodeURIComponent(keyword)}`
             );
 
-            if (!response.ok) {
-                throw new Error("검색에 실패했습니다.");
-            }
+            const univPromise = fetch(
+                `https://www.career.go.kr/cnet/openapi/getOpenApi.json?apiKey=${API_KEY}` +
+                `&svcType=api&svcCode=SCHOOL&contentType=json` +
+                `&gubun=univ_list` +
+                `&searchSchulNm=${encodeURIComponent(keyword)}`
+            );
 
-            const data = await response.json();
-            if (data.dataSearch && Array.isArray(data.dataSearch.content)) {
-                setSearchResults(data.dataSearch.content);
-                setShowSuggestions(true);
-            } else {
-                setSearchResults([]);
-            }
+            const [highSchoolResponse, univResponse] = await Promise.all([highSchoolPromise, univPromise]);
+
+            const highSchoolData = await highSchoolResponse.json();
+            const univData = await univResponse.json();
+
+            const highSchoolResults = highSchoolData.dataSearch && Array.isArray(highSchoolData.dataSearch.content)
+                ? highSchoolData.dataSearch.content
+                : [];
+
+            const univResults = univData.dataSearch && Array.isArray(univData.dataSearch.content)
+                ? univData.dataSearch.content
+                : [];
+
+            // 두 결과 합치기
+            const combinedResults = [...highSchoolResults, ...univResults];
+
+            setSearchResults(combinedResults);
+            setShowSuggestions(combinedResults.length > 0);
         } catch (error) {
             console.error("검색 실패:", error);
             setError("학교 정보를 검색하는 중 오류가 발생했습니다.");
@@ -325,9 +340,9 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
         FINAL_SCHOOL_LEVEL: "",
         FINAL_SCHOOL_NAME: "",
         FINAL_SCHOOL_LESSON: "",
-        FINAL_SCHOOL_SPECIALITY: "0",  
+        FINAL_SCHOOL_SPECIALITY: "0",
         GRADUATE_YN: "",
-        REG_DT: new Date().toISOString().split('T')[0]  
+        REG_DT: new Date().toISOString().split('T')[0]
     });
 
     const handleMajorSelect = (major) => {
@@ -403,31 +418,31 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // 필수 필드 검증
         const requiredFields = {
-          FINAL_SCHOOL_LEVEL: '최종학력',
-          FINAL_SCHOOL_NAME: '학교명',
-          GRADUATE_YN: '졸업여부'
+            FINAL_SCHOOL_LEVEL: '최종학력',
+            FINAL_SCHOOL_NAME: '학교명',
+            GRADUATE_YN: '졸업여부'
         };
-      
+
         const missingFields = Object.entries(requiredFields)
-          .filter(([key]) => !formData[key])
-          .map(([, label]) => label);
-      
+            .filter(([key]) => !formData[key])
+            .map(([, label]) => label);
+
         if (missingFields.length > 0) {
-          alert(`다음 필수 항목을 입력해주세요:\n${missingFields.join('\n')}`);
-          return;
+            alert(`다음 필수 항목을 입력해주세요:\n${missingFields.join('\n')}`);
+            return;
         }
-      
+
         try {
-          await onSave(formData);
-          // onClose()는 onSave 성공 시 호출됨
+            await onSave(formData);
+            // onClose()는 onSave 성공 시 호출됨
         } catch (error) {
-          console.error('Form submission error:', error);
-          alert('학력 정보 등록에 실패했습니다. 다시 시도해주세요.');
+            console.error('Form submission error:', error);
+            alert('학력 정보 등록에 실패했습니다. 다시 시도해주세요.');
         }
-      };
+    };
 
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
@@ -464,9 +479,11 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
                                 required
                             >
                                 <option value="">최종학력을 선택하세요</option>
-                                <option value="고등학교">고등학교</option>
-                                <option value="초대졸">전문대</option>
-                                <option value="대학교">대학교</option>
+                                <option value="20">중학교 졸업</option>
+                                <option value="30">고등학교 졸업</option>
+                                <option value="40">대학교 졸업(전문대)</option>
+                                <option value="50">대학교 졸업(4년제)</option>
+                                <option value="60">석사졸업</option>
                             </select>
                         </div>
 
@@ -547,10 +564,12 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
                                 required
                             >
                                 <option value="">졸업여부를 선택하세요</option>
-                                <option value="Y">졸업</option>
-                                <option value="N">재학중</option>
-                                <option value="N">휴학중</option>
-                                <option value="N">중퇴</option>
+                                <option value="10">재학주간</option>
+                                <option value="20">재학야간</option>
+                                <option value="30">휴학</option>
+                                <option value="40">중퇴</option>
+                                <option value="50">졸업</option>
+                                <option value="60">검정고시</option>
                             </select>
                         </div>
                     </div>
@@ -589,4 +608,4 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
     );
 };
 
-export default AddEduModal;
+export default AddEduModal; 

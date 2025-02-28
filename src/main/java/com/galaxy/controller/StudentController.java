@@ -2,7 +2,7 @@ package com.galaxy.controller;
 
 import com.galaxy.dto.StudentDto;
 import com.galaxy.service.StudentService;
-
+import com.galaxy.util.HttpLoginUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,17 +27,17 @@ public class StudentController {
         log.info("============================================");
         log.info("Entering getStudentAftercare method");
         log.info("Requested sequence number: {}", seq);
-        
+
         try {
             // studentService에서 조인된 데이터를 한 번에 가져옴
             Map<String, Object> mypageInfo = studentService.getStudentMypage(seq);
             log.info("Service response: {}", mypageInfo);
-            
+
             if (mypageInfo == null) {
                 log.warn("No aftercare info found for seq: {}", seq);
                 return ResponseEntity.notFound().build();
             }
-            
+
             return ResponseEntity.ok(mypageInfo);
         } catch (Exception e) {
             log.error("Error processing request for seq: {}", seq, e);
@@ -45,23 +45,48 @@ public class StudentController {
                     .body("정보 조회 중 오류가 발생했습니다.");
         }
     }
-     
 
-    
-    
+    @GetMapping("/mypage/current")
+    public ResponseEntity<?> getCurrentStudentMypage() {
+        try {
+            // HttpLoginUtil에서 현재 로그인한 사용자의 시퀀스 가져오기
+            String seqStr = HttpLoginUtil.getSeq();
+            if (seqStr == null || seqStr.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증된 사용자 정보가 없습니다.");
+            }
+
+            Long seq = Long.parseLong(seqStr);
+
+            // 기존 로직 재사용
+            Map<String, Object> mypageInfo = studentService.getStudentMypage(seq);
+
+            if (mypageInfo == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(mypageInfo);
+        } catch (Exception e) {
+            log.error("Error processing request for current user", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("정보 조회 중 오류가 발생했습니다.");
+        }
+    }
+
+
+
     @GetMapping("/info/{id}")
     public ResponseEntity<StudentDto> getStudentInfoById(@PathVariable String id) {
         // 입력받은 ID 값 로깅
         log.info("조회 요청된 학생 ID: {}", id);
-        
+
         StudentDto studentInfo = studentService.getStudentInfoById(id);
-        
+
         // 조회 결과 로깅
         if (studentInfo == null) {
             log.warn("ID: {}로 조회된 학생 정보가 없습니다.", id);
             return ResponseEntity.notFound().build();
         }
-        
+
         log.info("학생 정보 조회 성공 - ID: {}, 이름: {}", id, studentInfo.getName());
         return ResponseEntity.ok(studentInfo);
     }

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { authenticatedRequest as axios } from '../../plugins/axios';
+import { useParams } from 'react-router-dom';
 import '../../css/Mypage.css';
 import AddEduModal from './AddEduModal';
 import AddCertModal from './AddCertModal';
 
 function Mypage() {
+  const { seq } = useParams();
   const [loading, setLoading] = useState(false);
   const [studentData, setStudentData] = useState(null);
   const [error, setError] = useState(null);
@@ -15,11 +17,12 @@ function Mypage() {
   const [academicList, setAcademicList] = useState(null);
   const [studentSeq, setStudentSeq] = useState(null);
 
-  // 로그인된 사용자의 시퀀스를 가져오는 함수
   const fetchUserSeq = async () => {
     try {
-      const response = await axios.get('/api/auth/user-info');
-      return response.data.seq; // 백엔드에서 HttpLoginUtil.getSeq()를 통해 얻은 값
+      const response = await axios.get('/api/student/mypage/current');
+      // 응답에서 seq 값 추출 (응답 구조에 따라 달라질 수 있음)
+      const seq = response.data.STUDENT_SEQ || response.data.seq;
+      return seq;
     } catch (err) {
       console.error('Error fetching user sequence:', err);
       setError('사용자 정보를 불러오는 데 실패했습니다.');
@@ -27,24 +30,25 @@ function Mypage() {
     }
   };
 
-  const fetchStudentData = async (seq) => {
-    if (!seq) return;
+  const fetchStudentData = async (seqParam) => {
+    const sequenceToUse = seqParam || studentSeq;
+    if (!sequenceToUse) return;
 
     setLoading(true);
     setError(null);
 
     try {
       const [studentResponse, certResponse, academicResponse] = await Promise.all([
-        axios.get(`/api/student/mypage/${seq}`),
-        axios.get(`/api/student/certification/${seq}`),
-        axios.get(`/api/student/academic/info/${seq}`)
+        axios.get(`/api/student/mypage/${sequenceToUse}`),
+        axios.get(`/api/student/certification/${sequenceToUse}`),
+        axios.get(`/api/student/academic/info/${sequenceToUse}`)
       ]);
 
       setStudentData(studentResponse.data);
       setCertifications(Array.isArray(certResponse.data) ? certResponse.data : []);
       setAcademicList(academicResponse.data ? academicResponse.data : null);
     } catch (err) {
-      console.error('Error fetching data:', err);
+      console.error('데이터 가져오기 오류:', err);
       setError('데이터를 불러오는 데 실패했습니다.');
     } finally {
       setLoading(false);
@@ -66,7 +70,7 @@ function Mypage() {
       if (response.data) {
         alert('학력 정보가 성공적으로 등록되었습니다.');
         setIsModalOpen(false);
-        fetchStudentData(studentSeq); // 데이터 새로고침
+        fetchStudentData(); // 데이터 새로고침
       }
     } catch (error) {
       console.error('학력 정보 등록 실패:', error.response?.data || error.message);
@@ -80,8 +84,8 @@ function Mypage() {
 
   const handleEducationSave = async (educationData) => {
     try {
-      await axios.post(`/api/student/education/${studentSeq}`, educationData);
-      fetchStudentData(studentSeq);
+      await axios.post(`/api/student/education/${seq}`, educationData);
+      fetchStudentData();
     } catch (error) {
       console.error('Failed to save education data:', error);
     }
@@ -90,9 +94,9 @@ function Mypage() {
   const handleEducationDelete = async () => {
     if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
       try {
-        await axios.delete(`/api/student/education/${studentSeq}`);
+        await axios.delete(`/api/student/education/${seq}`);
         alert('학력 정보가 삭제되었습니다.');
-        await fetchStudentData(studentSeq);
+        await fetchStudentData();
       } catch (error) {
         console.error('Failed to delete education:', error);
         alert('학력 정보 삭제에 실패했습니다.');
@@ -102,9 +106,9 @@ function Mypage() {
 
   const handleCertificationSave = async (certificationData) => {
     try {
-      await axios.post(`/api/student/certification/${studentSeq}`, certificationData);
+      await axios.post(`/api/student/certification/${seq}`, certificationData);
       alert('자격증 정보가 성공적으로 등록되었습니다.');
-      await fetchStudentData(studentSeq);
+      await fetchStudentData();
       setIsCertificationModalOpen(false);
     } catch (error) {
       console.error('Failed to save certification data:', error);
@@ -115,20 +119,19 @@ function Mypage() {
   const handleCertificationDelete = async (certSort) => {
     if (window.confirm('자격증 정보를 삭제하시겠습니까?')) {
       try {
+        // URL 파라미터 seq 대신 studentSeq 사용
         await axios.delete(`/api/student/certification/${studentSeq}/${certSort}`);
         alert('자격증 정보가 삭제되었습니다.');
-        await fetchStudentData(studentSeq);
+        await fetchStudentData(studentSeq); // studentSeq 전달
       } catch (error) {
-        console.error('Failed to delete certification:', error);
+        console.error('자격증 정보 삭제 실패:', error);
         alert('자격증 정보 삭제에 실패했습니다.');
       }
     }
   };
 
   // 학력 정보 조회 함수
-  const getAcademicInfo = async (seq) => {
-    if (!seq) return;
-
+  const getAcademicInfo = async () => {
     try {
       const response = await axios.get(`/api/student/academic/info/${seq}`);
       // 응답 데이터가 배열인지 확인하고 처리
@@ -140,16 +143,15 @@ function Mypage() {
       setAcademicList([]); // 에러 시 빈 배열로 설정
     }
   };
-
   const deleteAcademic = async () => {
     if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
       try {
-        // academicList에서 현재 학생의 SORT 값을 가져옴
-        const academicSort = academicList[0]?.SORT || 1; // 기본값 1
+        const academicSort = academicList[0]?.SORT || 1;
 
+        // studentSeq를 일관되게 사용 (JWT에서 가져온 값)
         await axios.delete(`/api/student/academic/${studentSeq}/${academicSort}`);
         alert('학력 정보가 삭제되었습니다.');
-        fetchStudentData(studentSeq);
+        fetchStudentData(studentSeq); // studentSeq 전달
       } catch (error) {
         console.error('학력 정보 삭제 중 오류 발생:', error);
         alert('학력 정보 삭제에 실패했습니다.');
@@ -384,7 +386,7 @@ function Mypage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          studentSeq={studentSeq}
+          studentSeq={studentSeq}  // URL에서 가져온 시퀀스 전달
         />
 
         <AddCertModal

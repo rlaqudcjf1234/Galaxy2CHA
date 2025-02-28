@@ -1,55 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.galaxy.mapper.StudentMapper">
-    
-    <select id="selectStudentInfoById" resultType="com.galaxy.dto.StudentDto">
-    SELECT 
-         S.ID AS ID,
-        S.CLASS_SEQ AS CLASSSEQ,
-        S.NAME AS NAME,
-        S.JUMIN AS JUMIN,
-        S.REAL_ZIPCODE AS REALZIPCODE,
-        S.REAL_ADDRESS1 AS REALADDRESS1,
-        S.REAL_ADDRESS2 AS REALADDRESS2,
-        S.ZIPCODE AS ZIPCODE,
-        S.ADDRESS1 AS ADDRESS1,
-        S.ADDRESS2 AS ADDRESS2,
-        S.EMAIL AS EMAIL,
-        S.PHONE AS PHONE,
-        CAST(S.REG_DATE AS TIMESTAMP) AS REGDATE 
-    FROM 
-        GALAXY.STUDENT s
-    WHERE 
-        s.ID = #{id}
-    </select>
-
-    <select id="getStudentMypage" parameterType="Long" resultType="map">
-    SELECT  
-        A.SEQ AS STUDENT_SEQ,
-        A.NAME,
-        A.EMAIL,
-        A.PHONE,
-        A.REAL_ZIPCODE,
-        A.REAL_ADDRESS1,
-        A.REAL_ADDRESS2,
-        B.SEQ AS CLASS_SEQ,
-        B.ROOM,
-        TO_CHAR(B.START_DT, 'YYYY-MM-DD') AS START_DT,
-        TO_CHAR(B.END_DT, 'YYYY-MM-DD') AS END_DT,
-        B.START_TM,
-        B.END_TM,
-        B.ROUND,
-        C.NAME AS LECTURE_NAME,
-        AD.NAME AS ADMIN_NAME
-    FROM
-        GALAXY.STUDENT A
-        INNER JOIN GALAXY.CLASS B ON A.CLASS_SEQ = B.SEQ
-        INNER JOIN GALAXY.LECTURE C ON B.LECTURE_SEQ = C.SEQ
-        LEFT JOIN GALAXY.ADMIN AD ON B.ADMIN_SEQ = AD.SEQ
-    WHERE
-        A.SEQ = #{seq}
-</select>
-
-
-    
+	<select id="selectStudentInfoById" resultType="com.galaxy.dto.StudentDto">
+		SELECT
+		S.ID AS ID,
+		S.CLASS_SEQ AS CLASSSEQ,
+		S.NAME AS NAME,
+		S.JUMIN AS JUMIN,
+		S.REAL_ZIPCODE AS REALZIPCODE,
+		S.REAL_ADDRESS1 AS REALADDRESS1,
+		S.REAL_ADDRESS2 AS REALADDRESS2,
+		S.ZIPCODE AS ZIPCODE,
+		S.ADDRESS1 AS ADDRESS1,
+		S.ADDRESS2 AS ADDRESS2,
+		S.EMAIL AS EMAIL,
+		S.PHONE AS PHONE,
+		CAST(S.REG_DATE AS TIMESTAMP) AS REGDATE
+		FROM
+		GALAXY.STUDENT s
+		WHERE
+		s.ID = #{id}
+	</select>
+	<select id="getStudentMypage" parameterType="Long" resultType="map">
+		SELECT
+		A.SEQ AS STUDENT_SEQ,
+		A.NAME,
+		A.EMAIL,
+		A.PHONE,
+		A.REAL_ZIPCODE,
+		A.REAL_ADDRESS1,
+		A.REAL_ADDRESS2,
+		B.SEQ AS CLASS_SEQ,
+		B.ROOM,
+		TO_CHAR(B.START_DT, 'YYYY-MM-DD') AS START_DT,
+		TO_CHAR(B.END_DT, 'YYYY-MM-DD') AS END_DT,
+		B.START_TM,
+		B.END_TM,
+		B.ROUND,
+		C.NAME AS LECTURE_NAME,
+		AD.NAME AS ADMIN_NAME
+		FROM
+		GALAXY.STUDENT A
+		INNER JOIN GALAXY.CLASS B ON A.CLASS_SEQ = B.SEQ
+		INNER JOIN GALAXY.LECTURE C ON B.LECTURE_SEQ = C.SEQ
+		LEFT JOIN GALAXY.ADMIN AD ON B.ADMIN_SEQ = AD.SEQ
+		WHERE
+		A.SEQ = #{seq}
+	</select>
 </mapper>
