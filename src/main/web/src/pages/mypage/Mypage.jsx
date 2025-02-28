@@ -106,9 +106,16 @@ function Mypage() {
 
   const handleCertificationSave = async (certificationData) => {
     try {
-      await axios.post(`/api/student/certification/${seq}`, certificationData);
+      // studentSeq를 명시적으로 사용
+      if (!studentSeq) {
+        alert('학생 정보를 불러올 수 없습니다.');
+        return;
+      }
+
+      // URL 파라미터로 studentSeq 사용 (seq 대신)
+      await axios.post(`/api/student/certification/${studentSeq}`, certificationData);
       alert('자격증 정보가 성공적으로 등록되었습니다.');
-      await fetchStudentData();
+      await fetchStudentData(studentSeq);
       setIsCertificationModalOpen(false);
     } catch (error) {
       console.error('Failed to save certification data:', error);
@@ -188,12 +195,7 @@ function Mypage() {
           <h2 className="profile-name">{studentData.NAME || '이름없음'}</h2>
           <div className="profile-email">{studentData.EMAIL || '이메일 없음'}</div>
         </div>
-        <nav className="sidebar-menu">
-          <ul>
-            <li>내 정보</li>
-            <li>수강 정보</li>
-          </ul>
-        </nav>
+
       </aside>
 
       <div className="mypage-content">
@@ -201,7 +203,6 @@ function Mypage() {
           <h1>마이페이지</h1>
           <p>반갑습니다, {studentData.NAME}님</p>
         </div>
-
         <section className="mypage-section">
           <h2>기본 정보</h2>
           <div className="info-cards">
@@ -268,12 +269,6 @@ function Mypage() {
           {academicList.length === 0 ? (
             <div className="empty-state">
               <p>등록된 학력 정보가 없습니다.</p>
-              <button
-                className="btn btn-primary"
-                onClick={() => setIsModalOpen(true)}
-              >
-                학력 정보 추가
-              </button>
             </div>
           ) : (
             <>
@@ -314,6 +309,16 @@ function Mypage() {
               </div>
             </>
           )}
+          <div className="button-wrapper" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            marginTop: '15px'
+          }}>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+              학력 정보 추가
+            </button>
+          </div>
         </section>
 
 
@@ -325,58 +330,76 @@ function Mypage() {
               <p>등록된 자격증 정보가 없습니다.</p>
             </div>
           ) : (
-            <div className="table-responsive">
-              <table className="certification-table">
-                <thead>
-                  <tr>
-                    <th>자격증명</th>
-                    <th>발급기관</th>
-                    <th>합격일자</th>
-                    <th>자격증 번호</th>
-                    <th>관리</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {certifications.map((cert) => (
-                    <tr key={`${cert.STUDENT_SEQ}-${cert.SORT}`}>
-                      <td>{cert.CERT_NAME || '없음'}</td>
-                      <td>{cert.ISSUER || '없음'}</td>
-                      <td>{cert.PASS_DT || '없음'}</td>
-                      <td>{cert.CERT_NO || '없음'}</td>
-                      <td>
-                        <button
-                          onClick={() => handleCertificationDelete(cert.SORT)}
-                          className="delete-btn"
-                          style={{
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '14px'
-                          }}
-                        >
-                          삭제
-                        </button>
-                      </td>
+            <>
+              <div className="table-responsive">
+                <table className="certification-table">
+                  <thead>
+                    <tr>
+                      <th>자격증명</th>
+                      <th>발급기관</th>
+                      <th>합격일자</th>
+                      <th>자격증 번호</th>
+                      <th>관리</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {certifications.map((cert) => (
+                      <tr key={`${cert.STUDENT_SEQ}-${cert.SORT}`}>
+                        <td>{cert.CERT_NAME || '없음'}</td>
+                        <td>{cert.ISSUER || '없음'}</td>
+                        <td>{cert.PASS_DT || '없음'}</td>
+                        <td>{cert.CERT_NO || '없음'}</td>
+                        <td>
+                          <button
+                            onClick={() => handleCertificationDelete(cert.SORT)}
+                            className="delete-btn"
+                            style={{
+                              backgroundColor: '#dc3545',
+                              color: 'white',
+                              border: 'none',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '14px'
+                            }}
+                          >
+                            삭제
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="button-wrapper" style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: '15px'
+              }}>
+                <span style={{ color: 'gray', fontSize: '12px' }}>
+                  잘못 입력된 정보는 삭제 후 다시 등록해주세요.
+                </span>
+              </div>
+            </>
           )}
 
           <div className="button-wrapper" style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             marginTop: '15px'
           }}>
-            <span style={{ color: 'gray', fontSize: '12px' }}>
-              잘못 입력된 정보는 삭제 후 다시 등록해주세요.
-            </span>
-            <button className="btn btn-primary" onClick={() => setIsCertificationModalOpen(true)}>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                if (studentSeq) {
+                  setIsCertificationModalOpen(true);
+                } else {
+                  alert('학생 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+                }
+              }}
+            >
               자격증 정보 추가
             </button>
           </div>
@@ -393,8 +416,8 @@ function Mypage() {
           isOpen={isCertificationModalOpen}
           onClose={() => setIsCertificationModalOpen(false)}
           onSave={handleCertificationSave}
-          studentSeq={studentSeq}
-          sort={1}
+          studentSeq={studentSeq || ''}  // undefined 방지
+          sort={certifications.length > 0 ? certifications.length + 1 : 1}  // 자동으로 정렬 번호 지정
         />
       </div>
     </div>
