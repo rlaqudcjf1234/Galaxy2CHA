@@ -33,7 +33,14 @@ function List({ type }) {
             }
 
             const response = await axios.get("/api/community/list", { params: requestParams });
-            setItems(response.data.items || []);
+
+            // 역순으로 번호 매기기
+            const itemsWithReverseRnum = (response.data.items || []).map((item, index) => ({
+                ...item,
+                rnum: response.data.totalCount - (pageIndex - 1) * 10 - index,
+            }));
+
+            setItems(itemsWithReverseRnum);
             setTotalCount(response.data.totalCount || 0);
         } catch (error) {
             console.error("데이터 조회 오류:", error);
