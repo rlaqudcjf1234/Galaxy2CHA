@@ -4,15 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../css/Slider.css';
+import Uxeng from '../img/SwEng.png';
 import Sweng from '../img/SwEng.png';
 import BigData from '../img/BIGDATA.png';
 import ITsystem from '../img/ITSYSTEM.png';
 
 function Slider({ items, type }) {
     const navigate = useNavigate();
-    const itemsArray = items ? (Array.isArray(items) ? items : [items]) : [];
 
-    const getDefaultTitle = (type) => {
+    const sliderTitle = () => {
         switch (type) {
             case 'main':
                 return 'K디지털트레이닝';
@@ -24,6 +24,14 @@ function Slider({ items, type }) {
                 return '';
         }
     };
+    const itemsArray = items.filter((item) => {
+        const categoryMap = {
+            'main': 'k_digital',
+            'course': 'k_training',
+            'class': 'k_worker'
+        };
+        return item?.CATEGORY == categoryMap[type]
+    });
 
     // 날짜 포맷 함수
     const formatDate = (dateString) => {
@@ -38,28 +46,18 @@ function Slider({ items, type }) {
 
     const getLectureImage = (division) => {
         switch (division) {
-            case 'IT시스템관리':
+            case 'it_system':
                 return ITsystem;
-            case '빅데이터분석':
+            case 'bigdata':
                 return BigData;
-            case '응용SW엔지니어링':
+            case 'sw_engine':
                 return Sweng;
+            case 'ux_engine':
+                return Uxeng;
             default:
                 return '/images/default-course.jpg';
         }
     };
-
-    const getSliderTitle = () => {
-        const categoryMap = {
-            'main': 'k_digital',
-            'course': 'k_training',
-            'class': 'k_worker'
-        };
-        const matchingItem = itemsArray.find(item => item.CATEGORY === categoryMap[type]);
-        return matchingItem?.SLIDER_TITLE || getDefaultTitle(type);
-    };
-
-    const sliderTitle = getSliderTitle();
 
     const settings = {
         dots: true,
@@ -93,7 +91,7 @@ function Slider({ items, type }) {
 
     return (
         <div className={`slider-container ${type}-slider`}>
-            <h2 className="text-center mb-4">{sliderTitle}</h2>
+            <h2 className="text-start mb-2"><strong>{sliderTitle()}</strong></h2>
             <Slick {...settings}>
                 {itemsArray.map((item, index) => (
                     <div
@@ -104,13 +102,13 @@ function Slider({ items, type }) {
                         <div className="slide-image-wrapper">
                             <img
                                 src={getLectureImage(item.DIVISION)}
-                                alt={item.DIVISION || '강의 이미지'}
+                                alt={item.DIVISION_NAME || '강의 이미지'}
                                 className="slide-image"
                             />
                         </div>
                         <div className="slide-content">
                             <div className="content-title">
-                                <h3>{item.DIVISION || 'No Division'}</h3>
+                                <h3>{item.NAME}</h3>
                                 <p className="round">{item.ROUND || 'N/A'} 회차</p>
                             </div>
                             <div className="content-details">
@@ -118,7 +116,7 @@ function Slider({ items, type }) {
                             </div>
                         </div>
                     </div>
-                ))}                
+                ))}
             </Slick>
         </div>
     );
