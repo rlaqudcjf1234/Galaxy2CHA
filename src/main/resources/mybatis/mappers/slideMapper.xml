@@ -5,12 +5,15 @@
     SELECT
         B.LECTURE_SEQ,
         B.SEQ,
+        A.NAME, 
         A.CATEGORY,
-        GET_CODE_NAME('14',A.DIVISION) AS DIVISION,
-        GET_CODE_NAME('15',A.CATEGORY) AS SLIDER_TITLE,
+        A.DIVISION,
+        GET_CODE_NAME('14', A.DIVISION) AS DIVISION_NAME,
         B.ROUND,
-        B.START_DT
+        B.START_DT 
     FROM LECTURE A, CLASS B 
     WHERE A.SEQ = B.LECTURE_SEQ
+    AND B.USE_YN = 1
+    AND B.START_DT <![CDATA[>]]> TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')) 
     </select>
 </mapper>
