@@ -40,7 +40,7 @@ function Header() {
                                     },
                                     {
                                         label: "출석 및 시간표",
-                                        path: "#",
+                                        path: "calendar",
                                     },
                                     // {
                                     //     label: "자격증 안내",
