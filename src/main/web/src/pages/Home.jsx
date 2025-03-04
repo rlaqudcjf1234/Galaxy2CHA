@@ -55,12 +55,6 @@ function Home() {
                     <Slider items={slideData} type="class" />
                 </section>
             </div>
-            <section className="card-section">
-                <CardSection />
-            </section>
-            <section className="tab-menu-section">
-                <TabMenu />
-            </section>
         </div >
     );
 }
