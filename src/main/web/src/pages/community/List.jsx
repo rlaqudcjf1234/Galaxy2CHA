@@ -95,10 +95,6 @@ function List({ type }) {
 
     return (
         <div>
-            <div className="board-header mb-4">
-                <h4>{getBoardTitle()}</h4>
-            </div>
-
             <div className="row mb-3">
                 <div className="col-md-6">
                     <div className="input-group">
@@ -124,7 +120,13 @@ function List({ type }) {
                 </div>
             </div>
 
-            <table className="board-table">
+            <table className="table">
+                <caption>
+                    <span>
+                        <em>홈</em>
+                        <strong>{getBoardTitle()}</strong>
+                    </span>
+                </caption>
                 <colgroup>
                     <col width="80px" />
                     <col width="100px" />

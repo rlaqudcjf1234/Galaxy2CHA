@@ -93,7 +93,7 @@ function Header() {
                     </div>
                     <div className="menu-item">
                         <div className="menu-text">
-                            <Link to="/Class_Community" className="nav-link px-2">
+                            <Link to="/community/class" className="nav-link px-2">
                                 게시판
                             </Link>
                         </div>
