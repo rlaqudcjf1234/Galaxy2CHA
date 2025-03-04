@@ -91,12 +91,15 @@ function Mypage() {
     }
   };
 
+  // academicList에서 항목의 고유 ID를 전달.
   const handleEducationDelete = async () => {
     if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
       try {
-        await axios.delete(`/api/student/education/${seq}`);
+        const academicId = academicList[0].ACADEMIC_SEQ || academicList[0].SORT || 1;
+
+        await axios.delete(`/api/student/academic/${studentSeq}/${academicId}`);
         alert('학력 정보가 삭제되었습니다.');
-        await fetchStudentData();
+        await fetchStudentData(studentSeq);
       } catch (error) {
         console.error('Failed to delete education:', error);
         alert('학력 정보 삭제에 실패했습니다.');
@@ -311,7 +314,7 @@ function Mypage() {
                   잘못 입력된 정보는 삭제 후 다시 등록해주세요.
                 </span>
                 <button
-                  onClick={() => deleteAcademic()}
+                  onClick={() => handleEducationDelete()}
                   className="academic-delete-btn"
                 >
                   삭제
