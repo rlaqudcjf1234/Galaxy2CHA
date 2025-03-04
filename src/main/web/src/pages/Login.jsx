@@ -157,23 +157,6 @@ function Login() {
                     <form onSubmit={handleMemberSubmit}>
                         <h2 className="text-center mb-4">회원 로그인</h2>
 
-<<<<<<< HEAD
-                    {/* 이메일 입력 */}
-                    <div className="mb-3">
-                        <label htmlFor="email" className="form-label">
-                            이메일
-                        </label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="email"
-                            value={user.email}
-                            onChange={handleChange}
-                            required="required"
-                            autoComplete="current-email"/>
-                        <div className="invalid-feedback">
-                            {errors.email}
-=======
                         {errors.member && <div className="alert alert-danger">{errors.member}</div>}
 
                         {/* 이메일 입력 */}
@@ -189,27 +172,8 @@ function Login() {
                                 onChange={handleMemberChange}
                                 required
                             />
->>>>>>> ffa33c4e85c6e3edcad761eb2220f886f9817111
                         </div>
 
-<<<<<<< HEAD
-                    {/* 비밀번호 입력 */}
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">
-                            비밀번호
-                        </label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            name="password"
-                            value={user.password}
-                            onChange={handleChange}
-                            required="required"
-                            autoComplete="current-password"
-                            />
-                        <div className="invalid-feedback">
-                            {errors.password}
-=======
                         {/* 비밀번호 입력 */}
                         <div className="mb-3">
                             <label htmlFor="password" className="form-label">
@@ -223,7 +187,6 @@ function Login() {
                                 onChange={handleMemberChange}
                                 required
                             />
->>>>>>> ffa33c4e85c6e3edcad761eb2220f886f9817111
                         </div>
 
                         {/* 로그인 정보 기억하기 */}
