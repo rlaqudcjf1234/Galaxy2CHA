@@ -54,7 +54,7 @@ const Detail = () => {
     if (!clas) return <div className="p-4">No data available</div>;
     return (
         <div className="container-fluid">
-            <div className="row vh-100">
+            <div className="row">
                 <div className="col-7 overflow-auto p-0">
                     <div className="d-flex justify-content-center">
                         <section className="w-80 bg-white p-4">
