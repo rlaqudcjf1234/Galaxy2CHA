@@ -35,7 +35,7 @@
 }
 
 /* 슬라이드 내부 div */
-.slick-slide > div {
+.slick-slide>div {
     width: 100%;
     height: 100%;
 }
@@ -44,7 +44,7 @@
 .slide-item {
     background: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: all 0.3s ease;
     padding: 0;
@@ -55,7 +55,8 @@
 /* 이미지 래퍼 */
 .slide-image-wrapper {
     width: 100%;
-    padding-top: 56.25%; /* 16:9 비율 */
+    padding-top: 56.25%;
+    /* 16:9 비율 */
     position: relative;
     margin: 0;
     overflow: hidden;
@@ -86,17 +87,19 @@
 
 /* 제목 */
 .content-title h3 {
-    font-size: 1.1rem;
     color: #333;
-    margin: 0;
+    font-size: 1.1rem;
     font-weight: 600;
+    margin: 0;
+    word-break: keep-all;
 }
 
 /* 회차 정보 */
 .round {
-    font-size: 0.9rem;
     color: #666;
+    font-size: 0.9rem;
     margin: 0;
+    width: 50px;
 }
 
 /* 상세 정보 영역 */

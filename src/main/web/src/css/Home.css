@@ -1,7 +1,7 @@
 /* 메인 컨테이너 */
 .home-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 20px 0;
 }
@@ -11,7 +11,7 @@
 .course-slider,
 .class-slider {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 40px auto;
     padding: 0;
     display: flex;
