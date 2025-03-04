@@ -24,6 +24,8 @@ import CommunityMod from "./pages/community/Mod";
 
 import ClassDetail from "./pages/class/Detail";
 
+import Calendar from "./pages/calendar/Calendar";
+
 const SurveyList = lazy(() => import("./pages/survey/List"));
 const SurveyRead = lazy(() => import("./pages/survey/Read"));
 
@@ -48,11 +50,15 @@ function App() {
                         <Route path="class/:lecture_seq/:seq" element={<Container />}>
                             <Route index="index" element={<ClassDetail />} />
                         </Route>
+                        <Route path="calendar" element={<Container />}>
+                            <Route index="index" element={<Calendar />} />
+                        </Route>
 
                         <Route path="student">
                             <Route path="mypage/:seq" element={<Container />}>
                                 <Route index="index" element={<MyPage />} />
-                            </Route>
+                            </Route>                           
+                            
                         </Route>
                         <Route path="community" element={<Container />}>
                             <Route index="index" element={<CommunityList />} /> {/* 클래스 커뮤니티 관련 라우트 */}

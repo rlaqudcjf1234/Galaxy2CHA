@@ -96,7 +96,8 @@ function Login() {
                             name="email"
                             value={user.email}
                             onChange={handleChange}
-                            required="required"/>
+                            required="required"
+                            autoComplete="current-email"/>
                         <div className="invalid-feedback">
                             {errors.email}
                         </div>
@@ -113,7 +114,9 @@ function Login() {
                             name="password"
                             value={user.password}
                             onChange={handleChange}
-                            required="required"/>
+                            required="required"
+                            autoComplete="current-password"
+                            />
                         <div className="invalid-feedback">
                             {errors.password}
                         </div>
