@@ -138,9 +138,12 @@ function Mypage() {
   };
 
   // 학력 정보 조회 함수
-  const getAcademicInfo = async () => {
+  const getAcademicInfo = async (seqParam) => {
     try {
-      const response = await axios.get(`/api/student/academic/info/${seq}`);
+      const sequenceToUse = seqParam || studentSeq;
+      if (!sequenceToUse) return;
+
+      const response = await axios.get(`/api/student/academic/info/${sequenceToUse}`);
       // 응답 데이터가 배열인지 확인하고 처리
       const academicData = Array.isArray(response.data) ? response.data : [response.data];
       setAcademicList(academicData);
@@ -148,21 +151,6 @@ function Mypage() {
     } catch (error) {
       console.error('학력 정보 조회 중 오류 발생:', error);
       setAcademicList([]); // 에러 시 빈 배열로 설정
-    }
-  };
-  const deleteAcademic = async () => {
-    if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
-      try {
-        const academicSort = academicList[0]?.SORT || 1;
-
-        // studentSeq를 일관되게 사용 (JWT에서 가져온 값)
-        await axios.delete(`/api/student/academic/${studentSeq}/${academicSort}`);
-        alert('학력 정보가 삭제되었습니다.');
-        fetchStudentData(studentSeq); // studentSeq 전달
-      } catch (error) {
-        console.error('학력 정보 삭제 중 오류 발생:', error);
-        alert('학력 정보 삭제에 실패했습니다.');
-      }
     }
   };
 
@@ -174,7 +162,7 @@ function Mypage() {
 
       if (seq) {
         fetchStudentData(seq);
-        getAcademicInfo(seq);
+        getAcademicInfo(seq); // 가져온 seq 전달
       }
     };
 
@@ -287,10 +275,32 @@ function Mypage() {
                     {academicList.map((academic, index) => (
                       <tr key={index}>
                         <td>{academic.FINAL_SCHOOL_NAME || '없음'}</td>
-                        <td>{academic.FINAL_SCHOOL_LEVEL || '없음'}</td>
-                        <td>{academic.FINAL_SCHOOL_SPECIALITY || '없음'}</td>
+                        <td>
+                          {academic.FINAL_SCHOOL_LEVEL ?
+                            (parseInt(academic.FINAL_SCHOOL_LEVEL) === 20 ? '중학교' :
+                              parseInt(academic.FINAL_SCHOOL_LEVEL) === 30 ? '고등학교' :
+                                parseInt(academic.FINAL_SCHOOL_LEVEL) === 40 ? '대학교(2,3년제)' :
+                                  parseInt(academic.FINAL_SCHOOL_LEVEL) === 50 ? '대학교(4년제)' :
+                                    parseInt(academic.FINAL_SCHOOL_LEVEL) === 60 ? '석사졸업' :
+                                      academic.FINAL_SCHOOL_LEVEL) : '없음'}
+                        </td>
+                        <td>
+                          {academic.FINAL_SCHOOL_SPECIALITY ?
+                            (academic.FINAL_SCHOOL_SPECIALITY === '0' ? '비전공' :
+                              academic.FINAL_SCHOOL_SPECIALITY === '1' ? '전공' :
+                                academic.FINAL_SCHOOL_SPECIALITY) : '없음'}
+                        </td>
                         <td>{academic.FINAL_SCHOOL_LESSON || '없음'}</td>
-                        <td>{academic.GRADUATE_YN || '없음'}</td>
+                        <td>
+                          {academic.GRADUATE_YN ?
+                            (parseInt(academic.GRADUATE_YN) === 10 ? '재학주간' :
+                              parseInt(academic.GRADUATE_YN) === 20 ? '재학야간' :
+                                parseInt(academic.GRADUATE_YN) === 30 ? '휴학' :
+                                  parseInt(academic.GRADUATE_YN) === 40 ? '중퇴' :
+                                    parseInt(academic.GRADUATE_YN) === 50 ? '졸업' :
+                                      parseInt(academic.GRADUATE_YN) === 60 ? '검정고시' :
+                                        academic.GRADUATE_YN) : '없음'}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

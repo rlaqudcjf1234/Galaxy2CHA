@@ -7,6 +7,7 @@ import '../css/Slider.css';
 import Sweng from '../img/SwEng.png';
 import BigData from '../img/BIGDATA.png';
 import ITsystem from '../img/ITSYSTEM.png';
+import UiUxEng from '../img/UIUXENG.png'
 
 function Slider({ items, type }) {
     const navigate = useNavigate();
@@ -44,6 +45,8 @@ function Slider({ items, type }) {
                 return BigData;
             case '응용SW엔지니어링':
                 return Sweng;
+            case 'UI/UX엔지니어링':
+                return UiUxEng;
             default:
                 return '/images/default-course.jpg';
         }
@@ -118,7 +121,7 @@ function Slider({ items, type }) {
                             </div>
                         </div>
                     </div>
-                ))}                
+                ))}
             </Slick>
         </div>
     );
