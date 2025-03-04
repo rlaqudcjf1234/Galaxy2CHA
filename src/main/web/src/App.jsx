@@ -50,7 +50,7 @@ function App() {
                         </Route>
 
                         <Route path="student">
-                            <Route path="mypage" element={<Container />}>
+                            <Route path="mypage" element={<PrivateCotainer />}>
                                 <Route index element={<MyPage />} />
                             </Route>
                         </Route>

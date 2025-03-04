@@ -163,7 +163,8 @@
 .certification-table th,
 .certification-table td {
   padding: 0.75rem;
-  text-align: left;
+  text-align: center;
+  /* 모두 중앙 정렬로 변경 */
   border-bottom: 1px solid #dee2e6;
 }
 

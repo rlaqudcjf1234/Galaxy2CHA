@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../css/Slider.css';
-import Uxeng from '../img/SwEng.png';
 import Sweng from '../img/SwEng.png';
 import BigData from '../img/BIGDATA.png';
 import ITsystem from '../img/ITSYSTEM.png';
+import UiUxEng from '../img/UIUXENG.png'
 
 function Slider({ items, type }) {
     const navigate = useNavigate();
@@ -53,7 +53,7 @@ function Slider({ items, type }) {
             case 'sw_engine':
                 return Sweng;
             case 'ux_engine':
-                return Uxeng;
+                return UiUxEng;
             default:
                 return '/images/default-course.jpg';
         }
