@@ -1,56 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.galaxy.mapper.AcademicMapper">
-    
-    <insert id="insertAcademic" parameterType="map">
-    INSERT INTO ACADEMIC (
-        STUDENT_SEQ,
-        FINAL_SCHOOL_NAME,
-        FINAL_SCHOOL_LEVEL,
-        FINAL_SCHOOL_LESSON,
-        FINAL_SCHOOL_SPECIALITY,
-        GRADUATE_YN,
-        REG_DT
-    ) VALUES (
-        #{STUDENT_SEQ, jdbcType=NUMERIC},
-        #{FINAL_SCHOOL_NAME},
-        #{FINAL_SCHOOL_LEVEL},
-        #{FINAL_SCHOOL_LESSON},
-        #{FINAL_SCHOOL_SPECIALITY},
-        #{GRADUATE_YN},
-        SYSDATE
-    )
-</insert>
-
-    <select id="readAcademic" parameterType="int" resultType="map">
-        SELECT 
-            STUDENT_SEQ,
-            FINAL_SCHOOL_NAME,
-            FINAL_SCHOOL_LEVEL,
-            FINAL_SCHOOL_LESSON,
-            FINAL_SCHOOL_SPECIALITY,
-            GRADUATE_YN,
-            REG_DT
-        FROM ACADEMIC
-        WHERE STUDENT_SEQ = #{seq}
-    </select>
-
-     <select id="getAcademicInfo" parameterType="java.util.Map" resultType="java.util.Map">
-        SELECT 
-            FINAL_SCHOOL_NAME,
-            FINAL_SCHOOL_LEVEL,
-            FINAL_SCHOOL_SPECIALITY,
-            FINAL_SCHOOL_LESSON,
-            GRADUATE_YN,
-            TO_CHAR(REG_DT, 'YYYY-MM-DD') as REG_DT
-        FROM ACADEMIC
-        WHERE STUDENT_SEQ = #{STUDENT_SEQ}
-    </select>
-
-    
-    <delete id="deleteAcademicInfo" parameterType="java.util.Map">
-        DELETE FROM ACADEMIC 
-        WHERE STUDENT_SEQ = #{STUDENT_SEQ}
-    </delete>
-    
+	<insert id="insertAcademic" parameterType="map">
+		INSERT INTO ACADEMIC (
+		STUDENT_SEQ,
+		FINAL_SCHOOL_NAME,
+		FINAL_SCHOOL_LEVEL,
+		FINAL_SCHOOL_LESSON,
+		FINAL_SCHOOL_SPECIALITY,
+		GRADUATE_YN,
+		REG_DT
+		) VALUES (
+		#{STUDENT_SEQ, jdbcType=NUMERIC},
+		#{FINAL_SCHOOL_NAME},
+		#{FINAL_SCHOOL_LEVEL},
+		#{FINAL_SCHOOL_LESSON},
+		#{FINAL_SCHOOL_SPECIALITY},
+		#{GRADUATE_YN},
+		SYSDATE
+		)
+	</insert>
+	<select id="readAcademic" parameterType="int" resultType="map">
+		SELECT
+		STUDENT_SEQ,
+		FINAL_SCHOOL_NAME,
+		FINAL_SCHOOL_LEVEL,
+		FINAL_SCHOOL_LESSON,
+		FINAL_SCHOOL_SPECIALITY,
+		GRADUATE_YN,
+		REG_DT
+		FROM ACADEMIC
+		WHERE STUDENT_SEQ = #{seq}
+	</select>
+	<select id="getAcademicInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT
+		FINAL_SCHOOL_NAME,
+		FINAL_SCHOOL_LEVEL,
+		FINAL_SCHOOL_SPECIALITY,
+		FINAL_SCHOOL_LESSON,
+		GRADUATE_YN,
+		TO_CHAR(REG_DT, 'YYYY-MM-DD') as REG_DT
+		FROM ACADEMIC
+		WHERE STUDENT_SEQ = #{STUDENT_SEQ}
+	</select>
+	<delete id="deleteAcademicInfo" parameterType="java.util.Map">
+		DELETE FROM ACADEMIC
+		WHERE STUDENT_SEQ = #{STUDENT_SEQ}
+	</delete>
 </mapper>

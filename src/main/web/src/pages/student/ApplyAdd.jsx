@@ -31,12 +31,12 @@ function ApplyAdd() {
         seq: passedClassSeq || "", // 전달받은 class_seq로 초기화
         name: "",
         jumin: "",
-        real_zipcode: "",
-        real_address1: "",
-        real_address2: "",
         zipcode: "",
         address1: "",
         address2: "",
+        real_zipcode: "",
+        real_address1: "",
+        real_address2: "",
         email: "",
         phone: "",
         path: "",
@@ -152,7 +152,7 @@ function ApplyAdd() {
             const response = await axios.post("/api/apply/add", submitData);
             if (response.status === 200) {
                 alert("정보가 정상적으로 등록되었습니다.");
-                navigate("/apply");
+                navigate("/");
             }
         } catch (error) {
             console.error("상세 에러:", error.response?.data);
@@ -267,6 +267,52 @@ function ApplyAdd() {
                             </td>
                         </tr>
                         <tr id="apply_title">
+                            <th>등본상 우편번호(선택)</th>
+                            <td>
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        name="zipcode"
+                                        value={formData.zipcode}
+                                        onChange={handleInputChange}
+                                        className="form-control"
+                                        placeholder="등본상 우편번호"
+                                        readOnly
+                                    />
+                                    <button type="button" className="btn btn-secondary" onClick={searchAddress}>
+                                        우편번호 검색
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr id="apply_title">
+                            <th>등본상 주소(선택)</th>
+                            <td>
+                                <input
+                                    type="text"
+                                    name="address1"
+                                    value={formData.address1}
+                                    onChange={handleInputChange}
+                                    className="form-control"
+                                    placeholder="등본상 주소"
+                                    readOnly
+                                />
+                            </td>
+                        </tr>
+                        <tr id="apply_title">
+                            <th>등본상 상세 주소(선택)</th>
+                            <td>
+                                <input
+                                    type="text"
+                                    name="address2"
+                                    value={formData.address2}
+                                    onChange={handleInputChange}
+                                    className="form-control"
+                                    placeholder="등본상 상세 주소를 입력해주세요"
+                                />
+                            </td>
+                        </tr>
+                        <tr id="apply_title">
                             <th>실거주 우편번호</th>
                             <td>
                                 <div className="input-group">
@@ -312,52 +358,6 @@ function ApplyAdd() {
                                     className="form-control"
                                     placeholder="실거주지의 상세 주소를 입력해주세요"
                                     required
-                                />
-                            </td>
-                        </tr>
-                        <tr id="apply_title">
-                            <th>우편번호(선택)</th>
-                            <td>
-                                <div className="input-group">
-                                    <input
-                                        type="text"
-                                        name="zipcode"
-                                        value={formData.zipcode}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        placeholder="등본상 우편번호"
-                                        readOnly
-                                    />
-                                    <button type="button" className="btn btn-secondary" onClick={searchAddress}>
-                                        우편번호 검색
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr id="apply_title">
-                            <th>등본상 주소(선택)</th>
-                            <td>
-                                <input
-                                    type="text"
-                                    name="address1"
-                                    value={formData.address1}
-                                    onChange={handleInputChange}
-                                    className="form-control"
-                                    placeholder="등본상 주소"
-                                    readOnly
-                                />
-                            </td>
-                        </tr>
-                        <tr id="apply_title">
-                            <th>등본상 상세 주소(선택)</th>
-                            <td>
-                                <input
-                                    type="text"
-                                    name="address2"
-                                    value={formData.address2}
-                                    onChange={handleInputChange}
-                                    className="form-control"
-                                    placeholder="등본상 상세 주소를 입력해주세요"
                                 />
                             </td>
                         </tr>

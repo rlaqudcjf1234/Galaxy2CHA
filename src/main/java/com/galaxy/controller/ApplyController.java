@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.galaxy.dto.ApplyDto;
-import com.galaxy.dto.SearchDto;
 import com.galaxy.mapper.ApplyMapper;
 import com.galaxy.service.ApplyService;
+import com.galaxy.service.JwtService;
 import com.galaxy.service.validator.ApplyValidator;
 import com.galaxy.dto.ListDto;
+import com.galaxy.dto.SearchDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 
@@ -35,17 +38,52 @@ public class ApplyController {
     private final ApplyMapper applyMapper;
 
     @Autowired
-    ApplyService applyService;
+    private ApplyService applyService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @InitBinder
     public void validatorBinder(WebDataBinder binder) {
         binder.addValidators(applyValidator);
     }
 
+    @PostMapping("/guest")
+    public ResponseEntity<?> guest(HttpServletRequest request, HttpServletResponse response,
+            ApplyDto applyDto) {
+        try {
+            int count = applyService.selectCount(applyDto);
+
+            if (count == 0) {
+                System.out.println("No apply info found for: " + applyDto); // 로그 추가
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("신청 정보를 찾을 수 없습니다.");
+            }
+
+            // 임시 토큰 발행
+            String jwt = jwtService.generateGuestToken(applyDto.getEmail(), applyDto.getName(),
+                    applyDto.getJumin());
+
+            // 임시 토큰 저장
+            jwtService.setAccessToken(response, jwt);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid argument: " + e.getMessage()); // 로그 추가
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error in getStudentApplyInfo: " + e.getMessage()); // 로그
+                                                                                              // 추가
+            e.printStackTrace(); // 스택 트레이스 출력
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("서버 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/list")
-    public ListDto list(SearchDto dto) throws Exception {
+    public ListDto list(ApplyDto dto) throws Exception {
+
         int count = applyService.selectCount(dto);
         List<Map<String, Object>> list = applyService.selectList(dto);
+
         return new ListDto(count, list);
     }
 
@@ -90,35 +128,6 @@ public class ApplyController {
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PostMapping("/student-info")
-    public ResponseEntity<?> getStudentApplyInfo(@RequestBody ApplyDto applyDto) {
-        try {
-            System.out.println("Received request for student info: " + applyDto);  // 로그 추가
-            
-            ApplyDto applyInfo = applyService.getStudentApplyInfo(
-                    applyDto.getName(),
-                    applyDto.getEmail(),
-                    applyDto.getJumin());
-    
-            if (applyInfo == null) {
-                System.out.println("No apply info found for: " + applyDto);  // 로그 추가
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("신청 정보를 찾을 수 없습니다.");
-            }
-    
-            System.out.println("Found apply info: " + applyInfo);  // 로그 추가
-            return ResponseEntity.ok(applyInfo);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Invalid argument: " + e.getMessage());  // 로그 추가
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Unexpected error in getStudentApplyInfo: " + e.getMessage());  // 로그 추가
-            e.printStackTrace();  // 스택 트레이스 출력
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("서버 오류가 발생했습니다: " + e.getMessage());
         }
     }
 }

@@ -39,18 +39,18 @@ function Home() {
     // 우리는 이제 데이터베이스에서 제목을 가져오므로, type prop은 단순히 슬라이더 스타일과 레이아웃을 위해서만 사용됩니다
     return (
         <div className="home-container">
-             <HeroSlider />
-            <div className="slider-wrapper">
+            <HeroSlider />
+            <div className="slider-wrapper px-2">
                 <section className="main-slider">
                     <Slider items={slideData} type="main" />
                 </section>
             </div>
-            <div className="slider-wrapper">
+            <div className="slider-wrapper px-2">
                 <section className="course-slider">
                     <Slider items={slideData} type="course" />
                 </section>
             </div>
-            <div className="slider-wrapper">
+            <div className="slider-wrapper px-2">
                 <section className="course-slider">
                     <Slider items={slideData} type="class" />
                 </section>

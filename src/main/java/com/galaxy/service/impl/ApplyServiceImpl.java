@@ -24,12 +24,12 @@ public class ApplyServiceImpl implements ApplyService {
     private final ApplyValidator applyValidator;
 
     @Override
-    public int selectCount(SearchDto dto) throws Exception {
+    public int selectCount(ApplyDto dto) throws Exception {
         return applyMapper.selectCount(dto);
     }
 
     @Override
-    public List<Map<String, Object>> selectList(SearchDto dto) throws Exception {
+    public List<Map<String, Object>> selectList(ApplyDto dto) throws Exception {
         return applyMapper.selectList(dto);
     }
 
@@ -65,22 +65,6 @@ public class ApplyServiceImpl implements ApplyService {
     @Override
     public int deleteApply(Long id) {
         return applyMapper.deleteApply(id);
-    }
-
-    @Override
-    public ApplyDto getStudentApplyInfo(String name, String email, String jumin) {
-        // 입력값 유효성 검사
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("이름은 필수 입력값입니다.");
-        }
-        if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException("이메일은 필수 입력값입니다.");
-        }
-        if (jumin == null || jumin.trim().isEmpty()) {
-            throw new IllegalArgumentException("주민번호는 필수 입력값입니다.");
-        }
-
-        return applyMapper.selectApplyByStudentInfo(name, email, jumin);
     }
 
     @Override

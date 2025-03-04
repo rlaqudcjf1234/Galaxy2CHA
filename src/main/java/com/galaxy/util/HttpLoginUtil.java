@@ -19,12 +19,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public class HttpLoginUtil {
 
     public static String key;
-    public static final String BEARER = "Bearer ";  
+    public static final String BEARER = "Bearer ";
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
-    public static HttpServletRequest getRequest()throws Exception {
+    public static HttpServletRequest getRequest() throws Exception {
 
-        ServletRequestAttributes attr = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
+        ServletRequestAttributes attr =
+                (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 
         return attr.getRequest();
     }
@@ -34,27 +35,43 @@ public class HttpLoginUtil {
         key = secretKey;
     }
 
+    public static String getSubject() {
+
+        String subject = "";
+
+        try {
+            SecretKey secretKey =
+                    Keys.hmacShaKeyFor(HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8));
+            HttpServletRequest request = getRequest();
+            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.replace(BEARER, ""))
+                    .orElseThrow(() -> new AuthenticationServiceException("No access token"));
+
+            subject = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken)
+                    .getPayload().getSubject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return subject;
+    }
+
     public static String getSeq() {
 
         String seq = "";
 
         try {
-            SecretKey secretKey = Keys.hmacShaKeyFor(
-                HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8)
-            );
+            SecretKey secretKey =
+                    Keys.hmacShaKeyFor(HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8));
             HttpServletRequest request = getRequest();
-            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))  
-                .filter(token -> token.startsWith(BEARER))  
-                .map(token -> token.replace(BEARER, ""))
-                .orElseThrow(() -> new AuthenticationServiceException("No access token"));
-                
-            seq = Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload()
-                .get("seq", String.class);
+            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.replace(BEARER, ""))
+                    .orElseThrow(() -> new AuthenticationServiceException("No access token"));
+
+            seq = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken)
+                    .getPayload().get("seq", String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,22 +84,16 @@ public class HttpLoginUtil {
         String class_seq = "";
 
         try {
-            SecretKey secretKey = Keys.hmacShaKeyFor(
-                HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8)
-            );
+            SecretKey secretKey =
+                    Keys.hmacShaKeyFor(HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8));
             HttpServletRequest request = getRequest();
-            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))  
-                .filter(token -> token.startsWith(BEARER))  
-                .map(token -> token.replace(BEARER, ""))
-                .orElseThrow(() -> new AuthenticationServiceException("No access token"));
-                
-            class_seq = Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload()
-                .get("class_seq", String.class);
+            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.replace(BEARER, ""))
+                    .orElseThrow(() -> new AuthenticationServiceException("No access token"));
+
+            class_seq = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken)
+                    .getPayload().get("class_seq", String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,27 +101,21 @@ public class HttpLoginUtil {
         return class_seq;
     }
 
-    public String getName() {
+    public static String getName() {
 
         String name = "";
 
         try {
-            SecretKey secretKey = Keys.hmacShaKeyFor(
-                HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8)
-            );
+            SecretKey secretKey =
+                    Keys.hmacShaKeyFor(HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8));
             HttpServletRequest request = getRequest();
-            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))  
-                .filter(token -> token.startsWith(BEARER))  
-                .map(token -> token.replace(BEARER, ""))
-                .orElseThrow(() -> new AuthenticationServiceException("No access token"));
+            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.replace(BEARER, ""))
+                    .orElseThrow(() -> new AuthenticationServiceException("No access token"));
 
-            name = Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload()
-                .get("name", String.class);
+            name = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken)
+                    .getPayload().get("name", String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,27 +123,21 @@ public class HttpLoginUtil {
         return name;
     }
 
-    public String getEmail() {
+    public static String getEmail() {
 
         String email = "";
 
         try {
-            SecretKey secretKey = Keys.hmacShaKeyFor(
-                HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8)
-            );
+            SecretKey secretKey =
+                    Keys.hmacShaKeyFor(HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8));
             HttpServletRequest request = getRequest();
-            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))  
-                .filter(token -> token.startsWith(BEARER))  
-                .map(token -> token.replace(BEARER, ""))
-                .orElseThrow(() -> new AuthenticationServiceException("No access token"));
+            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.replace(BEARER, ""))
+                    .orElseThrow(() -> new AuthenticationServiceException("No access token"));
 
-            email = Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload()
-                .get("email", String.class);
+            email = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken)
+                    .getPayload().get("email", String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,27 +145,21 @@ public class HttpLoginUtil {
         return email;
     }
 
-    public String getId() {
+    public static String getId() {
 
         String id = "";
 
         try {
-            SecretKey secretKey = Keys.hmacShaKeyFor(
-                HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8)
-            );
+            SecretKey secretKey =
+                    Keys.hmacShaKeyFor(HttpLoginUtil.key.getBytes(StandardCharsets.UTF_8));
             HttpServletRequest request = getRequest();
-            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))  
-                .filter(token -> token.startsWith(BEARER))  
-                .map(token -> token.replace(BEARER, ""))
-                .orElseThrow(() -> new AuthenticationServiceException("No access token"));
+            String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION_HEADER))
+                    .filter(token -> token.startsWith(BEARER))
+                    .map(token -> token.replace(BEARER, ""))
+                    .orElseThrow(() -> new AuthenticationServiceException("No access token"));
 
-            id = Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload()
-                .get("id", String.class);
+            id = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(accessToken)
+                    .getPayload().get("id", String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

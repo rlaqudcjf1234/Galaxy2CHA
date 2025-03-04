@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.CalendarMapper">
+
+  <select id="selectCount" parameterType="SearchDto" resultType="int">
+      SELECT COUNT(*)
+      FROM CALENDAR A, CLASS B
+      WHERE A.CLASS_SEQ = B.SEQ
+  </select>
+  
+  <select id="stdCalenList" parameterType="SearchDto" resultType="map">
+      SELECT  
+        A.CLASS_SEQ,
+        A.STUDENT_SEQ AS STUDENT,
+        GET_CLASS_NAME(B.SEQ) AS CLASS_NAME,    
+        GET_CODE_NAME('7', A.DIVISION) AS DIVISION,
+        TO_CHAR(A.DAILY, 'YYYY-MM-DD') AS DAILY,
+        A.MEMO
+      FROM CALENDAR A
+      JOIN CLASS B ON A.CLASS_SEQ = B.SEQ
+      JOIN STUDENT C ON A.STUDENT_SEQ = C.SEQ
+      WHERE EXTRACT(YEAR FROM A.DAILY) = #{year}
+      AND EXTRACT(MONTH FROM A.DAILY) = #{month}
+      AND A.STUDENT_SEQ='${@com.galaxy.util.HttpLoginUtil@getSeq()}'
+  </select>
+
+  <select id="getStudentClassInfo" parameterType="SearchDto" resultType="map">
+    SELECT 
+        B.SEQ AS CLASS_SEQ,
+        GET_CLASS_NAME(b.seq) AS CLASS_NAME,
+        D.NAME AS ADMIN_NAME,
+        GET_CODE_NAME('8', B.ROOM) AS ROOM,
+        C.SEQ AS STUDENT_SEQ
+    FROM STUDENT C
+    JOIN CLASS B ON C.CLASS_SEQ = B.SEQ
+    JOIN ADMIN D ON B.ADMIN_SEQ = D.SEQ
+    WHERE C.SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}'
+    </select>
+
+  
+  <select id="classStudentList" parameterType="String" resultType="map">
+      SELECT 
+        C.SEQ,
+        C.NAME
+      FROM STUDENT C
+      JOIN CLASS B ON C.CLASS_SEQ = B.SEQ
+      WHERE B.ROOM = #{room}
+  </select>
+  
+ <insert id="insertstd" parameterType="CalendarDto">
+    INSERT INTO CALENDAR (
+        CLASS_SEQ, 
+        DAILY, 
+        STUDENT_SEQ, 
+        DIVISION, 
+        MEMO
+    ) VALUES (
+        #{class_seq, jdbcType=NUMERIC}, 
+        #{daily},
+        ${@com.galaxy.util.HttpLoginUtil@getSeq()}, 
+        #{division}, 
+        #{memo, jdbcType=VARCHAR}
+    )
+</insert>
+  
+  <update id="updatestd" parameterType="map">
+      UPDATE CALENDAR SET DIVISION = #{division},
+          MEMO = #{memo}
+      WHERE CLASS_SEQ = #{class_seq}
+      AND STUDENT_SEQ =  ${@com.galaxy.util.HttpLoginUtil@getSeq()}
+      AND DAILY = #{daily}
+  </update>
+
+</mapper>

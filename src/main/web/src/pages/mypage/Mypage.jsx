@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { authenticatedRequest as axios } from '../../plugins/axios';
+import { useParams } from 'react-router-dom';
 import '../../css/Mypage.css';
 import AddEduModal from './AddEduModal';
 import AddCertModal from './AddCertModal';
 
 function Mypage() {
+  const { seq } = useParams();
   const [loading, setLoading] = useState(false);
   const [studentData, setStudentData] = useState(null);
   const [error, setError] = useState(null);
@@ -15,11 +17,12 @@ function Mypage() {
   const [academicList, setAcademicList] = useState(null);
   const [studentSeq, setStudentSeq] = useState(null);
 
-  // 로그인된 사용자의 시퀀스를 가져오는 함수
   const fetchUserSeq = async () => {
     try {
-      const response = await axios.get('/api/auth/user-info');
-      return response.data.seq; // 백엔드에서 HttpLoginUtil.getSeq()를 통해 얻은 값
+      const response = await axios.get('/api/student/mypage/current');
+      // 응답에서 seq 값 추출 (응답 구조에 따라 달라질 수 있음)
+      const seq = response.data.STUDENT_SEQ || response.data.seq;
+      return seq;
     } catch (err) {
       console.error('Error fetching user sequence:', err);
       setError('사용자 정보를 불러오는 데 실패했습니다.');
@@ -27,24 +30,25 @@ function Mypage() {
     }
   };
 
-  const fetchStudentData = async (seq) => {
-    if (!seq) return;
+  const fetchStudentData = async (seqParam) => {
+    const sequenceToUse = seqParam || studentSeq;
+    if (!sequenceToUse) return;
 
     setLoading(true);
     setError(null);
 
     try {
       const [studentResponse, certResponse, academicResponse] = await Promise.all([
-        axios.get(`/api/student/mypage/${seq}`),
-        axios.get(`/api/student/certification/${seq}`),
-        axios.get(`/api/student/academic/info/${seq}`)
+        axios.get(`/api/student/mypage/${sequenceToUse}`),
+        axios.get(`/api/student/certification/${sequenceToUse}`),
+        axios.get(`/api/student/academic/info/${sequenceToUse}`)
       ]);
 
       setStudentData(studentResponse.data);
       setCertifications(Array.isArray(certResponse.data) ? certResponse.data : []);
       setAcademicList(academicResponse.data ? academicResponse.data : null);
     } catch (err) {
-      console.error('Error fetching data:', err);
+      console.error('데이터 가져오기 오류:', err);
       setError('데이터를 불러오는 데 실패했습니다.');
     } finally {
       setLoading(false);
@@ -66,7 +70,7 @@ function Mypage() {
       if (response.data) {
         alert('학력 정보가 성공적으로 등록되었습니다.');
         setIsModalOpen(false);
-        fetchStudentData(studentSeq); // 데이터 새로고침
+        fetchStudentData(); // 데이터 새로고침
       }
     } catch (error) {
       console.error('학력 정보 등록 실패:', error.response?.data || error.message);
@@ -80,8 +84,8 @@ function Mypage() {
 
   const handleEducationSave = async (educationData) => {
     try {
-      await axios.post(`/api/student/education/${studentSeq}`, educationData);
-      fetchStudentData(studentSeq);
+      await axios.post(`/api/student/education/${seq}`, educationData);
+      fetchStudentData();
     } catch (error) {
       console.error('Failed to save education data:', error);
     }
@@ -90,9 +94,9 @@ function Mypage() {
   const handleEducationDelete = async () => {
     if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
       try {
-        await axios.delete(`/api/student/education/${studentSeq}`);
+        await axios.delete(`/api/student/education/${seq}`);
         alert('학력 정보가 삭제되었습니다.');
-        await fetchStudentData(studentSeq);
+        await fetchStudentData();
       } catch (error) {
         console.error('Failed to delete education:', error);
         alert('학력 정보 삭제에 실패했습니다.');
@@ -102,6 +106,13 @@ function Mypage() {
 
   const handleCertificationSave = async (certificationData) => {
     try {
+      // studentSeq를 명시적으로 사용
+      if (!studentSeq) {
+        alert('학생 정보를 불러올 수 없습니다.');
+        return;
+      }
+
+      // URL 파라미터로 studentSeq 사용 (seq 대신)
       await axios.post(`/api/student/certification/${studentSeq}`, certificationData);
       alert('자격증 정보가 성공적으로 등록되었습니다.');
       await fetchStudentData(studentSeq);
@@ -115,22 +126,24 @@ function Mypage() {
   const handleCertificationDelete = async (certSort) => {
     if (window.confirm('자격증 정보를 삭제하시겠습니까?')) {
       try {
+        // URL 파라미터 seq 대신 studentSeq 사용
         await axios.delete(`/api/student/certification/${studentSeq}/${certSort}`);
         alert('자격증 정보가 삭제되었습니다.');
-        await fetchStudentData(studentSeq);
+        await fetchStudentData(studentSeq); // studentSeq 전달
       } catch (error) {
-        console.error('Failed to delete certification:', error);
+        console.error('자격증 정보 삭제 실패:', error);
         alert('자격증 정보 삭제에 실패했습니다.');
       }
     }
   };
 
   // 학력 정보 조회 함수
-  const getAcademicInfo = async (seq) => {
-    if (!seq) return;
-
+  const getAcademicInfo = async (seqParam) => {
     try {
-      const response = await axios.get(`/api/student/academic/info/${seq}`);
+      const sequenceToUse = seqParam || studentSeq;
+      if (!sequenceToUse) return;
+
+      const response = await axios.get(`/api/student/academic/info/${sequenceToUse}`);
       // 응답 데이터가 배열인지 확인하고 처리
       const academicData = Array.isArray(response.data) ? response.data : [response.data];
       setAcademicList(academicData);
@@ -138,22 +151,6 @@ function Mypage() {
     } catch (error) {
       console.error('학력 정보 조회 중 오류 발생:', error);
       setAcademicList([]); // 에러 시 빈 배열로 설정
-    }
-  };
-
-  const deleteAcademic = async () => {
-    if (window.confirm('학력 정보를 삭제하시겠습니까?')) {
-      try {
-        // academicList에서 현재 학생의 SORT 값을 가져옴
-        const academicSort = academicList[0]?.SORT || 1; // 기본값 1
-
-        await axios.delete(`/api/student/academic/${studentSeq}/${academicSort}`);
-        alert('학력 정보가 삭제되었습니다.');
-        fetchStudentData(studentSeq);
-      } catch (error) {
-        console.error('학력 정보 삭제 중 오류 발생:', error);
-        alert('학력 정보 삭제에 실패했습니다.');
-      }
     }
   };
 
@@ -165,7 +162,7 @@ function Mypage() {
 
       if (seq) {
         fetchStudentData(seq);
-        getAcademicInfo(seq);
+        getAcademicInfo(seq); // 가져온 seq 전달
       }
     };
 
@@ -186,12 +183,7 @@ function Mypage() {
           <h2 className="profile-name">{studentData.NAME || '이름없음'}</h2>
           <div className="profile-email">{studentData.EMAIL || '이메일 없음'}</div>
         </div>
-        <nav className="sidebar-menu">
-          <ul>
-            <li>내 정보</li>
-            <li>수강 정보</li>
-          </ul>
-        </nav>
+
       </aside>
 
       <div className="mypage-content">
@@ -199,7 +191,6 @@ function Mypage() {
           <h1>마이페이지</h1>
           <p>반갑습니다, {studentData.NAME}님</p>
         </div>
-
         <section className="mypage-section">
           <h2>기본 정보</h2>
           <div className="info-cards">
@@ -266,12 +257,6 @@ function Mypage() {
           {academicList.length === 0 ? (
             <div className="empty-state">
               <p>등록된 학력 정보가 없습니다.</p>
-              <button
-                className="btn btn-primary"
-                onClick={() => setIsModalOpen(true)}
-              >
-                학력 정보 추가
-              </button>
             </div>
           ) : (
             <>
@@ -290,10 +275,32 @@ function Mypage() {
                     {academicList.map((academic, index) => (
                       <tr key={index}>
                         <td>{academic.FINAL_SCHOOL_NAME || '없음'}</td>
-                        <td>{academic.FINAL_SCHOOL_LEVEL || '없음'}</td>
-                        <td>{academic.FINAL_SCHOOL_SPECIALITY || '없음'}</td>
+                        <td>
+                          {academic.FINAL_SCHOOL_LEVEL ?
+                            (parseInt(academic.FINAL_SCHOOL_LEVEL) === 20 ? '중학교' :
+                              parseInt(academic.FINAL_SCHOOL_LEVEL) === 30 ? '고등학교' :
+                                parseInt(academic.FINAL_SCHOOL_LEVEL) === 40 ? '대학교(2,3년제)' :
+                                  parseInt(academic.FINAL_SCHOOL_LEVEL) === 50 ? '대학교(4년제)' :
+                                    parseInt(academic.FINAL_SCHOOL_LEVEL) === 60 ? '석사졸업' :
+                                      academic.FINAL_SCHOOL_LEVEL) : '없음'}
+                        </td>
+                        <td>
+                          {academic.FINAL_SCHOOL_SPECIALITY ?
+                            (academic.FINAL_SCHOOL_SPECIALITY === '0' ? '비전공' :
+                              academic.FINAL_SCHOOL_SPECIALITY === '1' ? '전공' :
+                                academic.FINAL_SCHOOL_SPECIALITY) : '없음'}
+                        </td>
                         <td>{academic.FINAL_SCHOOL_LESSON || '없음'}</td>
-                        <td>{academic.GRADUATE_YN || '없음'}</td>
+                        <td>
+                          {academic.GRADUATE_YN ?
+                            (parseInt(academic.GRADUATE_YN) === 10 ? '재학주간' :
+                              parseInt(academic.GRADUATE_YN) === 20 ? '재학야간' :
+                                parseInt(academic.GRADUATE_YN) === 30 ? '휴학' :
+                                  parseInt(academic.GRADUATE_YN) === 40 ? '중퇴' :
+                                    parseInt(academic.GRADUATE_YN) === 50 ? '졸업' :
+                                      parseInt(academic.GRADUATE_YN) === 60 ? '검정고시' :
+                                        academic.GRADUATE_YN) : '없음'}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -312,6 +319,16 @@ function Mypage() {
               </div>
             </>
           )}
+          <div className="button-wrapper" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            marginTop: '15px'
+          }}>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+              학력 정보 추가
+            </button>
+          </div>
         </section>
 
 
@@ -323,58 +340,76 @@ function Mypage() {
               <p>등록된 자격증 정보가 없습니다.</p>
             </div>
           ) : (
-            <div className="table-responsive">
-              <table className="certification-table">
-                <thead>
-                  <tr>
-                    <th>자격증명</th>
-                    <th>발급기관</th>
-                    <th>합격일자</th>
-                    <th>자격증 번호</th>
-                    <th>관리</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {certifications.map((cert) => (
-                    <tr key={`${cert.STUDENT_SEQ}-${cert.SORT}`}>
-                      <td>{cert.CERT_NAME || '없음'}</td>
-                      <td>{cert.ISSUER || '없음'}</td>
-                      <td>{cert.PASS_DT || '없음'}</td>
-                      <td>{cert.CERT_NO || '없음'}</td>
-                      <td>
-                        <button
-                          onClick={() => handleCertificationDelete(cert.SORT)}
-                          className="delete-btn"
-                          style={{
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '14px'
-                          }}
-                        >
-                          삭제
-                        </button>
-                      </td>
+            <>
+              <div className="table-responsive">
+                <table className="certification-table">
+                  <thead>
+                    <tr>
+                      <th>자격증명</th>
+                      <th>발급기관</th>
+                      <th>합격일자</th>
+                      <th>자격증 번호</th>
+                      <th>관리</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {certifications.map((cert) => (
+                      <tr key={`${cert.STUDENT_SEQ}-${cert.SORT}`}>
+                        <td>{cert.CERT_NAME || '없음'}</td>
+                        <td>{cert.ISSUER || '없음'}</td>
+                        <td>{cert.PASS_DT || '없음'}</td>
+                        <td>{cert.CERT_NO || '없음'}</td>
+                        <td>
+                          <button
+                            onClick={() => handleCertificationDelete(cert.SORT)}
+                            className="delete-btn"
+                            style={{
+                              backgroundColor: '#dc3545',
+                              color: 'white',
+                              border: 'none',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '14px'
+                            }}
+                          >
+                            삭제
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="button-wrapper" style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: '15px'
+              }}>
+                <span style={{ color: 'gray', fontSize: '12px' }}>
+                  잘못 입력된 정보는 삭제 후 다시 등록해주세요.
+                </span>
+              </div>
+            </>
           )}
 
           <div className="button-wrapper" style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             marginTop: '15px'
           }}>
-            <span style={{ color: 'gray', fontSize: '12px' }}>
-              잘못 입력된 정보는 삭제 후 다시 등록해주세요.
-            </span>
-            <button className="btn btn-primary" onClick={() => setIsCertificationModalOpen(true)}>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                if (studentSeq) {
+                  setIsCertificationModalOpen(true);
+                } else {
+                  alert('학생 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+                }
+              }}
+            >
               자격증 정보 추가
             </button>
           </div>
@@ -384,15 +419,15 @@ function Mypage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          studentSeq={studentSeq}
+          studentSeq={studentSeq}  // URL에서 가져온 시퀀스 전달
         />
 
         <AddCertModal
           isOpen={isCertificationModalOpen}
           onClose={() => setIsCertificationModalOpen(false)}
           onSave={handleCertificationSave}
-          studentSeq={studentSeq}
-          sort={1}
+          studentSeq={studentSeq || ''}  // undefined 방지
+          sort={certifications.length > 0 ? certifications.length + 1 : 1}  // 자동으로 정렬 번호 지정
         />
       </div>
     </div>

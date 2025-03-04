@@ -55,10 +55,16 @@ function App() {
                         </Route>
 
                         <Route path="student">
+<<<<<<< HEAD
                             <Route path="mypage/:seq" element={<Container />}>
                                 <Route index="index" element={<MyPage />} />
                             </Route>                           
                             
+=======
+                            <Route path="mypage" element={<PrivateCotainer />}>
+                                <Route index element={<MyPage />} />
+                            </Route>
+>>>>>>> ffa33c4e85c6e3edcad761eb2220f886f9817111
                         </Route>
                         <Route path="community" element={<Container />}>
                             <Route index="index" element={<CommunityList />} /> {/* 클래스 커뮤니티 관련 라우트 */}

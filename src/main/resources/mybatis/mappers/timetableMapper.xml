@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.galaxy.mapper.TimeTableMapper">
+
+
+<select id="selectCount" parameterType="SearchDto" resultType="int">
+        SELECT COUNT(*) FROM TIMETABLE         
+</select>
+
+<select id="tablelist" parameterType="com.galaxy.dto.SeqDto" resultType="map">
+    SELECT DISTINCT
+        GET_ADMIN_NAME(B.ADMIN_SEQ) AS ADMIN_SEQ,
+        A.CLASS_SEQ AS CLASS_SEQ,
+        GET_CLASS_NAME(B.SEQ) AS CLASS_NAME,    
+        B.ROOM AS ROOM,            
+        A.DAILY,
+        A.STATUS AS STATUS
+    FROM TIMETABLE A 
+    INNER JOIN 
+        CLASS B ON A.CLASS_SEQ = B.SEQ
+    INNER JOIN 
+        STUDENT C ON C.CLASS_SEQ = B.SEQ
+    INNER JOIN    
+        ADMIN D ON B.ADMIN_SEQ = D.SEQ
+    WHERE 1=1
+    AND C.SEQ = '${@com.galaxy.util.HttpLoginUtil@getSeq()}'       
+    AND A.STATUS='cancel'
+</select>
+
+</mapper>
