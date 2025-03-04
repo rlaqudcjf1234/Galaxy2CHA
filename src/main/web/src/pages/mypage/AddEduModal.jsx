@@ -422,7 +422,6 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
         // 필수 필드 검증
         const requiredFields = {
             FINAL_SCHOOL_LEVEL: '최종학력',
-            FINAL_SCHOOL_NAME: '학교명',
             GRADUATE_YN: '졸업여부'
         };
 
@@ -490,7 +489,6 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
                         <div>
                             <label className="form-label">
                                 학교명
-                                <span className="required-mark">*필수</span>
                             </label>
                             <div className="school-input-group">
                                 <input
