@@ -130,13 +130,12 @@ const Detail = () => {
                 <div className="col-5 border-start p-0">
                     <div className="sticky-top w-100">
                         <section className="bg-white p-4">
-                            <h2 className="fs-2 fw-bold mb-4">
+                            <h2 className="fs-2 fw-bold mb-4" style={{ wordBreak: "keep-all" }}>
                                 {clas.LECTURE_NAME}[{clas.ROUND}기]
                             </h2>
                             <div className="bg-light p-4">
                                 <div className="mb-4 d-flex">
-                                    <h3
-                                        className="fw-semibold text-secondary fs-6 mb-0"
+                                    <h3 className="fw-semibold text-secondary fs-6 mb-0"
                                         style={{
                                             width: "100px",
                                         }}
