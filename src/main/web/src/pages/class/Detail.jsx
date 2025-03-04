@@ -61,7 +61,11 @@ const Detail = () => {
                             {lectureDoc.plan?.length > 0
                                 ? lectureDoc.plan.map((item, index) => (
                                     <div key={index}>
-                                        <h1 className="fs-2 fw-bold mb-4">강의설명</h1>
+                                        {
+                                            index == 0 ? (
+                                                <h1 className="fs-2 fw-bold mb-4">강의설명</h1>
+                                            ) : null
+                                        }
                                         <div
                                             className="mb-4"
                                             dangerouslySetInnerHTML={{
@@ -74,7 +78,11 @@ const Detail = () => {
                             {lectureDoc.award?.length > 0
                                 ? lectureDoc.award.map((item, index) => (
                                     <div key={index}>
-                                        <h1 className="fs-2 fw-bold mb-4">수상내역</h1>
+                                        {
+                                            index == 0 ? (
+                                                <h1 className="fs-2 fw-bold mb-4">수상내역</h1>
+                                            ) : null
+                                        }
                                         <div
                                             className="mb-4"
                                             dangerouslySetInnerHTML={{
@@ -87,7 +95,11 @@ const Detail = () => {
                             {lectureDoc.progress?.length > 0
                                 ? lectureDoc.progress.map((item, index) => (
                                     <div key={index}>
-                                        <h1 className="fs-2 fw-bold mb-4">진행과정</h1>
+                                        {
+                                            index == 0 ? (
+                                                <h1 className="fs-2 fw-bold mb-4">진행과정</h1>
+                                            ) : null
+                                        }
                                         <div
                                             className="mb-4"
                                             dangerouslySetInnerHTML={{
@@ -100,7 +112,11 @@ const Detail = () => {
                             {lectureDoc.capacity?.length > 0
                                 ? lectureDoc.capacity.map((item, index) => (
                                     <div key={index}>
-                                        <h1 className="fs-2 fw-bold mb-4">필요자격</h1>
+                                        {
+                                            index == 0 ? (
+                                                <h1 className="fs-2 fw-bold mb-4">필요자격</h1>
+                                            ) : null
+                                        }
                                         <div
                                             className="mb-4"
                                             dangerouslySetInnerHTML={{
@@ -113,7 +129,11 @@ const Detail = () => {
                             {lectureDoc.procedure?.length > 0
                                 ? lectureDoc.procedure.map((item, index) => (
                                     <div key={index}>
-                                        <h1 className="fs-2 fw-bold mb-4">취업과정</h1>
+                                        {
+                                            index == 0 ? (
+                                                <h1 className="fs-2 fw-bold mb-4">취업과정</h1>
+                                            ) : null
+                                        }
                                         <div
                                             className="mb-4"
                                             dangerouslySetInnerHTML={{
