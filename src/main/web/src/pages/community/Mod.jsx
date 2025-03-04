@@ -10,6 +10,7 @@ function Mod() {
     const location = useLocation();
     const [loading, setLoading] = useState(true);
     const [communityType, setCommunityType] = useState(null);
+    const [isAuthor, setIsAuthor] = useState(false);
     const [formData, setFormData] = useState({
         seq: seq,
         title: "",
@@ -54,25 +55,43 @@ function Mod() {
         checkAuth();
     }, [navigate]);
 
-    // 기존 게시글 데이터 로드
+    // 게시글 데이터 로드 및 작성자 확인
     useEffect(() => {
-        const fetchPost = async () => {
+        const fetchData = async () => {
+            if (!formData.tableType) return;
+
             try {
-                // tableType 파라미터 추가
+                // 1. 게시글 데이터 조회
                 const response = await axios.get(`/api/community/read/${seq}`, {
                     params: { tableType: formData.tableType },
                 });
 
                 console.log("게시글 데이터:", response.data);
 
-                const post = Array.isArray(response.data) ? response.data[0] : response.data;
+                const postData = Array.isArray(response.data) ? response.data[0] : response.data;
 
                 setFormData((prev) => ({
                     ...prev,
-                    title: post.title || post.TITLE || "",
-                    division: post.division || post.DIVISION || "",
-                    detail: post.detail || post.DETAIL || "",
+                    title: postData.title || postData.TITLE || "",
+                    division: postData.division || postData.DIVISION || "",
+                    detail: postData.detail || postData.DETAIL || "",
                 }));
+
+                // 2. 작성자 확인 API 호출
+                const authorCheckResponse = await axios.get(`/api/community/check-author/${seq}`, {
+                    params: { tableType: formData.tableType }
+                });
+
+                console.log("작성자 확인 결과:", authorCheckResponse.data);
+                setIsAuthor(authorCheckResponse.data.isAuthor);
+
+                // 작성자가 아닌 경우 목록 페이지로 리다이렉트
+                if (!authorCheckResponse.data.isAuthor) {
+                    alert("본인이 작성한 게시글만 수정할 수 있습니다.");
+                    navigate(`/community/${communityType}`);
+                    return;
+                }
+
                 setLoading(false);
             } catch (error) {
                 console.error("게시글 로드 오류:", error);
@@ -82,7 +101,7 @@ function Mod() {
         };
 
         if (communityType && seq && formData.tableType) {
-            fetchPost();
+            fetchData();
         }
     }, [communityType, seq, formData.tableType, navigate]);
 
@@ -94,23 +113,16 @@ function Mod() {
         }));
     };
 
-    // 토큰 확인 로직 추가
-    const checkToken = async () => {
-        try {
-            const response = await axios.get("/api/community/auth/me");
-            console.log("인증 상태:", response.data);
-            return true;
-        } catch (error) {
-            console.error("인증 오류:", error);
-            alert("로그인이 필요합니다");
-            navigate("/login");
-            return false;
-        }
-    };
-
     // 제출 처리 함수 수정
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // 작성자가 아닌 경우 수정 방지
+        if (!isAuthor) {
+            alert("본인이 작성한 게시글만 수정할 수 있습니다.");
+            return;
+        }
+
         try {
             console.log("수정 요청 데이터:", formData);
 
@@ -126,7 +138,11 @@ function Mod() {
             navigate(`/community/${communityType}/read/${seq}`);
         } catch (error) {
             console.error("게시글 수정 오류:", error);
-            alert("게시글 수정에 실패했습니다.");
+            if (error.response && error.response.status === 403) {
+                alert("본인이 작성한 게시글만 수정할 수 있습니다.");
+            } else {
+                alert("게시글 수정에 실패했습니다.");
+            }
         }
     };
 

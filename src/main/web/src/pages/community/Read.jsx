@@ -13,6 +13,7 @@ function Read() {
     const [error, setError] = useState(null);
     const [communityType, setCommunityType] = useState(null);
     const [tableType, setTableType] = useState(null);
+    const [isAuthor, setIsAuthor] = useState(false);
 
     // URL 경로에서 타입 추출
     useEffect(() => {
@@ -34,45 +35,51 @@ function Read() {
         setTableType(tblType);
     }, [location]);
 
+    // 게시글 데이터 로드
     useEffect(() => {
-        const fetchPost = async () => {
-            if (!seq) {
-                setLoading(false);
-                setError("게시글 ID가 없습니다");
-                return;
+        const fetchPostData = async () => {
+            if (!seq || !tableType) {
+                console.log("seq 또는 tableType이 없습니다:", { seq, tableType });
+                return; // 아직 초기화 중이므로 리턴
             }
 
+            setLoading(true);
             try {
-                console.log("게시글 조회 요청:", {
-                    seq: seq,
-                    tableType: tableType,
-                });
-
-                // API 경로와 파라미터 수정
+                console.log("게시글 조회 요청:", { seq, tableType });
                 const response = await axios.get(`/api/community/read/${seq}`, {
-                    params: {
-                        tableType: tableType,
-                    },
+                    params: { tableType }
                 });
 
-                console.log("서버 응답 원본:", response.data);
+                console.log("게시글 응답:", response.data);
 
                 // 응답 데이터 처리
-                if (Array.isArray(response.data) && response.data.length > 0) {
-                    setPost(response.data[0]);
-                } else {
-                    setPost(response.data);
+                const postData = Array.isArray(response.data) ? response.data[0] : response.data;
+                setPost(postData);
+
+                // 작성자 확인 API 호출은 게시글 데이터가 있는 경우에만
+                if (postData) {
+                    try {
+                        const authorCheckResponse = await axios.get(`/api/community/check-author/${seq}`, {
+                            params: { tableType }
+                        });
+                        setIsAuthor(authorCheckResponse.data.isAuthor);
+                    } catch (error) {
+                        console.error("작성자 확인 오류:", error);
+                        // 작성자 확인 실패 시 기본적으로 false로 설정
+                        setIsAuthor(false);
+                    }
                 }
             } catch (error) {
-                console.error("Error details:", error);
-                setError("게시글을 불러오는 중 오류가 발생했습니다");
+                console.error("게시글 조회 오류:", error);
+                setError("게시글을 불러오는 중 오류가 발생했습니다.");
             } finally {
                 setLoading(false);
             }
         };
 
-        if (seq && tableType) {
-            fetchPost();
+        // tableType이 설정된 경우에만 데이터 로드
+        if (tableType) {
+            fetchPostData();
         }
     }, [seq, tableType]);
 
@@ -81,10 +88,14 @@ function Read() {
     };
 
     const handleDelete = async () => {
+        if (!isAuthor) {
+            alert("자신이 작성한 게시글만 삭제할 수 있습니다.");
+            return;
+        }
+
         if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
         try {
-            // 백엔드 API 경로에 맞게 수정 (/delete → /read)
             await axios.delete(`/api/community/read/${seq}`, {
                 params: { tableType },
             });
@@ -93,11 +104,20 @@ function Read() {
             handleGoBack();
         } catch (error) {
             console.error("Error:", error);
-            alert("삭제 중 오류가 발생했습니다.");
+            if (error.response && error.response.status === 403) {
+                alert("자신이 작성한 게시글만 삭제할 수 있습니다.");
+            } else {
+                alert("삭제 중 오류가 발생했습니다.");
+            }
         }
     };
 
     const handleMod = () => {
+        if (!isAuthor) {
+            alert("자신이 작성한 게시글만 수정할 수 있습니다.");
+            return;
+        }
+
         navigate(`/community/${communityType}/edit/${seq}`);
     };
 
@@ -105,14 +125,22 @@ function Read() {
         return <div className="text-center p-4">로딩 중...</div>;
     }
 
-    if (error || !post) {
-        return <div className="text-center p-4">{error || "게시글을 찾을 수 없습니다."}</div>;
+    if (error) {
+        return <div className="text-center p-4">{error}</div>;
+    }
+
+    if (!post) {
+        return <div className="text-center p-4">게시글을 찾을 수 없습니다.</div>;
     }
 
     return (
         <div className="board-container">
             <div className="board-header">
                 <h2>게시글 상세</h2>
+                <div style={{ fontSize: '12px', color: '#888', marginTop: '5px' }}>
+                    {/* 디버깅용 정보 (문제 해결 후 삭제) */}
+                    <p>seq: {seq}, tableType: {tableType}, isAuthor: {isAuthor ? 'true' : 'false'}</p>
+                </div>
             </div>
 
             <div className="post-detail" style={{ border: "1px solid #ddd", borderRadius: "4px" }}>
@@ -123,7 +151,7 @@ function Read() {
                         backgroundColor: "#f8f9fa",
                     }}
                 >
-                    <h3 style={{ margin: "0", fontSize: "1.3rem" }}>{post?.TITLE || post?.title || "제목 없음"}</h3>
+                    <h3 style={{ margin: "0", fontSize: "1.3rem" }}>{post?.title || post?.TITLE || "제목 없음"}</h3>
                 </div>
 
                 <div
@@ -137,13 +165,13 @@ function Read() {
                     }}
                 >
                     <div style={{ marginRight: "20px" }}>
-                        <strong>구분:</strong> {post.DIVISION || post.division || "미분류"}
+                        <strong>구분:</strong> {post.division || post.DIVISION || "미분류"}
                     </div>
                     <div style={{ marginRight: "20px" }}>
-                        <strong>작성자:</strong> {post.AUTHOR || post.author || "이름 정보 없음"}
+                        <strong>작성자:</strong> {post.author || post.AUTHOR || "이름 정보 없음"}
                     </div>
                     <div>
-                        <strong>작성일:</strong> {post.REG_DT || post.regDt || post.reg_dt || "날짜 정보 없음"}
+                        <strong>작성일:</strong> {post.regDt || post.REG_DT || "날짜 정보 없음"}
                     </div>
                 </div>
 
@@ -156,7 +184,7 @@ function Read() {
                         fontSize: "17px",
                     }}
                 >
-                    {post.DETAIL || post.detail}
+                    {post.detail || post.DETAIL}
                 </div>
             </div>
 
@@ -164,12 +192,18 @@ function Read() {
                 <button className="btn btn-dark" onClick={handleGoBack}>
                     목록
                 </button>
-                <button className="btn btn-primary" onClick={handleMod}>
-                    수정
-                </button>
-                <button className="btn btn-danger" onClick={handleDelete}>
-                    삭제
-                </button>
+
+                {/* 작성자인 경우에만 수정/삭제 버튼 표시 */}
+                {isAuthor && (
+                    <>
+                        <button className="btn btn-primary" onClick={handleMod}>
+                            수정
+                        </button>
+                        <button className="btn btn-danger" onClick={handleDelete}>
+                            삭제
+                        </button>
+                    </>
+                )}
             </div>
         </div>
     );
