@@ -480,7 +480,7 @@ const AddEduModal = ({ isOpen, onClose, onSave, studentSeq }) => {
                                 <option value="">최종학력을 선택하세요</option>
                                 <option value="20">중학교</option>
                                 <option value="30">고등학교</option>
-                                <option value="40">대학교(2,3년제제)</option>
+                                <option value="40">대학교(2,3년제)</option>
                                 <option value="50">대학교(4년제)</option>
                                 <option value="60">석사졸업</option>
                             </select>
