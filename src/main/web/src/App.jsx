@@ -37,20 +37,21 @@ function App() {
                     <Route path="/" element={<Layout />}>
                         <Route index="index" element={<Home />} />
 
+                        <Route path="class/:lecture_seq/:seq" element={<Container />}>
+                            <Route index="index" element={<ClassDetail />} />
+                        </Route>
+
                         <Route path="login" element={<Container />}>
                             <Route index="index" element={<Login />} />
                         </Route>
 
-                        <Route path="apply" element={<Container />}>
+                        <Route path="apply" element={<PrivateCotainer />}>
                             <Route index="index" element={<ApplyList />} />
                             <Route path="add" element={<ApplyAdd />} />
                             <Route path="read/:id" element={<ApplyRead />} />
                         </Route>
 
-                        <Route path="class/:lecture_seq/:seq" element={<Container />}>
-                            <Route index="index" element={<ClassDetail />} />
-                        </Route>
-                        <Route path="calendar" element={<Container />}>
+                        <Route path="calendar" element={<PrivateCotainer />}>
                             <Route index="index" element={<Calendar />} />
                         </Route>
 
@@ -60,7 +61,7 @@ function App() {
                             </Route>
                         </Route>
 
-                        <Route path="community" element={<Container />}>
+                        <Route path="community" element={<PrivateCotainer />}>
                             <Route index="index" element={<CommunityList />} /> {/* 클래스 커뮤니티 관련 라우트 */}
                             <Route path="class" element={<CommunityList type="class" />} />
                             <Route path="class/add" element={<CommunityAdd type="class" />} />

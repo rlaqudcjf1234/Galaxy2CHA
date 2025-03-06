@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useCookies } from "react-cookie";
+
 import { persistor } from "../main";
 import { tokenSelector } from "../redux/store";
 import "../css/Header.css";
@@ -12,6 +14,8 @@ function Header() {
         await persistor.purge();
     };
 
+    const [cookies, setCookie, removeCookie] = useCookies(["guest"]);
+
     return (
         <header className="d-flex flex-wrap align-items-center justify-content-center p-3 border-bottom">
             {/* 로고를 중앙에 놓고 싶다면 */}
@@ -23,7 +27,7 @@ function Header() {
                 </Link>
             </div>
 
-            {val ? (
+            {(val && !cookies.guest) ? (
                 <nav id="menu" className="nav col-md-4 col-md-auto mb-2 justify-content-center mb-md-0">
                     <div className="menu-item">
                         <div className="menu-text">
@@ -134,9 +138,15 @@ function Header() {
             )}
             {val ? (
                 <div className="col-md-3 text-end">
-                    <Link to="/student/mypage" className="btn btn-outline-primary me-2">
-                        My Page
-                    </Link>
+                    {!cookies.guest ? (
+                        <Link to="/student/mypage" className="btn btn-outline-primary me-2">
+                            My Page
+                        </Link>
+                    ) : (
+                        <Link to="/apply" className="btn btn-outline-primary me-2">
+                            접수현황
+                        </Link>
+                    )}
                     <button type="button" className="btn btn-outline-primary me-2" onClick={handleClick}>
                         Logout
                     </button>
