@@ -54,7 +54,7 @@ function List() {
                 <caption>
                     <span>
                         <em>홈</em>
-                        <strong>설문현황</strong>
+                        <strong>설문평가</strong>
                     </span>
                 </caption>
                 <colgroup>

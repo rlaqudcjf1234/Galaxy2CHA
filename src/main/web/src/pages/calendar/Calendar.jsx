@@ -85,25 +85,25 @@ const AttendanceForm = ({ selectedDate, onStatusUpdate, calendarData, selectedEv
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-    
+
         // 이벤트가 선택되었는지 확인
         if (!selectedEvent || !selectedEvent.DAILY) {
             alert("수정할 이벤트가 없습니다. 캘린더에서 출석 상태를 선택해주세요.");
             return;
         }
-    
+
         if (!division) {
             alert("출석 상태를 선택해주세요.");
             return;
         }
-    
+
         // 클래스 정보 체크
         if (!classInfo || !classInfo.CLASS_SEQ) {
             console.error('클래스 정보가 없습니다. classInfo:', classInfo);
             alert("클래스 정보를 찾을 수 없습니다. 다시 시도해주세요.");
             return;
         }
-    
+
         try {
             // 선택된 이벤트의 날짜 사용 (selectedEvent.DAILY)
             const eventDate = new Date(selectedEvent.DAILY);
@@ -112,29 +112,29 @@ const AttendanceForm = ({ selectedDate, onStatusUpdate, calendarData, selectedEv
             const day = String(eventDate.getDate()).padStart(2, '0');
             // 하이픈이 없는 정확한 YYYYMMDD 형식
             const formattedDate = `${year}${month}${day}`;
-    
+
             console.log('이벤트 날짜:', eventDate);
             console.log('포맷된 날짜:', formattedDate);
-    
+
             // 서버 요청 데이터 준비 - 파라미터 이름을 소문자로 사용
             const urlEncodedData = new URLSearchParams();
             urlEncodedData.append('class_seq', String(classInfo.CLASS_SEQ));
             urlEncodedData.append('daily', formattedDate);
             urlEncodedData.append('division', division);
             urlEncodedData.append('memo', memo || '');
-    
+
             // 디버깅을 위한 로그
             console.log('전송할 데이터:', Object.fromEntries(urlEncodedData.entries()));
-    
+
             try {
                 const response = await axios.post('/api/calendar/mod', urlEncodedData, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     }
                 });
-    
+
                 console.log('API 응답:', response);
-    
+
                 if (response && response.status === 200) {
                     alert('출석 상태가 수정되었습니다.');
                     resetFormFields();
@@ -148,7 +148,7 @@ const AttendanceForm = ({ selectedDate, onStatusUpdate, calendarData, selectedEv
                 console.error('오류 메시지:', apiError.message);
                 console.error('응답 상태:', apiError.response?.status);
                 console.error('응답 데이터:', apiError.response?.data);
-                
+
                 const errorMsg = apiError.response?.data?.error || apiError.message;
                 alert(`출석 상태 수정 중 오류 발생: ${errorMsg}`);
             }
@@ -228,7 +228,6 @@ const AttendanceForm = ({ selectedDate, onStatusUpdate, calendarData, selectedEv
 
     return (
         <div className="event-form-container">
-            <h3 className="text-lg font-semibold mb-4">출석 상태 관리</h3>
             <form>
                 <div>
                     <label className="block mb-2">선택된 날짜</label>

@@ -32,31 +32,8 @@ function Header() {
                     <div className="menu-item">
                         <div className="menu-text">
                             <Link to="/calendar" className="nav-link px-2">
-                                학적부
+                                출석 및 시간표
                             </Link>
-                        </div>
-                        <div className="sub-menu">
-                            <div className="box">
-                                {[
-                                    {
-                                        label: "출석 및 시간표",
-                                        path: "calendar",
-                                    },
-                                    // {
-                                    //     label: "자격증 안내",
-                                    //     path: "#",
-                                    // },
-                                    // {
-                                    //     label: "시간표 조회",
-                                    //     path: "#",
-                                    // },
-                                ].map((item, index) => (
-                                    <Link key={index} to={`/${item.path}`}>
-                                        {item.label}
-                                    </Link>
-                                ))}
-                            </div>
-                            <div className="sub-menu-holder"></div>
                         </div>
                     </div>
                     <div className="menu-item">
@@ -65,31 +42,6 @@ function Header() {
                                 설문평가
                             </Link>
                         </div>
-                        {
-                            <div className="sub-menu">
-                                <div className="box">
-                                    {[
-                                        {
-                                            label: "설문 참여",
-                                            path: "survey",
-                                        },
-                                        // {
-                                        //     label: "교원평가",
-                                        //     path: "#",
-                                        // },
-                                        // {
-                                        //     label: "설문 결과",
-                                        //     path: "#",
-                                        // },
-                                    ].map((item, index) => (
-                                        <Link key={index} to={`/${item.path}`}>
-                                            {item.label}
-                                        </Link>
-                                    ))}
-                                </div>
-                                <div className="sub-menu-holder"></div>
-                            </div>
-                        }
                     </div>
                     <div className="menu-item">
                         <div className="menu-text">
