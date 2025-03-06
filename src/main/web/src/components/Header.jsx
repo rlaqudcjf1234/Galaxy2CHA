@@ -31,17 +31,13 @@ function Header() {
                 <nav id="menu" className="nav col-md-4 col-md-auto mb-2 justify-content-center mb-md-0">
                     <div className="menu-item">
                         <div className="menu-text">
-                            <Link to="/apply" className="nav-link px-2">
+                            <Link to="/calendar" className="nav-link px-2">
                                 학적부
                             </Link>
                         </div>
                         <div className="sub-menu">
                             <div className="box">
                                 {[
-                                    {
-                                        label: "접수현황",
-                                        path: "apply",
-                                    },
                                     {
                                         label: "출석 및 시간표",
                                         path: "calendar",
