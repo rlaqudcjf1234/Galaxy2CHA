@@ -185,7 +185,40 @@
             WHERE SC.SEQ = #{seq}
             </otherwise>
         </choose>
-        </select>
+    </select>
+
+    <!-- 관리자 공지글 목록 조회 -->
+    <select id="selectAdminNotices" resultType="java.util.Map">
+        SELECT 
+            A.SEQ,
+            A.ADMIN_SEQ AS AUTHOR_SEQ,
+            AD.NAME AS AUTHOR_NAME,
+            A.TITLE,
+            '공지' AS DIVISION,
+            A.DETAIL,
+            TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS REG_DT,
+            'ADMIN' AS TABLE_TYPE
+        FROM ADMIN_COMMUNITY A
+        LEFT JOIN ADMIN AD ON A.ADMIN_SEQ = AD.SEQ
+        WHERE A.DIVISION = '공지'
+        ORDER BY A.REG_DT DESC
+    </select>
+
+    <!-- 관리자 공지글 상세 조회 -->
+    <select id="selectAdminCommunityPost" parameterType="map" resultType="map">
+        SELECT 
+            A.SEQ,
+            A.ADMIN_SEQ AS AUTHOR_SEQ,
+            AD.NAME AS AUTHOR_NAME,
+            A.TITLE,
+            A.DIVISION,
+            A.DETAIL,
+            TO_CHAR(A.REG_DT, 'YYYY-MM-DD') AS REG_DT,
+            'ADMIN' AS TABLE_TYPE
+        FROM ADMIN_COMMUNITY A
+        LEFT JOIN ADMIN AD ON A.ADMIN_SEQ = AD.SEQ
+        WHERE A.SEQ = #{seq}
+    </select>
 
     <update id="updatePost" parameterType="map">
         UPDATE 

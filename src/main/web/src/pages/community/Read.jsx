@@ -18,17 +18,38 @@ function Read() {
     // URL 경로에서 타입 추출
     useEffect(() => {
         const path = location.pathname;
+        const queryParams = new URLSearchParams(location.search);
         let type, tblType;
 
+        // 1. 먼저 쿼리 파라미터에서 tableType 가져오기 (우선순위)
+        const queryTableType = queryParams.get("tableType");
+
+        if (queryTableType) {
+            // 쿼리 파라미터에 tableType이 있으면 그것을 사용
+            tblType = queryTableType;
+            console.log("쿼리 파라미터에서 tableType 설정:", tblType);
+        } else {
+            // 없으면 URL 경로에서 추출 (기존 로직)
+            if (path.includes("/class/")) {
+                type = "class";
+                tblType = "CLASS";
+            } else if (path.includes("/student/")) {
+                type = "student";
+                tblType = "STUDENT";
+            } else if (path.includes("/postbox/")) {
+                type = "postbox";
+                tblType = "STUDENT";
+            }
+            console.log("URL 경로에서 tableType 설정:", tblType);
+        }
+
+        // 커뮤니티 타입 설정 (URL 경로에서)
         if (path.includes("/class/")) {
             type = "class";
-            tblType = "CLASS";
         } else if (path.includes("/student/")) {
             type = "student";
-            tblType = "STUDENT";
         } else if (path.includes("/postbox/")) {
             type = "postbox";
-            tblType = "STUDENT";
         }
 
         setCommunityType(type);
@@ -47,7 +68,7 @@ function Read() {
             try {
                 console.log("게시글 조회 요청:", { seq, tableType });
                 const response = await axios.get(`/api/community/read/${seq}`, {
-                    params: { tableType }
+                    params: { tableType },
                 });
 
                 console.log("게시글 응답:", response.data);
@@ -60,7 +81,7 @@ function Read() {
                 if (postData) {
                     try {
                         const authorCheckResponse = await axios.get(`/api/community/check-author/${seq}`, {
-                            params: { tableType }
+                            params: { tableType },
                         });
                         setIsAuthor(authorCheckResponse.data.isAuthor);
                     } catch (error) {
@@ -137,9 +158,11 @@ function Read() {
         <div className="board-container">
             <div className="board-header">
                 <h2>게시글 상세</h2>
-                <div style={{ fontSize: '12px', color: '#888', marginTop: '5px' }}>
+                <div style={{ fontSize: "12px", color: "#888", marginTop: "5px" }}>
                     {/* 디버깅용 정보 (문제 해결 후 삭제) */}
-                    <p>seq: {seq}, tableType: {tableType}, isAuthor: {isAuthor ? 'true' : 'false'}</p>
+                    <p>
+                        seq: {seq}, tableType: {tableType}, isAuthor: {isAuthor ? "true" : "false"}
+                    </p>
                 </div>
             </div>
 
