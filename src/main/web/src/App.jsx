@@ -39,15 +39,15 @@ function App() {
 
                         <Route path="class/:lecture_seq/:seq" element={<Container />}>
                             <Route index="index" element={<ClassDetail />} />
+                            <Route path="add" element={<ApplyAdd />} />
                         </Route>
 
                         <Route path="login" element={<Container />}>
                             <Route index="index" element={<Login />} />
                         </Route>
-
                         <Route path="apply" element={<PrivateCotainer />}>
                             <Route index="index" element={<ApplyList />} />
-                            <Route path="add" element={<ApplyAdd />} />
+
                             <Route path="read/:id" element={<ApplyRead />} />
                         </Route>
 

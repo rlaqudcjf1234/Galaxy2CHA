@@ -158,12 +158,7 @@ function Read() {
         <div className="board-container">
             <div className="board-header">
                 <h2>게시글 상세</h2>
-                <div style={{ fontSize: "12px", color: "#888", marginTop: "5px" }}>
-                    {/* 디버깅용 정보 (문제 해결 후 삭제) */}
-                    <p>
-                        seq: {seq}, tableType: {tableType}, isAuthor: {isAuthor ? "true" : "false"}
-                    </p>
-                </div>
+                <div style={{ fontSize: "12px", color: "#888", marginTop: "5px" }}></div>
             </div>
 
             <div className="post-detail" style={{ border: "1px solid #ddd", borderRadius: "4px" }}>
