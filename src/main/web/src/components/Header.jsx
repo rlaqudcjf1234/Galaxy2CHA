@@ -53,11 +53,11 @@ function Header() {
                             <div className="box">
                                 {[
                                     {
-                                        label: "반 별 게시판",
+                                        label: "강의 게시판",
                                         path: "community/class",
                                     },
                                     {
-                                        label: "학생 자유 게시판",
+                                        label: "자유 게시판",
                                         path: "community/student",
                                     },
                                     {
