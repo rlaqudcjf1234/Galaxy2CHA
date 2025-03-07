@@ -2,6 +2,7 @@ package com.galaxy.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,6 @@ public class CommunityServiceImpl implements CommunityService {
         if (searchDto.getTableType() == null) {
             searchDto.setTableType("STUDENT");
         }
-        if (searchDto.getClassSeq() != null) {
-            log.info("특정 클래스 조회: classSeq={}", searchDto.getClassSeq());
-        }
 
         // 로그 추가
         log.info("검색 조건: tableType={}, pageIndex={}, pageSize={}, searchKeyword={}",
@@ -46,17 +44,30 @@ public class CommunityServiceImpl implements CommunityService {
                 searchDto.getPageSize(),
                 searchDto.getSearchKeyword());
 
-        // 전체 게시글 수 조회
+        // 전체 게시글 수 조회 (관리자 공지글 제외)
         int totalCount = communityMapper.selectCommunityCount(searchDto);
 
         // 게시글 목록 조회
         List<Map<String, Object>> rawList = communityMapper.selectCommunityList(searchDto);
 
+        // 관리자 공지글 목록 조회
+        List<Map<String, Object>> adminNotices = communityMapper.selectAdminNotices();
+
+        // 관리자 공지글과 일반 게시글 병합
+        List<Map<String, Object>> combinedList = new ArrayList<>();
+        if (adminNotices != null && !adminNotices.isEmpty()) {
+            combinedList.addAll(adminNotices);
+        }
+        combinedList.addAll(rawList);
+
         // 로그 추가
-        log.info("조회된 게시글 수: {}", rawList.size());
+        log.info("조회된 게시글 수: 기존={}, 공지={}, 전체={}",
+                rawList.size(),
+                adminNotices != null ? adminNotices.size() : 0,
+                combinedList.size());
 
         // 게시글 목록 매핑
-        List<CommListDto.CommItem> items = rawList.stream()
+        List<CommListDto.CommItem> items = combinedList.stream()
                 .map(this::mapToCommItem)
                 .collect(Collectors.toList());
 
@@ -77,7 +88,7 @@ public class CommunityServiceImpl implements CommunityService {
         Map<String, Object> params = new HashMap<>();
 
         // 필수 필드 설정
-        params.put("studentSeq", postDto.getStudentSeq());  // authorSeq 대신 studentSeq 사용
+        params.put("studentSeq", postDto.getStudentSeq()); // authorSeq 대신 studentSeq 사용
         params.put("title", postDto.getTitle());
         params.put("division", postDto.getDivision());
         params.put("detail", postDto.getDetail());
@@ -105,30 +116,24 @@ public class CommunityServiceImpl implements CommunityService {
             throw new IllegalArgumentException("게시글 번호는 필수 입력 항목입니다.");
         }
 
-        // CLASS 테이블에서 조회
-        Map<String, Object> classParams = new HashMap<>();
-        classParams.put("tableType", "CLASS");
-        classParams.put("seq", seq);
-        Map<String, Object> classResult = communityMapper.selectCommunityPost(classParams);
+        Map<String, Object> params = new HashMap<>();
+        params.put("seq", seq);
 
-        // STUDENT 테이블에서 조회
-        Map<String, Object> studentParams = new HashMap<>();
-        studentParams.put("tableType", "STUDENT");
-        studentParams.put("seq", seq);
-        Map<String, Object> studentResult = communityMapper.selectCommunityPost(studentParams);
+        Map<String, Object> result = null;
 
-        // 결과가 있는 테이블의 데이터 사용
-        Map<String, Object> map = null;
-        if (classResult != null && !classResult.isEmpty()) {
-            map = classResult;
-        } else if (studentResult != null && !studentResult.isEmpty()) {
-            map = studentResult;
+        // 테이블 타입에 따라 적절한 조회 메서드 호출
+        if ("ADMIN".equals(tableType)) {
+            result = communityMapper.selectAdminCommunityPost(params);
+        } else if ("CLASS".equals(tableType)) {
+            params.put("tableType", "CLASS");
+            result = communityMapper.selectCommunityPost(params);
         } else {
-            return null; // 모든 테이블에서 결과가 없는 경우
+            params.put("tableType", "STUDENT");
+            result = communityMapper.selectCommunityPost(params);
         }
 
         // 데이터 매핑
-        return mapToCommItem(map);
+        return mapToCommItem(result);
     }
 
     // 입력값 검증 메서드
@@ -190,6 +195,9 @@ public class CommunityServiceImpl implements CommunityService {
             item.setDivision(getStringValueOrEmpty(map, "DIVISION"));
             item.setDetail(getStringValueOrEmpty(map, "DETAIL"));
             item.setRegDt(getStringValueOrEmpty(map, "REG_DT"));
+            item.setTableType(getStringValueOrEmpty(map, "TABLE_TYPE"));
+
+            return item;
 
         } catch (Exception e) {
             // 예외 로깅

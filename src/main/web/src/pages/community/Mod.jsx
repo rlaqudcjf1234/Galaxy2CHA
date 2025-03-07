@@ -79,7 +79,7 @@ function Mod() {
 
                 // 2. 작성자 확인 API 호출
                 const authorCheckResponse = await axios.get(`/api/community/check-author/${seq}`, {
-                    params: { tableType: formData.tableType }
+                    params: { tableType: formData.tableType },
                 });
 
                 console.log("작성자 확인 결과:", authorCheckResponse.data);
@@ -177,14 +177,12 @@ function Mod() {
                                     <option value="">선택해주세요</option>
                                     {communityType === "class" && (
                                         <>
-                                            <option value="공지">공지</option>
                                             <option value="일반">일반</option>
                                             <option value="질문">질문</option>
                                         </>
                                     )}
                                     {communityType === "student" && (
                                         <>
-                                            <option value="공지">공지</option>
                                             <option value="일반">일반</option>
                                             <option value="유머">유머</option>
                                         </>

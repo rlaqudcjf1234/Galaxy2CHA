@@ -35,11 +35,26 @@ function List({ type }) {
             const response = await axios.get("/api/community/list", { params: requestParams });
 
             // 역순으로 번호 매기기
-            const itemsWithReverseRnum = (response.data.items || []).map((item, index) => ({
-                ...item,
-                rnum: response.data.totalCount - (pageIndex - 1) * 10 - index,
-            }));
-
+            const itemsWithReverseRnum = (response.data.items || []).map((item, index) => {
+                // 공지글은 번호 대신 '-' 표시
+                if (item.tableType === "ADMIN" || item.division === "공지") {
+                    return {
+                        ...item,
+                        rnum: "-",
+                    };
+                }
+                // 일반 게시글은 일반 게시글 중에서의 순번 표시
+                else {
+                    const normalItems = response.data.items.filter(
+                        (i) => i.tableType !== "ADMIN" && i.division !== "공지"
+                    );
+                    const normalIndex = normalItems.findIndex((ni) => ni.seq === item.seq);
+                    return {
+                        ...item,
+                        rnum: normalItems.length - normalIndex,
+                    };
+                }
+            });
             setItems(itemsWithReverseRnum);
             setTotalCount(response.data.totalCount || 0);
         } catch (error) {
@@ -154,10 +169,18 @@ function List({ type }) {
                     {Array.isArray(items) && items.length > 0 ? (
                         items.map((item, index) => (
                             <tr key={`item-${item.seq}`}>
-                                <td>{item.rnum || "-"}</td>
+                                <td>
+                                    {item.tableType === "ADMIN" || item.division === "공지" ? "-" : item.rnum || "-"}
+                                </td>
                                 <td>{item.division || "-"}</td>
                                 <td>
-                                    <Link to={`/community/${communityType}/read/${item.seq}`}>{item.title || "-"}</Link>
+                                    <Link
+                                        to={`/community/${communityType}/read/${item.seq}?tableType=${
+                                            item.tableType || tableType
+                                        }`}
+                                    >
+                                        {item.title || "-"}
+                                    </Link>
                                 </td>
                                 <td>{item.author || "-"}</td>
                                 <td>{item.regDt || "-"}</td>

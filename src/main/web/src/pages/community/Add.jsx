@@ -120,11 +120,7 @@ function Add({ type }) {
                     {communityType === "class" ? "반 별" : communityType === "postbox" ? "건의함" : "학생 게시판"}{" "}
                     글쓰기
                 </h4>
-                {userInfo && (
-                    <p className="text-muted">
-                        작성자: {userInfo.name} ({userInfo.id})
-                    </p>
-                )}
+                {userInfo && <p>작성자: {userInfo.name} </p>}
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -149,7 +145,6 @@ function Add({ type }) {
                                     ) : (
                                         <>
                                             <option value="일반">일반</option>
-                                            <option value="공지">공지</option>
                                             {communityType === "class" && <option value="질문">질문</option>}
                                             {communityType === "student" && <option value="유머">유머</option>}
                                         </>

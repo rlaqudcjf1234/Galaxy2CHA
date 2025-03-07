@@ -21,6 +21,7 @@ public class CommListDto extends SeqDto{
         private String detail;   // 상세
         private String regDt;    // 등록일자 (문자열 형태로 받음)
         private int rnum;        // 행 번호 (ROWNUM)
+        private String tableType;
     }
     
     private int totalCount;        // 전체 게시글 수
